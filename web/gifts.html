@@ -1,0 +1,913 @@
+<title>Proc-Gifts</title>
+<style>
+  /* Tema da linha "Processamento" (igual ao Proc-Scanner): só dark mode, por opção */
+  :root {
+    color-scheme: dark;
+    --bg: #15171c;
+    --sidebar: #1c1f26;
+    --card: #232730;
+    --card-hover: #2b303b;
+    --sub: #1a1d23;
+    --linha-alt: #20242c;
+    --borda: #323845;
+    --texto: #f1f3f7;
+    --texto-sec: #a4acbb;
+    --accent: #4c8dff;
+    --accent-hover: #3a78e8;
+    --accent-texto: #7fb0ff;
+    --accent-suave: #1f3358;
+    --sucesso: #1f9d5a;
+    --sucesso-hover: #1a8550;
+    --sucesso-texto: #5fd49a;
+    --erro: #e5484d;
+    --trilho: #2f3542;
+    --etiqueta-fundo: #3d2f0c;
+    --etiqueta-texto: #ffd166;
+    /* Cores dos processos (cor do texto e fundo suave) */
+    --p-gifts: #5ccfc2;  --p-gifts-bg: #15302d;
+    --p-bmjcp: #f0b25a;  --p-bmjcp-bg: #36280f;
+    --p-omega: #b89cf5;  --p-omega-bg: #2a2140;
+    --p-offset: #7fb0f5; --p-offset-bg: #18273f;
+    --p-urg: #fb923c;    --p-urg-bg: #3b2210;
+    --p-unk: #f5867b;    --p-unk-bg: #3a1a17;
+    --sans: "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    --display: "Inter Display", "Inter", "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+    --mono: "Cascadia Mono", Consolas, ui-monospace, monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--texto);
+    font: 14px/1.45 var(--sans);
+    -webkit-font-smoothing: antialiased;
+    /* O Inter troca "23x31" por "23×31": os nomes das pastas têm de aparecer como são */
+    font-variant-ligatures: no-contextual;
+  }
+  button, input { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .app { display: grid; grid-template-columns: 280px minmax(0, 1fr); min-height: 100%; }
+
+  /* ---------------------------------------------------------------- Sidebar */
+  .sidebar {
+    background: var(--sidebar);
+    padding: 28px 24px 24px;
+    display: flex; flex-direction: column;
+    position: sticky; top: env(safe-area-inset-top, 0px);
+    height: 100vh; height: 100dvh; overflow-y: auto;
+  }
+  .sidebar h1 { margin: 0; font: 600 24px/1.2 var(--display); letter-spacing: -0.01em; }
+  .subtitulo { color: var(--texto-sec); font-size: 13px; }
+  .secao {
+    display: block;
+    margin: 32px 0 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+    color: var(--texto-sec); text-transform: uppercase;
+  }
+  .grupo + .secao { margin-top: 28px; }
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; height: 40px; border-radius: 6px; cursor: pointer;
+    background: var(--card); border: 1px solid var(--borda); transition: background .15s;
+  }
+  .btn:hover:not(:disabled) { background: var(--card-hover); }
+  .btn:disabled { cursor: default; opacity: .55; }
+  .btn.copiado { color: var(--sucesso-texto); }
+  .btn.pequeno { width: auto; height: 32px; padding: 0 12px; font-size: 13px; }
+  .chip { margin-top: 10px; background: var(--sub); border-radius: 8px; padding: 8px 12px; overflow-wrap: anywhere; }
+  .chip .nome { color: var(--texto-sec); }
+  .chip.escolhida .nome { color: var(--texto); }
+  .chip .contagem { color: var(--texto-sec); font-size: 13px; }
+  .link {
+    margin-top: 6px; margin-left: -6px; height: 30px; padding: 0 6px; border: 0; border-radius: 6px;
+    background: transparent; color: var(--accent-texto); font-size: 13px; cursor: pointer; align-self: flex-start;
+  }
+  .link:hover:not(:disabled) { background: var(--card-hover); }
+  .link:disabled { opacity: .5; cursor: default; }
+  .privado { margin-top: 20px; font-size: 12.5px; color: var(--texto-sec); display: flex; gap: 8px; }
+  .privado svg { flex: none; margin-top: 2px; }
+  .rodape { margin-top: auto; padding-top: 24px; display: grid; gap: 12px; }
+  .btn-principal {
+    height: 42px; border: 0; border-radius: 6px; cursor: pointer; width: 100%;
+    background: var(--sucesso); color: #fff; font-size: 15px; font-weight: 600; transition: background .15s;
+  }
+  .btn-principal:hover:not(:disabled) { background: var(--sucesso-hover); }
+  .btn-principal:disabled { background: var(--card); color: var(--texto-sec); cursor: default; }
+  .btn-principal.azul { background: var(--accent); }
+  .btn-principal.azul:hover:not(:disabled) { background: var(--accent-hover); }
+  .versao { font-size: 12px; color: var(--texto-sec); text-align: center; opacity: .7; }
+
+  /* -------------------------------------------------------- Área principal */
+  main { padding: 24px 28px 16px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .cabecalho { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .cabecalho h2 { margin: 0; font: 600 24px/1.3 var(--display); }
+  #estado { color: var(--texto-sec); text-align: right; }
+  #estado[data-tipo="ativo"] { color: var(--accent-texto); }
+  #estado[data-tipo="ok"] { color: var(--sucesso); }
+  #estado[data-tipo="erro"] { color: var(--erro); }
+
+  .separadores { display: flex; gap: 4px; border-bottom: 1px solid var(--borda); margin-top: -4px; }
+  .separadores button {
+    background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px;
+    padding: 8px 12px; color: var(--texto-sec); font-weight: 600; cursor: pointer;
+  }
+  .separadores button:hover { color: var(--texto); }
+  .separadores button[aria-selected="true"] { color: var(--texto); border-bottom-color: var(--accent); }
+  .painel { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+  .barra { height: 6px; border-radius: 3px; background: var(--trilho); overflow: hidden; }
+  .barra > i { display: block; height: 100%; width: 0; border-radius: 3px; background: var(--accent); transition: width .15s; }
+  /* Progresso, igual nas apps da linha (no Python é o ui.Progresso): a barra fina e, por
+     baixo, o que está a fazer à esquerda e a percentagem e o tempo que falta à direita */
+  .progresso { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 6px; margin-top: -4px; transition: opacity .2s; }
+  .progresso.a-sair { opacity: 0; }
+  .progresso .barra > i { background: var(--accent); transition: width .15s, background-color .2s; }
+  .progresso[data-estado="ok"] .barra > i { background: var(--sucesso); }
+  .progresso[data-estado="erro"] .barra > i { background: var(--erro); }
+  .progresso[data-estado="indeterminado"] .barra > i { width: 30% !important; animation: progresso-desliza 1.3s ease-in-out infinite; }
+  @keyframes progresso-desliza { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
+  .progresso-legenda {
+    display: flex; justify-content: space-between; gap: 16px; min-height: 18px;
+    font-size: 12.5px; line-height: 18px; color: var(--texto-sec); font-variant-numeric: tabular-nums;
+  }
+  .progresso-detalhe { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .progresso-valor { flex: none; white-space: nowrap; }
+  .progresso[data-estado="ok"] .progresso-legenda { color: var(--sucesso-texto); }
+  .progresso[data-estado="erro"] .progresso-legenda { color: var(--erro); }
+  @media (prefers-reduced-motion: reduce) {
+    .progresso[data-estado="indeterminado"] .barra > i { animation: none; width: 100% !important; opacity: .4; }
+  }
+
+  .card { background: var(--card); border: 1px solid var(--borda); border-radius: 10px; }
+
+  /* Cor de cada processo: --c (texto) e --cb (fundo) */
+  .p-GIFTS { --c: var(--p-gifts); --cb: var(--p-gifts-bg); }
+  .p-BMJCP { --c: var(--p-bmjcp); --cb: var(--p-bmjcp-bg); }
+  .p-OMEGA { --c: var(--p-omega); --cb: var(--p-omega-bg); }
+  .p-OFFSET { --c: var(--p-offset); --cb: var(--p-offset-bg); }
+  .p-URGENTES { --c: var(--p-urg); --cb: var(--p-urg-bg); }
+  .p-DESCONHECIDO { --c: var(--p-unk); --cb: var(--p-unk-bg); }
+
+  .pill {
+    display: inline-flex; align-items: center; justify-content: center; height: 24px; padding: 0 10px;
+    border-radius: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap;
+    background: var(--cb, var(--accent-suave)); color: var(--c, var(--accent-texto));
+  }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+  .stat { padding: 12px 16px; }
+  .stat b { display: block; font: 600 28px/1.25 var(--display); font-variant-numeric: tabular-nums; color: var(--c, var(--texto)); }
+  .stat span { color: var(--texto-sec); font-size: 13px; }
+  .stat[class*="p-"] { background: var(--cb); border-color: color-mix(in srgb, var(--c) 25%, transparent); }
+
+  .aviso { padding: 10px 14px; border-radius: 8px; border: 1px solid; }
+  .aviso b { font-weight: 600; }
+  .aviso ul { margin: 6px 0 0; padding-left: 20px; }
+  .aviso li { font: 13px/20px var(--mono); overflow-wrap: anywhere; }
+  .aviso.erro { background: var(--p-unk-bg); color: var(--p-unk); border-color: color-mix(in srgb, var(--p-unk) 35%, transparent); }
+  .aviso.info { background: var(--etiqueta-fundo); color: var(--etiqueta-texto); border-color: color-mix(in srgb, var(--etiqueta-texto) 30%, transparent); }
+
+  /* Cartão de um processo */
+  .processo { overflow: hidden; }
+  .processo-topo {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 10px 16px; flex-wrap: wrap;
+    padding: 14px 18px; background: var(--cb); border-bottom: 1px solid var(--borda);
+  }
+  .processo-topo h3 { margin: 0; font: 600 18px/1.3 var(--display); color: var(--c); }
+  .processo-topo dl { margin: 4px 0 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 10px; font-size: 13px; }
+  .processo-topo dt { color: var(--texto-sec); }
+  .processo-topo dd { margin: 0; font-family: var(--mono); overflow-wrap: anywhere; }
+  .processo-corpo { padding: 14px 18px; display: grid; gap: 14px; }
+  .dica { font-size: 12.5px; color: var(--texto-sec); }
+
+  /* Pesquisa no Explorador: os IDs em grupos que cabem na caixa de pesquisa, um Copiar por grupo */
+  .grupos { display: grid; gap: 12px; }
+  .grupo-ids { display: grid; gap: 6px; }
+  .grupo-ids .feito { color: var(--sucesso-texto); }
+  .campo { display: flex; gap: 8px; align-items: stretch; }
+  .campo code {
+    flex: 1; min-width: 0; padding: 9px 12px; border-radius: 6px; user-select: all;
+    background: var(--sub); border: 1px solid var(--borda); font: 13px/21px var(--mono); overflow-wrap: anywhere;
+  }
+  .campo code span { white-space: nowrap; }
+  .campo .copiar { width: auto; min-width: 120px; height: 42px; align-self: flex-start; }
+  .copiar.copiado, .copiar.copiado:hover:not(:disabled) { background: var(--sucesso); }
+
+  details > summary { cursor: pointer; color: var(--accent-texto); font-size: 13px; width: max-content; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  th, td { text-align: left; padding: 6px 10px; vertical-align: top; }
+  th { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--texto-sec); border-bottom: 1px solid var(--borda); }
+  tbody tr:nth-child(even) { background: var(--linha-alt); }
+  td.mono { font: 13px/20px var(--mono); white-space: nowrap; }
+  td.qtd { text-align: center; font-variant-numeric: tabular-nums; }
+  .cat { color: var(--texto-sec); }
+  .tabela-scroll { overflow-x: auto; }
+
+  /* Pesquisar produto */
+  .pesquisar { padding: 16px 18px; display: grid; gap: 12px; }
+  .pesquisar input {
+    width: 100%; height: 44px; padding: 0 14px; border-radius: 6px; font-size: 15px;
+    background: var(--sub); border: 1px solid var(--borda);
+  }
+  .resposta { border-radius: 8px; padding: 14px 16px; background: var(--cb); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); display: grid; gap: 8px; }
+  .resposta .nome-processo { font: 600 24px/1.2 var(--display); color: var(--c); }
+  .resposta dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; font-size: 13px; }
+  .resposta dt { color: var(--texto-sec); }
+  .resposta dd { margin: 0; overflow-wrap: anywhere; }
+  .resposta dd.mono { font-family: var(--mono); }
+
+  /* Regras */
+  .regras { padding: 16px 18px; display: grid; gap: 8px; }
+  .regras h3 { margin: 12px 0 0; font: 600 16px/1.3 var(--display); }
+  .regras h3:first-child { margin-top: 0; }
+  .regras p { margin: 0; color: var(--texto-sec); font-size: 13px; }
+  .regras code { font-family: var(--mono); font-size: 12.5px; }
+
+  .vazio { padding: 120px 16px; text-align: center; color: var(--texto-sec); }
+
+  /* Arrastar uma pasta para a janela */
+  .largar {
+    position: fixed; inset: 0; z-index: 10; display: grid; place-items: center;
+    background: rgba(21, 23, 28, .88); border: 2px dashed var(--accent); pointer-events: none;
+    font-size: 18px; font-weight: 600; color: var(--accent-texto);
+  }
+
+  @media (max-width: 760px) {
+    .app { grid-template-columns: minmax(0, 1fr); }
+    .sidebar { position: static; height: auto; padding: 24px 16px; overflow: visible; }
+    main { padding: 20px 16px; }
+    .stats { gap: 8px; }
+    .stat { padding: 10px 12px; }
+    .stat b { font-size: 22px; }
+    .campo { flex-direction: column; }
+    .campo .copiar { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="app">
+  <aside class="sidebar">
+    <h1>Proc-Gifts</h1>
+    <div class="subtitulo">Para encaminhar encomendas de Presentes Personalizados</div>
+
+    <div class="secao">Pasta</div>
+    <div class="grupo">
+      <button class="btn" id="btn-pasta" type="button">Escolher pasta…</button>
+      <input id="input-pasta" type="file" webkitdirectory multiple hidden>
+      <div class="chip" id="chip">
+        <div class="nome" id="nome-pasta">Nenhuma pasta selecionada</div>
+        <div class="contagem" id="n-encomendas" hidden></div>
+      </div>
+    </div>
+
+    <div class="secao">Ações</div>
+    <button class="link" id="btn-limpar" type="button">Limpar resultados</button>
+
+    <div class="privado">
+      <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M4 7V5a4 4 0 0 1 8 0v2M3 7h10v7H3z"/></svg>
+      <span>Só são lidos os nomes das pastas; nada é enviado.</span>
+    </div>
+
+    <div class="rodape">
+      <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
+      <div class="versao">Versão web 1.0</div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="cabecalho">
+      <h2 id="titulo-painel">Encomendas</h2>
+      <div id="estado" role="status">Pronto para iniciar</div>
+    </div>
+    <div class="separadores" role="tablist">
+      <button type="button" role="tab" id="tab-encomendas" aria-controls="painel-encomendas" aria-selected="true">Encomendas</button>
+      <button type="button" role="tab" id="tab-pesquisar" aria-controls="painel-pesquisar" aria-selected="false">Pesquisar produto</button>
+      <button type="button" role="tab" id="tab-regras" aria-controls="painel-regras" aria-selected="false">Regras</button>
+    </div>
+    <div class="progresso" id="progresso" role="progressbar" aria-label="Progresso" aria-valuemin="0" aria-valuemax="100" hidden>
+      <div class="barra"><i></i></div>
+      <div class="progresso-legenda"><span class="progresso-detalhe"></span><span class="progresso-valor"></span></div>
+    </div>
+
+    <section class="painel" id="painel-encomendas" role="tabpanel" aria-labelledby="tab-encomendas">
+      <div class="stats" id="stats" hidden></div>
+      <div class="painel" id="avisos"></div>
+      <div class="painel" id="processos"></div>
+      <div class="vazio" id="vazio">Escolha a pasta do canal e carregue em Analisar</div>
+    </section>
+
+    <section class="painel" id="painel-pesquisar" role="tabpanel" aria-labelledby="tab-pesquisar" hidden>
+      <div class="card pesquisar">
+        <input type="text" id="pesquisa" placeholder="Colar ou escrever o nome da pasta, ex.: Canecas › Caneca Básica" autocomplete="off" spellcheck="false" aria-label="Nome da pasta de produto">
+        <div class="dica">Basta parte do nome (ex.: "almofada 40x40", "pvc", "bola de natal").</div>
+        <div id="resposta"></div>
+      </div>
+    </section>
+
+    <section class="painel" id="painel-regras" role="tabpanel" aria-labelledby="tab-regras" hidden>
+      <div class="card regras" id="regras"></div>
+    </section>
+  </main>
+</div>
+<div class="largar" id="largar" hidden>Largue a pasta do canal</div>
+
+<script id="logica">
+// Classificação das encomendas de Presentes Personalizados pelo nome da pasta de produto.
+// Sem acesso ao DOM, para poder ser testada à parte (testes/testar.js).
+// Regras validadas pelo utilizador a 2026-11-09 contra 1.676 encomendas reais (ver CLAUDE.md).
+const Logica = (() => {
+  const VER_DOC = "Ver documentação do processo";
+  const PROCESSOS = {
+    URGENTES:     { nome: "URGENTES",       picagem: VER_DOC,              destino: VER_DOC },
+    BMJCP:        { nome: "BMJCP",          picagem: "Serviços Externos",  destino: "A:\\ENTRADA_RAWS\\BMJCP" },
+    OMEGA:        { nome: "OMEGA",          picagem: "Pré Impressão",      destino: "A:\\PRE_IMPRESSAO\\_#OMEGA (UV) · _#BISCATES (Lembranças)" },
+    OFFSET:       { nome: "OFFSET",         picagem: "Pré Impressão",      destino: "A:\\PRE_IMPRESSAO\\_#OFFSET_DIGITAL" },
+    GIFTS:        { nome: "GIFTS",          picagem: "G1.3 Pré Impressão", destino: "A:\\PRE_IMPRESSAO\\_#GIFTS" },
+    DESCONHECIDO: { nome: "Por confirmar",  picagem: "—",                  destino: "Produto sem regra: confirmar com o responsável" },
+  };
+  // Ordem dos cartões no ecrã. GIFTS no fim: é o maior volume e o operador trata-o como "o resto"
+  // depois de tirar os outros processos. Por confirmar logo antes, para não se misturar com o resto.
+  const ORDEM = ["URGENTES", "BMJCP", "OMEGA", "OFFSET", "DESCONHECIDO", "GIFTS"];
+
+  // Almofadas e mantas com tipo e tamanho nesta tabela vão para BMJCP; as outras, para GIFTS
+  const TABELA_BMJCP = [
+    { produto: "Manta Simples",    tamanhos: ["70x105", "90x140", "105x180"] },
+    { produto: "Manta Polar",      tamanhos: ["70x105", "90x140", "105x180"] },
+    { produto: "Almofada Polar",   tamanhos: ["30x50", "45x45", "70x40"] },
+    { produto: "Almofada 1 Face",  tamanhos: ["70x40", "35x35", "40x40", "45x45"] },
+    { produto: "Almofada 2 Faces", tamanhos: ["35x35", "40x40", "45x45"] },
+    { produto: "Boneco Fotoprix",  tamanhos: ["Tamanho Único"] },
+  ];
+
+  // Por ordem: ganha a primeira que bate. processo null = decidir pela tabela BMJCP.
+  // teste recebe o texto normalizado "categoria › produto".
+  const REGRAS = [
+    { quando: "contém «landscape 31x23»", processo: "URGENTES", exemplos: "Horizontais › Landscape 31x23 (Aro 4.5cm)", teste: n => /landscape 31\s*x\s*23/.test(n) },
+    { quando: "contém «classic 23x31»", processo: "URGENTES", exemplos: "Verticais › Classic 23x31 (Aro 3cm, Aro 4.5cm)", teste: n => /classic 23\s*x\s*31/.test(n) },
+    { quando: "contém «globo»", processo: "OFFSET", exemplos: "Foto Globos › Globo Personalizado", teste: n => /globo/.test(n) },
+    { quando: "tem a palavra «pin» ou «pins»", processo: "OFFSET", exemplos: "Pin › Pin", teste: n => /(^|[^a-z])pins?([^a-z]|$)/.test(n) },
+    { quando: "contém «moldura atlas»", processo: "OMEGA", exemplos: "Moldura Atlas 13x18, 15x20", teste: n => /moldura atlas/.test(n) },
+    { quando: "contém «moldura essence»", processo: "OMEGA", exemplos: "Moldura Essence 20x20, 20x30, 30x45, 40x60", teste: n => /moldura essence/.test(n) },
+    { quando: "contém «moldura haramukh»", processo: "OMEGA", exemplos: "Moldura Haramukh 10x15, 15x20", teste: n => /moldura haramukh/.test(n) },
+    { quando: "contém «mealheiro»", processo: "GIFTS", exemplos: "Oportunidades › Mealheiro", teste: n => /mealheiro/.test(n) },
+    { quando: "contém «dibu» ou «boneco»", processo: "BMJCP", exemplos: "Dibuñecos › Dibunecos (= Boneco Fotoprix)", teste: n => /dibu|boneco/.test(n) },
+    { quando: "contém «almofada» ou «manta»", processo: null, exemplos: "Almofadas e Mantas (ver a tabela BMJCP)", teste: n => /almofada|manta/.test(n) },
+    { quando: "contém «caneca»", processo: "GIFTS", exemplos: "Básica, Colorida, Love, Mágica, Preta Personalizada, Simples", teste: n => /caneca/.test(n) },
+    { quando: "contém «avental» ou «aventais»", processo: "GIFTS", exemplos: "Aventais › Avental", teste: n => /avental|aventais/.test(n) },
+    { quando: "contém «baralho»", processo: "OFFSET", exemplos: "Baralho Cartas (9x6cm)", teste: n => /baralho/.test(n) },
+    { quando: "contém «puzzle»", processo: "GIFTS", exemplos: "Puzzles Simples, Puzzle Coração, Puzzles Madeira", teste: n => /puzzle/.test(n) },
+    { quando: "contém «tapete»", processo: "GIFTS", exemplos: "Tapete de Rato Têxtil, Tapete Rato Gaming", teste: n => /tapete/.test(n) },
+    { quando: "contém «porta chave» ou «porta-chave»", processo: "GIFTS", exemplos: "Metálico, Coração, Quadrado", teste: n => /porta.?chave/.test(n) },
+    { quando: "contém «iman»", processo: "OFFSET", exemplos: "Íman Quadrado, Ímanes Vintage, Ímanes Redondos", teste: n => /iman/.test(n) },
+    { quando: "contém «ornamento»", processo: "OMEGA", exemplos: "Ornamento de Natal: Coração, Floco de Neve, Quadrado", teste: n => /ornamento/.test(n) },
+    { quando: "contém «bola de natal»", processo: "OFFSET", exemplos: "Natal › Bola de Natal", teste: n => /bola de natal/.test(n) },
+    { quando: "contém «azulejo»", processo: "GIFTS", exemplos: "Azulejo Português (15x15cm)", teste: n => /azulejo/.test(n) },
+    { quando: "contém «pvc»", processo: "OMEGA", exemplos: "Quadro PVC, todos os tamanhos", teste: n => /pvc/.test(n) },
+    { quando: "contém «mont blanc»", processo: "OMEGA", exemplos: "Moldura Mont Blanc 10X15", teste: n => /mont blanc/.test(n) },
+    { quando: "contém «peluche», «coelhinho», «reninha», «sapinho» ou «ursinho»", processo: "GIFTS", exemplos: "Coelhinho Bunny, Reninha Knut, Sapinho Paddy, Ursinho Barney", teste: n => /peluche|coelhinho|reninha|sapinho|ursinho/.test(n) },
+    { quando: "contém «caderno»", processo: "OFFSET", exemplos: "Cadernos › Caderno A5", teste: n => /caderno/.test(n) },
+    { quando: "contém «cartao de visita» ou «cartoes visita»", processo: "OFFSET", exemplos: "Cartões Visita › Cartões de Visita", teste: n => /cartoes? (de )?visita/.test(n) },
+  ];
+
+  // Nomes vindos de um ZIP trazem os caracteres escapados: "#U203a" -> "›"
+  const descodificar = s => String(s ?? "").replace(/#U([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
+
+  // Sem acentos, minúsculas, espaços seguidos reduzidos a um
+  function normalizar(texto) {
+    return descodificar(texto).normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase().replace(/\s+/g, " ").trim();
+  }
+
+  // "(x2) - Categoria › Produto" -> { nome: "Categoria › Produto", qtd: 2, categoria, produto }
+  function lerNomeProduto(bruto) {
+    let nome = descodificar(bruto).trim();
+    let qtd = 1;
+    const m = nome.match(/^\(\s*x\s*(\d+)\s*\)\s*-?\s*/i);
+    if (m) { qtd = parseInt(m[1], 10); nome = nome.slice(m[0].length); }
+    const partes = nome.split(/\s*[›>]\s*/);
+    const categoria = partes.length > 1 ? partes[0] : "";
+    const produto = partes.length > 1 ? partes.slice(1).join(" › ") : partes[0];
+    return { nome, qtd, categoria, produto };
+  }
+
+  // O tamanho "35x35" nos dois sentidos, ou null
+  function tamanho(texto) {
+    const m = normalizar(texto).match(/(\d+)\s*x\s*(\d+)/);
+    return m ? [`${m[1]}x${m[2]}`, `${m[2]}x${m[1]}`] : null;
+  }
+
+  function tipoBMJCP(n) {
+    if (/manta/.test(n)) return /polar/.test(n) ? "Manta Polar" : "Manta Simples";
+    if (/polar/.test(n)) return "Almofada Polar";
+    if (/frente e verso|2 faces|duas faces/.test(n)) return "Almofada 2 Faces";
+    return "Almofada 1 Face";
+  }
+
+  const nomeProcesso = k => PROCESSOS[k].nome;
+
+  // Nome da pasta de produto -> { processo, regra, numRegra, qtd, categoria, produto, nome }
+  function classificar(nomePasta) {
+    const p = lerNomeProduto(nomePasta);
+    const n = normalizar(p.nome);
+    for (const [i, r] of REGRAS.entries()) {
+      if (!r.teste(n)) continue;
+      const num = i + 1;
+      if (r.processo) {
+        return { ...p, processo: r.processo, numRegra: num, regra: `Regra ${num}: ${r.quando} → ${nomeProcesso(r.processo)}` };
+      }
+      // Almofadas e mantas: pela tabela BMJCP
+      const tipo = tipoBMJCP(n);
+      const tams = tamanho(p.produto) || tamanho(p.nome);
+      const linha = TABELA_BMJCP.find(t => t.produto === tipo);
+      if (linha && tams && linha.tamanhos.some(t => tams.includes(t))) {
+        return { ...p, processo: "BMJCP", numRegra: num, regra: `Regra ${num}: ${tipo} ${tams[0]} está na tabela BMJCP → BMJCP` };
+      }
+      const motivo = tams ? `${tipo} ${tams[0]}` : `${p.produto} (sem tamanho)`;
+      return { ...p, processo: "GIFTS", numRegra: num, regra: `Regra ${num}: ${motivo} não está na tabela BMJCP → ${nomeProcesso("GIFTS")}` };
+    }
+    return { ...p, processo: "DESCONHECIDO", numRegra: 0, regra: "Nenhuma regra corresponde a este produto: confirmar com o responsável" };
+  }
+
+  // Pasta da encomenda "<nº>_<order id>"
+  const PASTA_ENCOMENDA = /^\d+_\d+$/;
+  const ehPastaEncomenda = nome => PASTA_ENCOMENDA.test(nome);
+  // O order id é o segundo número: "3477501_2057613" -> "2057613"
+  function orderId(pasta) {
+    const m = /^\d+_(\d+)$/.exec(String(pasta).trim());
+    return m ? m[1] : "";
+  }
+
+  // Pesquisa no Explorador do Windows: cada id entre asteriscos ("*2057529* OR *2057613*"), porque o
+  // Explorador trata "3477501_2057613" como uma só palavra. A caixa de pesquisa corta o texto colado
+  // aos 400 caracteres: os ids vão em grupos, pela mesma ordem, de no máximo LIMITE_PESQUISA caracteres
+  // (asteriscos e " OR " incluídos) e MAX_IDS_GRUPO ids. Igual ao gruposPesquisa() do Proc-Scanner.
+  const LIMITE_PESQUISA = 400;
+  const MAX_IDS_GRUPO = 23;
+  const termo = id => `*${id}*`;
+  function gruposPesquisa(ids, limite = LIMITE_PESQUISA, maxIds = MAX_IDS_GRUPO) {
+    const grupos = [];
+    let atual = [], tamanhoAtual = 0;
+    for (const id of ids) {
+      const t = termo(id).length;
+      const extra = atual.length ? 4 + t : t; // " OR " + termo
+      if (atual.length && (tamanhoAtual + extra > limite || atual.length >= maxIds)) {
+        grupos.push(atual);
+        atual = [];
+        tamanhoAtual = 0;
+      }
+      tamanhoAtual += atual.length ? 4 + t : t;
+      atual.push(id);
+    }
+    if (atual.length) grupos.push(atual);
+    return grupos.map(g => ({ ids: g, texto: g.map(termo).join(" OR ") }));
+  }
+
+  return {
+    PROCESSOS, ORDEM, REGRAS, TABELA_BMJCP, normalizar, lerNomeProduto, classificar,
+    ehPastaEncomenda, orderId, gruposPesquisa, LIMITE_PESQUISA, MAX_IDS_GRUPO,
+  };
+})();
+</script>
+
+<script>
+// Barra de progresso da linha "Processamento", igual nas três apps (no Python é o ui.Progresso).
+//   iniciar(detalhe)     mostra-a, numa fase sem medida
+//   fase(detalhe)        fase sem medida (abrir um PDF, conferir): a barra desliza
+//   atualizar(x, detalhe) põe-na em x, de 0 a 1; sem detalhe fica o anterior
+//   concluir(ok, detalhe) verde (ou vermelha), e recolhe-a passados 1,5 s
+// O tempo que falta mede-se desde o início da fase com medida, e só aparece com 1,5 s e 5 % feitos.
+function criarProgresso(el, tituloBase = document.title) {
+  const barra = el.querySelector(".barra > i");
+  const detalheEl = el.querySelector(".progresso-detalhe");
+  const valorEl = el.querySelector(".progresso-valor");
+  const pct = x => `${Math.floor(x * 100)}\u00a0%`;
+  const tempo = s => {
+    if (s < 60) return `${Math.max(1, Math.round(s))} s`;
+    const r = Math.round(s / 5) * 5;
+    return r % 60 ? `${Math.floor(r / 60)} min ${r % 60} s` : `${r / 60} min`;
+  };
+  let estado = "indeterminado", x = 0, detalhe = "", valor = "";
+  let t0 = 0, base = null, falta = null, ultimo = 0, pedido = 0, saida = 0, tituloFinal = false;
+
+  // O DOM muda no máximo uma vez por frame: há apps que leem centenas de PDFs por segundo
+  function pintar() {
+    pedido = 0;
+    el.dataset.estado = estado;
+    detalheEl.textContent = detalhe;
+    valorEl.textContent = valor;
+    if (estado === "indeterminado") el.removeAttribute("aria-valuenow");
+    else {
+      barra.style.width = `${x * 100}%`;
+      el.setAttribute("aria-valuenow", String(Math.floor(x * 100)));
+    }
+    const texto = estado === "ativo" ? [pct(x), detalhe].filter(Boolean).join(" · ") : detalhe;
+    if (texto) el.setAttribute("aria-valuetext", texto); else el.removeAttribute("aria-valuetext");
+  }
+  const agendar = () => { if (!pedido) pedido = requestAnimationFrame(pintar); };
+  const agora = () => { if (pedido) { cancelAnimationFrame(pedido); pedido = 0; } pintar(); };
+  // O título muda logo (o requestAnimationFrame pára com o separador em segundo plano)
+  const titulo = t => { if (document.title !== t) document.title = t; };
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && tituloFinal) { tituloFinal = false; titulo(tituloBase); }
+  });
+
+  return {
+    iniciar(texto = "") {
+      clearTimeout(saida);
+      el.classList.remove("a-sair");
+      if (el.hidden) barra.style.width = "0%"; // ainda escondida: não anima de volta ao zero
+      t0 = performance.now();
+      x = 0; base = null; falta = null; tituloFinal = false;
+      estado = "indeterminado"; detalhe = texto; valor = "";
+      agora();
+      el.hidden = false;
+    },
+    fase(texto) {
+      estado = "indeterminado"; detalhe = texto; valor = ""; base = null; falta = null;
+      titulo(tituloBase); // sem medida não há % para mostrar
+      agendar();
+    },
+    atualizar(novoX, texto) {
+      const t = performance.now();
+      x = Math.min(1, Math.max(0, novoX));
+      if (texto !== undefined) detalhe = texto;
+      if (estado !== "ativo" || base === null) { base = { t, x }; falta = null; }
+      estado = "ativo";
+      const passou = (t - base.t) / 1000, feito = x - base.x;
+      if (passou >= 1.5 && x >= 0.05 && feito > 0) {
+        const estimativa = passou * (1 - x) / feito;
+        // Média móvel, descontando o tempo desde a última estimativa: o número não salta
+        falta = falta === null ? estimativa : 0.6 * Math.max(0, falta - (t - ultimo) / 1000) + 0.4 * estimativa;
+        ultimo = t;
+      }
+      valor = falta !== null && falta >= 2 ? `${pct(x)} · ~${tempo(falta)}` : pct(x);
+      titulo(`${pct(x)} · ${tituloBase}`);
+      agendar();
+    },
+    concluir(ok = true, texto) {
+      estado = ok ? "ok" : "erro";
+      x = 1;
+      detalhe = texto ?? (ok ? `Concluído em ${tempo((performance.now() - t0) / 1000)}` : "Interrompido");
+      valor = ok ? "100\u00a0%" : "";
+      agora();
+      if (document.hidden) { titulo(`${ok ? "✓ Concluído" : "✗ Erro"} · ${tituloBase}`); tituloFinal = true; }
+      else titulo(tituloBase);
+      clearTimeout(saida);
+      saida = setTimeout(() => {
+        el.classList.add("a-sair");
+        saida = setTimeout(() => { el.hidden = true; el.classList.remove("a-sair"); }, 200);
+      }, 1500);
+    },
+  };
+}
+</script>
+
+<script>
+(() => {
+  const { PROCESSOS, ORDEM, REGRAS, TABELA_BMJCP } = Logica;
+  const $ = id => document.getElementById(id);
+  const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  const s = n => (n === 1 ? "" : "s");
+  const el = (tag, props = {}, ...filhos) => {
+    const e = Object.assign(document.createElement(tag), props);
+    e.append(...filhos.filter(f => f !== null && f !== undefined && f !== false));
+    return e;
+  };
+  const NIVEIS = 5; // procurar pastas de encomenda até 5 níveis abaixo da pasta escolhida
+
+  // A pasta lida: encomendas [{canal, enc, produtos: [nome da pasta]}]
+  let lida = null;
+  let ocupado = false;
+
+  function estado(texto, tipo = "idle") {
+    $("estado").textContent = texto;
+    $("estado").dataset.tipo = tipo;
+  }
+
+  // ------------------------------------------------------------------ separadores
+  const TABS = ["encomendas", "pesquisar", "regras"];
+  const TITULOS = { encomendas: "Encomendas", pesquisar: "Pesquisar produto", regras: "Regras" };
+  function mostrarTab(qual) {
+    for (const t of TABS) {
+      $(`tab-${t}`).setAttribute("aria-selected", String(t === qual));
+      $(`painel-${t}`).hidden = t !== qual;
+    }
+    $("titulo-painel").textContent = TITULOS[qual];
+    if (qual === "pesquisar") $("pesquisa").focus();
+  }
+  for (const t of TABS) $(`tab-${t}`).addEventListener("click", () => mostrarTab(t));
+
+  // ------------------------------------------------------------------ ler a pasta (só nomes de pastas)
+  const barraProgresso = criarProgresso($("progresso"));
+
+  // Junta as entradas {canal, enc, produto|null} numa lista de encomendas
+  function juntar(entradas) {
+    const mapa = new Map();
+    for (const e of entradas) {
+      const chave = `${e.canal}\u0000${e.enc}`;
+      if (!mapa.has(chave)) mapa.set(chave, { canal: e.canal, enc: e.enc, produtos: [] });
+      const enc = mapa.get(chave);
+      if (e.produto && !enc.produtos.includes(e.produto)) enc.produtos.push(e.produto);
+    }
+    return [...mapa.values()].sort((a, b) => a.canal.localeCompare(b.canal) || a.enc.localeCompare(b.enc));
+  }
+
+  function definirPasta(encomendas, nome) {
+    lida = encomendas;
+    const n = encomendas.length;
+    $("nome-pasta").textContent = nome;
+    $("chip").classList.add("escolhida");
+    $("n-encomendas").textContent = `${fmt(n)} encomenda${s(n)}`;
+    $("n-encomendas").hidden = false;
+    if (n) {
+      barraProgresso.concluir(true, `${fmt(n)} encomenda${s(n)} encontrada${s(n)}`);
+      estado("Pasta lida. Carregue em Analisar.");
+    } else {
+      barraProgresso.concluir(false, "Nenhuma encomenda encontrada");
+      estado("Nenhuma pasta de encomenda (nº_id) nesta pasta.", "erro");
+    }
+  }
+
+  // Escolher pasta: o browser dá a lista de ficheiros; as pastas saem do webkitRelativePath
+  $("btn-pasta").addEventListener("click", () => $("input-pasta").click());
+  $("input-pasta").addEventListener("change", e => {
+    const todos = [...e.target.files];
+    e.target.value = "";
+    if (!todos.length) return;
+    barraProgresso.iniciar("A ler pastas…");
+    const entradas = [];
+    for (const f of todos) {
+      const seg = (f.webkitRelativePath || "").split("/");
+      // seg: [pasta escolhida, …, encomenda, produto, …, ficheiro]
+      for (let i = 0; i <= NIVEIS && i < seg.length - 1; i++) {
+        if (!Logica.ehPastaEncomenda(seg[i])) continue;
+        const temProduto = i + 2 < seg.length; // há uma pasta (e não só um ficheiro) dentro da encomenda
+        entradas.push({ canal: i > 0 ? seg[i - 1] : "", enc: seg[i], produto: temProduto ? seg[i + 1] : null });
+        break;
+      }
+    }
+    const pasta = (todos[0].webkitRelativePath || "").split("/")[0] || "Pasta";
+    definirPasta(juntar(entradas), pasta);
+  });
+
+  // Arrastar: percorre só as pastas (nunca abre ficheiros) e pára em cada pasta de encomenda
+  function lerPasta(dir) {
+    return new Promise((ok, erro) => {
+      const leitor = dir.createReader(), todas = [];
+      const lote = () => leitor.readEntries(l => { if (!l.length) ok(todas); else { todas.push(...l); lote(); } }, erro);
+      lote();
+    });
+  }
+  async function percorrer(entrada, pai, nivel, entradas, contar) {
+    if (!entrada.isDirectory || nivel > NIVEIS) return;
+    const filhos = await lerPasta(entrada);
+    if (Logica.ehPastaEncomenda(entrada.name)) {
+      const produtos = filhos.filter(f => f.isDirectory);
+      if (!produtos.length) entradas.push({ canal: pai, enc: entrada.name, produto: null });
+      for (const p of produtos) entradas.push({ canal: pai, enc: entrada.name, produto: p.name });
+      contar();
+      return;
+    }
+    for (const f of filhos) await percorrer(f, entrada.name, nivel + 1, entradas, contar);
+  }
+
+  let arrastos = 0;
+  addEventListener("dragenter", e => { if (ocupado) return; e.preventDefault(); arrastos++; $("largar").hidden = false; });
+  addEventListener("dragleave", () => { if (--arrastos <= 0) { arrastos = 0; $("largar").hidden = true; } });
+  addEventListener("dragover", e => e.preventDefault());
+  addEventListener("drop", async e => {
+    e.preventDefault();
+    arrastos = 0;
+    $("largar").hidden = true;
+    if (ocupado) return;
+    const pastas = [...e.dataTransfer.items].map(i => i.webkitGetAsEntry && i.webkitGetAsEntry())
+      .filter(x => x && x.isDirectory);
+    if (!pastas.length) { estado("Largue uma pasta (não ficheiros).", "erro"); return; }
+    setOcupado(true);
+    barraProgresso.iniciar("A ler pastas…");
+    const entradas = [];
+    let n = 0;
+    const contar = () => { n++; barraProgresso.fase(`A ler pastas · ${fmt(n)} encomenda${s(n)}`); };
+    try {
+      for (const p of pastas) await percorrer(p, "", 0, entradas, contar);
+      setOcupado(false);
+      definirPasta(juntar(entradas), pastas.length === 1 ? pastas[0].name : `${pastas.length} pastas`);
+    } catch (erro) {
+      setOcupado(false);
+      barraProgresso.concluir(false, "Não foi possível ler a pasta");
+      estado("Erro ao ler a pasta.", "erro");
+    }
+  });
+
+  function setOcupado(sim) {
+    ocupado = sim;
+    $("btn-analisar").disabled = sim;
+    $("btn-pasta").disabled = sim;
+    $("btn-limpar").disabled = sim;
+  }
+
+  // ------------------------------------------------------------------ copiar
+  // Copia o texto; sem acesso ao clipboard, deixa-o selecionado para o Ctrl+C
+  async function copiarTexto(texto, codigo) {
+    try {
+      await navigator.clipboard.writeText(texto);
+      return true;
+    } catch (e) {
+      if (!codigo) return false;
+      const intervalo = document.createRange();
+      intervalo.selectNodeContents(codigo);
+      getSelection().removeAllRanges();
+      getSelection().addRange(intervalo);
+      try { return document.execCommand("copy"); } catch (e2) { return false; }
+    }
+  }
+
+  // Botão Copiar: "Copiado ✓" durante 1,5 s; a etiqueta do grupo fica marcada como copiada
+  function botaoCopiar(rotulo, classe, obterTexto, codigo, aoCopiar) {
+    const botao = el("button", { className: classe, type: "button", textContent: rotulo });
+    let volta = 0;
+    botao.addEventListener("click", async () => {
+      const ok = await copiarTexto(obterTexto(), codigo);
+      clearTimeout(volta);
+      botao.textContent = ok ? "Copiado ✓" : "Ctrl+C";
+      botao.classList.toggle("copiado", ok);
+      volta = setTimeout(() => { botao.textContent = rotulo; botao.classList.remove("copiado"); }, 1500);
+      if (ok && aoCopiar) aoCopiar();
+      if (!ok && !codigo) estado("Não foi possível copiar para o clipboard.", "erro");
+    });
+    return botao;
+  }
+
+  // ------------------------------------------------------------------ analisar
+  const nomeCanal = c => c.replace(/^PRESENTES_PERSONALIZADOS\s*-\s*/i, "") || c;
+
+  function limpar() {
+    if (ocupado) return;
+    $("stats").replaceChildren();
+    $("stats").hidden = true;
+    $("avisos").replaceChildren();
+    $("processos").replaceChildren();
+    $("vazio").hidden = false;
+    estado("Pronto para iniciar");
+  }
+
+  function analisar() {
+    if (ocupado) return;
+    if (!lida) { estado("Selecione uma pasta primeiro!", "erro"); return; }
+    limpar();
+    mostrarTab("encomendas");
+    if (!lida.length) { estado("Nenhuma pasta de encomenda (nº_id) nesta pasta.", "erro"); return; }
+
+    // Uma linha por (encomenda, pasta de produto)
+    const linhas = [];
+    const semProduto = [];
+    for (const enc of lida) {
+      if (!enc.produtos.length) { semProduto.push(enc); continue; }
+      for (const produto of enc.produtos) linhas.push({ ...enc, pasta: produto, ...Logica.classificar(produto) });
+    }
+    const porProcesso = Object.fromEntries(ORDEM.map(k => [k, linhas.filter(l => l.processo === k)]));
+    const multi = lida.filter(e => e.produtos.length > 1);
+    const variosCanais = new Set(lida.map(e => e.canal)).size > 1;
+
+    // Resumo
+    const stats = [el("div", { className: "card stat" }, el("b", { textContent: fmt(lida.length) }), el("span", { textContent: "Encomendas" }))];
+    for (const k of ORDEM) {
+      const n = porProcesso[k].length;
+      if (!n && k === "DESCONHECIDO") continue;
+      stats.push(el("div", { className: `card stat p-${k}` }, el("b", { textContent: fmt(n) }), el("span", { textContent: PROCESSOS[k].nome })));
+    }
+    $("stats").replaceChildren(...stats);
+    $("stats").hidden = false;
+
+    // Avisos
+    const avisos = [];
+    const desconhecidos = porProcesso.DESCONHECIDO;
+    if (desconhecidos.length) {
+      const nomes = [...new Set(desconhecidos.map(l => l.nome))].sort((a, b) => a.localeCompare(b));
+      const n = desconhecidos.length;
+      avisos.push(el("div", { className: "aviso erro", role: "alert" },
+        el("b", { textContent: `${n} encomenda${s(n)} com produto sem regra. ` }),
+        "Confirmar com o responsável antes de processar. Produtos:",
+        el("ul", {}, ...nomes.map(t => el("li", { textContent: t })))));
+    }
+    if (multi.length) {
+      const n = multi.length;
+      avisos.push(el("div", { className: "aviso info" },
+        el("b", { textContent: `${n} encomenda${s(n)} com mais do que uma pasta de produto. ` }),
+        "Aparece" + (n === 1 ? "" : "m") + " em cada processo correspondente:",
+        el("ul", {}, ...multi.map(e => el("li", { textContent: `${e.enc}: ${e.produtos.join(" | ")}` })))));
+    }
+    if (semProduto.length) {
+      const n = semProduto.length;
+      avisos.push(el("div", { className: "aviso info" },
+        el("b", { textContent: `${n} encomenda${s(n)} sem pasta de produto. ` }),
+        "Não aparece" + (n === 1 ? "" : "m") + " em nenhum processo:",
+        el("ul", {}, ...semProduto.map(e => el("li", { textContent: e.enc })))));
+    }
+    $("avisos").replaceChildren(...avisos);
+
+    // Um cartão por processo
+    $("processos").replaceChildren(...ORDEM.filter(k => porProcesso[k].length)
+      .map(k => cartaoProcesso(k, porProcesso[k], variosCanais)));
+    $("vazio").hidden = true;
+
+    const n = lida.length;
+    if (desconhecidos.length) estado(`${fmt(n)} encomenda${s(n)}: há produtos por confirmar.`, "erro");
+    else estado(`Concluído: ${fmt(n)} encomenda${s(n)}.`, "ok");
+  }
+
+  function cartaoProcesso(k, linhas, variosCanais) {
+    const P = PROCESSOS[k];
+    const ids = [...new Set(linhas.map(l => Logica.orderId(l.enc)))];
+    const pastas = [...new Set(linhas.map(l => l.enc))];
+
+    const topo = el("div", { className: "processo-topo" },
+      el("div", {},
+        el("h3", { textContent: `${P.nome} · ${fmt(linhas.length)}` }),
+        el("dl", {},
+          el("dt", { textContent: "Picagem" }), el("dd", { textContent: P.picagem }),
+          el("dt", { textContent: "Destino" }), el("dd", { textContent: P.destino }))),
+      botaoCopiar("Copiar nºs", "btn pequeno", () => pastas.join("\n")));
+
+    // Pesquisa no Explorador
+    const grupos = Logica.gruposPesquisa(ids);
+    const g = grupos.length;
+    const pesquisa = el("div", { className: "grupos" },
+      el("div", { className: "dica", textContent: g > 1
+        ? `Pesquisa no Explorador · ${g} grupos de até ${Logica.MAX_IDS_GRUPO} IDs · colar um de cada vez`
+        : "Pesquisa no Explorador · colar na caixa de pesquisa da pasta" }),
+      ...grupos.map((grupo, i) => {
+        const codigo = el("code");
+        grupo.ids.forEach((id, j) => {
+          if (j) codigo.append(" OR", el("wbr"), " ");
+          codigo.append(el("span", { textContent: `*${id}*` }));
+        });
+        const m = grupo.ids.length;
+        const rotulo = el("div", { className: "dica", textContent: `${g > 1 ? `Grupo ${i + 1} de ${g} · ` : ""}${m} ID${s(m)}` });
+        const botao = botaoCopiar("Copiar", "btn-principal azul copiar", () => grupo.texto, codigo, () => {
+          if (!rotulo.querySelector(".feito")) rotulo.append(el("span", { className: "feito", textContent: " · copiado ✓" }));
+          estado(`${P.nome}: grupo ${i + 1} de ${g} copiado (${m} ID${s(m)}).`, "ok");
+        });
+        return el("div", { className: "grupo-ids" }, rotulo, el("div", { className: "campo" }, codigo, botao));
+      }));
+
+    // Tabela das encomendas (aberta logo nos casos pequenos e nos por confirmar)
+    const tabela = el("table", {},
+      el("thead", {}, el("tr", {},
+        el("th", { textContent: "Encomenda" }),
+        variosCanais && el("th", { textContent: "Canal" }),
+        el("th", { textContent: "Categoria › Produto" }),
+        el("th", { textContent: "Qtd", style: "text-align:center" }))),
+      el("tbody", {}, ...linhas.map(l => el("tr", { title: l.regra },
+        el("td", { className: "mono", textContent: l.enc }),
+        variosCanais && el("td", { className: "cat", textContent: nomeCanal(l.canal) }),
+        el("td", {}, l.categoria ? el("span", { className: "cat", textContent: `${l.categoria} › ` }) : null, l.produto),
+        el("td", { className: "qtd", textContent: String(l.qtd) })))));
+    const detalhes = el("details", { open: k === "DESCONHECIDO" || linhas.length <= 15 },
+      el("summary", { textContent: `Ver encomendas (${fmt(linhas.length)})` }),
+      el("div", { className: "tabela-scroll" }, tabela));
+
+    return el("section", { className: `card processo p-${k}` }, topo,
+      el("div", { className: "processo-corpo" }, pesquisa, detalhes));
+  }
+
+  $("btn-analisar").addEventListener("click", analisar);
+  $("btn-limpar").addEventListener("click", limpar);
+
+  // ------------------------------------------------------------------ pesquisar produto
+  $("pesquisa").addEventListener("input", e => {
+    const texto = e.target.value.trim();
+    if (!texto) { $("resposta").replaceChildren(); return; }
+    const r = Logica.classificar(texto);
+    const P = PROCESSOS[r.processo];
+    $("resposta").replaceChildren(el("div", { className: `resposta p-${r.processo}` },
+      el("div", { className: "nome-processo", textContent: P.nome }),
+      el("dl", {},
+        el("dt", { textContent: "Picagem" }), el("dd", { textContent: P.picagem }),
+        el("dt", { textContent: "Destino" }), el("dd", { className: "mono", textContent: P.destino }),
+        el("dt", { textContent: "Regra" }), el("dd", { textContent: r.regra }),
+        r.qtd > 1 && el("dt", { textContent: "Quantidade" }), r.qtd > 1 && el("dd", { textContent: String(r.qtd) }))));
+  });
+
+  // ------------------------------------------------------------------ regras (dos mesmos dados da lógica)
+  const pill = k => el("span", { className: `pill p-${k}`, textContent: PROCESSOS[k].nome });
+  const tabelaSimples = (cabecalho, linhas) => el("div", { className: "tabela-scroll" }, el("table", {},
+    el("thead", {}, el("tr", {}, ...cabecalho.map(c => el("th", { textContent: c })))),
+    el("tbody", {}, ...linhas.map(cels => el("tr", {}, ...cels.map(c => c instanceof Node ? el("td", {}, c) : el("td", { textContent: c })))))));
+
+  $("regras").replaceChildren(
+    el("h3", { textContent: "Processos" }),
+    tabelaSimples(["Processo", "Picagem", "Destino das pastas"],
+      ORDEM.map(k => [pill(k), PROCESSOS[k].picagem, el("code", { textContent: PROCESSOS[k].destino })])),
+    el("h3", { textContent: "Produto → Processo" }),
+    el("p", { textContent: "Aplicam-se por esta ordem ao nome da pasta sem acentos e em minúsculas; ganha a primeira que bate." }),
+    tabelaSimples(["#", "Bate quando o nome…", "Processo", "Exemplos"], [
+      ...REGRAS.map((r, i) => [String(i + 1), r.quando,
+        r.processo ? pill(r.processo) : el("span", {}, "tabela BMJCP: ", pill("BMJCP"), " ou ", pill("GIFTS")), r.exemplos]),
+      ["—", "nenhuma regra bate", pill("DESCONHECIDO"), "confirmar com o responsável"],
+    ]),
+    el("h3", { textContent: "Tabela BMJCP (almofadas e mantas)" }),
+    el("p", { textContent: "Almofadas e mantas cujo tipo e tamanho estão nesta tabela vão para BMJCP; as outras (outro tamanho, ou sem tamanho) vão para GIFTS. O tamanho compara-se nos dois sentidos (70x40 = 40x70). Manta com «polar» é Manta Polar; almofada com «polar» é Almofada Polar; com «frente e verso», «2 faces» ou «duas faces» é Almofada 2 Faces; as restantes são Almofada 1 Face." }),
+    tabelaSimples(["Produto", "Tamanhos"], TABELA_BMJCP.map(t => [t.produto, t.tamanhos.join(" · ")])));
+})();
+</script>

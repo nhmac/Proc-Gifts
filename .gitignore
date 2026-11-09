@@ -1,0 +1,12 @@
+# Site gerado pelo build (publicado pelo GitHub Actions)
+_site/
+
+# Python
+__pycache__/
+.venv/
+
+# Pastas de encomendas de teste: ficam só nos PCs (têm encomendas reais)
+PRESENTES_PERSONALIZADOS*/
+pastas-teste/
+*.pdf
+*.zip

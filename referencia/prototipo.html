@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proc-Encaminhador · Presentes Personalizados</title>
+<style>
+  :root {
+    --bg: #f6f6f4; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6b66; --line: #e3e2dd; --soft: #efeee9;
+    --gifts: #0f766e; --gifts-bg: #e3f3f1;
+    --bmjcp: #a15c07; --bmjcp-bg: #fbefdc;
+    --omega: #6d3fc0; --omega-bg: #efe8fb;
+    --offset: #1d5fbf; --offset-bg: #e4edfb;
+    --unk: #b42318; --unk-bg: #fde8e6;
+    --urg: #c2410c; --urg-bg: #ffedd5;
+    --radius: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161615; --panel: #1f1f1d; --ink: #ecebe6; --muted: #9a9993; --line: #33332f; --soft: #2a2a27;
+      --gifts: #5ccfc2; --gifts-bg: #15302d;
+      --bmjcp: #f0b25a; --bmjcp-bg: #36280f;
+      --omega: #b89cf5; --omega-bg: #2a2140;
+      --offset: #7fb0f5; --offset-bg: #18273f;
+      --unk: #f5867b; --unk-bg: #3a1a17;
+      --urg: #fb923c; --urg-bg: #3b2210;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 28px 20px 60px; }
+  header h1 { font-size: 22px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  header p { margin: 0; color: var(--muted); }
+  nav { display: flex; gap: 4px; margin: 22px 0 18px; border-bottom: 1px solid var(--line); }
+  nav button { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted);
+    font: inherit; font-weight: 600; padding: 10px 14px; cursor: pointer; margin-bottom: -1px; }
+  nav button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+  section[hidden] { display: none; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .hint { color: var(--muted); font-size: 13.5px; margin: 8px 0 0; }
+  input[type=text] { width: 100%; font: inherit; font-size: 16px; padding: 12px 14px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  input[type=text]:focus { outline: 2px solid var(--offset); outline-offset: 1px; }
+
+  .result { margin-top: 16px; display: none; }
+  .result.show { display: block; }
+  .big { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 18px; border-radius: var(--radius); }
+  .big .proc { font-size: 26px; font-weight: 750; letter-spacing: -0.01em; }
+  .big dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: 13.5px; }
+  .big dt { color: var(--muted); } .big dd { margin: 0; font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
+  .why { margin-top: 10px; font-size: 13.5px; color: var(--muted); }
+
+  .c-GIFTS { --c: var(--gifts); --cb: var(--gifts-bg); }
+  .c-BMJCP { --c: var(--bmjcp); --cb: var(--bmjcp-bg); }
+  .c-OMEGA { --c: var(--omega); --cb: var(--omega-bg); }
+  .c-OFFSET { --c: var(--offset); --cb: var(--offset-bg); }
+  .c-URGENTES { --c: var(--urg); --cb: var(--urg-bg); }
+  .c-DESCONHECIDO { --c: var(--unk); --cb: var(--unk-bg); }
+  .tint { background: var(--cb); color: var(--ink); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); }
+  .tint .proc { color: var(--c); }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12.5px; font-weight: 650;
+    background: var(--cb); color: var(--c); white-space: nowrap; }
+
+  .drop { border: 2px dashed var(--line); border-radius: var(--radius); padding: 30px 18px; text-align: center;
+    background: var(--panel); transition: border-color .15s, background .15s; }
+  .drop.over { border-color: var(--offset); background: var(--offset-bg); }
+  .drop strong { display: block; font-size: 16px; margin-bottom: 4px; }
+  .btn { font: inherit; font-weight: 600; font-size: 14px; padding: 8px 14px; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+  .btn:hover { background: var(--soft); }
+  .btn.primary { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+  .btn.feito { background: var(--cb, var(--soft)); color: var(--c, var(--ink)); }
+  .btn.small { font-size: 12.5px; padding: 5px 10px; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+  .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 18px 0; }
+  .stat { border-radius: var(--radius); padding: 12px 14px; }
+  .stat .n { font-size: 28px; font-weight: 750; color: var(--c); line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: 13px; font-weight: 600; }
+  .stat.total { background: var(--panel); border: 1px solid var(--line); }
+  .stat.total .n { color: var(--ink); }
+
+  .group { margin-top: 18px; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--panel); }
+  .group > .gh { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 12px 14px; background: var(--cb); border-bottom: 1px solid var(--line); }
+  .gh h3 { margin: 0; font-size: 16px; color: var(--c); }
+  .meta { font-size: 12.5px; color: var(--muted); }
+  .gh .meta { font-size: 12.5px; color: var(--muted); font-family: ui-monospace, Consolas, monospace; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 650; }
+  tr:last-child td { border-bottom: 0; }
+  td.num { font-family: ui-monospace, Consolas, monospace; white-space: nowrap; }
+  td.q { text-align: center; font-variant-numeric: tabular-nums; }
+  .cat { color: var(--muted); }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--panel);
+    padding: 8px 14px; border-radius: 8px; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .toast.show { opacity: 1; }
+  h2 { font-size: 16px; margin: 26px 0 10px; }
+  h2:first-child { margin-top: 0; }
+  .note { font-size: 13.5px; color: var(--muted); }
+  .warn { margin-top: 14px; padding: 10px 14px; border-radius: 8px; background: var(--unk-bg); color: var(--unk); font-size: 14px; display: none; }
+  .warn.show { display: block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Proc-Encaminhador</h1>
+    <p>A que processo pertence cada encomenda de Presentes Personalizados? A resposta vem do nome da pasta de produto dentro da pasta da encomenda.</p>
+  </header>
+
+  <nav role="tablist">
+    <button role="tab" data-tab="pasta" aria-selected="true">Analisar pasta</button>
+    <button role="tab" data-tab="pesquisa" aria-selected="false">Pesquisar produto</button>
+    <button role="tab" data-tab="regras" aria-selected="false">Regras</button>
+  </nav>
+
+  <!-- ANALISAR PASTA -->
+  <section id="tab-pasta">
+    <div class="drop" id="drop">
+      <strong>Arrasta para aqui a pasta do canal</strong>
+      <span class="note">ex.: PRESENTES_PERSONALIZADOS - AMADOR, ou a pasta que contém vários canais</span>
+      <div class="row" style="justify-content:center; margin-top:14px">
+        <label class="btn primary" for="dirInput" style="display:inline-block">Escolher pasta…</label>
+        <input id="dirInput" type="file" webkitdirectory directory multiple hidden>
+      </div>
+      <p class="hint">Nada é enviado para lado nenhum: a página só lê os nomes das pastas, no teu computador.</p>
+    </div>
+    <div class="warn" id="warn"></div>
+    <div id="out"></div>
+  </section>
+
+  <!-- PESQUISA -->
+  <section id="tab-pesquisa" hidden>
+    <div class="panel">
+      <input type="text" id="q" placeholder="Cola ou escreve o nome da pasta, ex.: Canecas › Caneca Básica" autocomplete="off">
+      <p class="hint">Basta parte do nome (ex.: "almofada 40x40", "pvc", "bola de natal").</p>
+      <div class="result" id="res"></div>
+    </div>
+  </section>
+
+  <!-- REGRAS -->
+  <section id="tab-regras" hidden>
+    <div class="panel">
+      <h2>Processos</h2>
+      <table id="tProc"><thead><tr><th>Processo</th><th>Picagem</th><th>Destino das pastas</th></tr></thead><tbody></tbody></table>
+      <h2>Produto → Processo</h2>
+      <table id="tRegras"><thead><tr><th>Produto (pasta)</th><th>Processo</th></tr></thead><tbody></tbody></table>
+      <h2>Tabela BMJCP — Almofadas, Mantas e Boneco</h2>
+      <p class="note" style="margin-top:0">Almofadas e mantas cujo tipo e tamanho estão nesta tabela vão para <b>BMJCP</b>. Se o tamanho (ou o produto) não estiver aqui, vão para <b>Gifts</b>. "Frente e Verso" conta como Almofada 2 Faces; as restantes (Simples, Sem Margem, Com Margem) contam como 1 Face.</p>
+      <table id="tBmjcp"><thead><tr><th>Produto</th><th>Tamanhos</th></tr></thead><tbody></tbody></table>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== Classificador: nome da pasta de produto -> processo =====
+const PROCESSOS = {
+  GIFTS:  { nome: "Gifts",          picagem: "G1.3 Pré Impressão", destino: "A:\\PRE_IMPRESSAO\\_#GIFTS" },
+  BMJCP:  { nome: "BMJCP",          picagem: "Serviços Externos",  destino: "A:\\ENTRADA_RAWS\\BMJCP" },
+  OMEGA:  { nome: "OMEGA",          picagem: "Pré Impressão",      destino: "A:\\PRE_IMPRESSAO\\_#OMEGA (UV) · _#BISCATES (Lembranças)" },
+  OFFSET: { nome: "Offset Digital", picagem: "Pré Impressão",      destino: "A:\\PRE_IMPRESSAO\\_#OFFSET_DIGITAL" },
+  URGENTES: { nome: "URGENTES",     picagem: "Ver documentação do processo", destino: "Ver documentação do processo" },
+  DESCONHECIDO: { nome: "Por confirmar", picagem: "—", destino: "Produto sem regra — confirmar com o responsável" }
+};
+
+// Tabela BMJCP (tamanhos aceites). Tudo o que for almofada/manta fora desta tabela = Gifts.
+const TABELA_BMJCP = [
+  { produto: "Manta Simples",    tamanhos: ["70x105", "90x140", "105x180"] },
+  { produto: "Manta Polar",      tamanhos: ["70x105", "90x140", "105x180"] },
+  { produto: "Almofada Polar",   tamanhos: ["30x50", "45x45", "70x40"] },
+  { produto: "Almofada 1 Face",  tamanhos: ["70x40", "35x35", "40x40", "45x45"] },
+  { produto: "Almofada 2 Faces", tamanhos: ["35x35", "40x40", "45x45"] },
+  { produto: "Boneco Fotoprix",  tamanhos: ["Tamanho Único"] }
+];
+
+function norm(s) {
+  return String(s || "")
+    .replace(/#U([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16))) // nomes vindos de ZIP
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function decodeNome(s) {
+  return String(s || "").replace(/#U([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
+}
+
+// Separa "(x2) - Categoria › Produto"
+function parseNome(raw) {
+  let nome = decodeNome(raw).trim();
+  let qtd = 1;
+  const m = nome.match(/^\(\s*x\s*(\d+)\s*\)\s*-?\s*/i);
+  if (m) { qtd = parseInt(m[1], 10); nome = nome.slice(m[0].length); }
+  const partes = nome.split(/\s*[›>]\s*/);
+  const categoria = partes.length > 1 ? partes[0] : "";
+  const produto = partes.length > 1 ? partes.slice(1).join(" › ") : partes[0];
+  return { nome, qtd, categoria, produto };
+}
+
+function tamanho(s) {
+  const m = norm(s).match(/(\d+)\s*x\s*(\d+)/);
+  return m ? [m[1] + "x" + m[2], m[2] + "x" + m[1]] : null;
+}
+
+function tipoBMJCP(n) {
+  if (/boneco|dibu/.test(n)) return "Boneco Fotoprix";
+  if (/manta/.test(n)) return /polar/.test(n) ? "Manta Polar" : "Manta Simples";
+  if (/almofada/.test(n)) {
+    if (/polar/.test(n)) return "Almofada Polar";
+    if (/frente e verso|2 faces|duas faces/.test(n)) return "Almofada 2 Faces";
+    return "Almofada 1 Face";
+  }
+  return null;
+}
+
+// Regras por ordem. Cada uma recebe o texto normalizado "categoria › produto".
+const REGRAS = [
+  { teste: n => /landscape 31\s*x\s*23/.test(n), processo: "URGENTES", regra: "Horizontais › Landscape 31x23 (Aro 4.5cm) → URGENTES" },
+  { teste: n => /classic 23\s*x\s*31/.test(n), processo: "URGENTES", regra: "Verticais › Classic 23x31 (Aro 3cm, Aro 4.5cm) → URGENTES" },
+  { teste: n => /globo/.test(n), processo: "OFFSET", regra: "Foto Globos › Globo Personalizado → Offset Digital" },
+  { teste: n => /(^|[^a-z])pins?([^a-z]|$)/.test(n), processo: "OFFSET", regra: "Pin → Offset Digital" },
+  { teste: n => /moldura atlas/.test(n), processo: "OMEGA", regra: "Moldura Atlas (13x18, 15x20) → OMEGA" },
+  { teste: n => /moldura essence/.test(n), processo: "OMEGA", regra: "Moldura Essence (20x20, 20x30, 30x45, 40x60) → OMEGA" },
+  { teste: n => /moldura haramukh/.test(n), processo: "OMEGA", regra: "Moldura Haramukh (10x15, 15x20) → OMEGA" },
+  { teste: n => /mealheiro/.test(n), processo: "GIFTS", regra: "Oportunidades › Mealheiro → Gifts" },
+  { teste: n => /dibu|boneco/.test(n), processo: "BMJCP", regra: "Dibuñecos / Boneco Fotoprix → BMJCP" },
+  { teste: n => /almofada|manta/.test(n), processo: null, regra: "Almofadas e Mantas → tabela BMJCP" },
+  { teste: n => /caneca/.test(n), processo: "GIFTS", regra: "Canecas → Gifts" },
+  { teste: n => /avental|aventais/.test(n), processo: "GIFTS", regra: "Aventais → Gifts" },
+  { teste: n => /baralho/.test(n), processo: "OFFSET", regra: "Baralho de Cartas → Offset Digital" },
+  { teste: n => /puzzle/.test(n), processo: "GIFTS", regra: "Puzzles (Simples, Coração, Madeira) → Gifts" },
+  { teste: n => /tapete/.test(n), processo: "GIFTS", regra: "Tapetes de Rato → Gifts" },
+  { teste: n => /porta.?chave/.test(n), processo: "GIFTS", regra: "Porta-Chaves (Metálico, Coração, Quadrado) → Gifts" },
+  { teste: n => /iman/.test(n), processo: "OFFSET", regra: "Ímanes (Quadrado, Vintage, Redondos) → Offset Digital" },
+  { teste: n => /ornamento/.test(n), processo: "OMEGA", regra: "Natal › Ornamento (Coração, Floco de Neve, Quadrado) → OMEGA" },
+  { teste: n => /bola de natal/.test(n), processo: "OFFSET", regra: "Natal › Bola de Natal → Offset Digital" },
+  { teste: n => /azulejo/.test(n), processo: "GIFTS", regra: "Azulejo Português → Gifts" },
+  { teste: n => /pvc/.test(n), processo: "OMEGA", regra: "Quadro PVC (todos os tamanhos) → OMEGA" },
+  { teste: n => /mont blanc/.test(n), processo: "OMEGA", regra: "Mont Blanc › Moldura → OMEGA" },
+  { teste: n => /peluche|coelhinho|reninha|sapinho|ursinho/.test(n), processo: "GIFTS", regra: "Peluches (Coelhinho, Reninha, Sapinho, Ursinho Barney) → Gifts" },
+  { teste: n => /caderno/.test(n), processo: "OFFSET", regra: "Cadernos → Offset Digital" },
+  { teste: n => /cartoes? (de )?visita/.test(n), processo: "OFFSET", regra: "Cartões de Visita → Offset Digital" }
+];
+
+function classificar(raw) {
+  const p = parseNome(raw);
+  const n = norm(p.nome);
+  for (const r of REGRAS) {
+    if (!r.teste(n)) continue;
+    if (r.processo) return { ...p, processo: r.processo, regra: r.regra };
+    // Almofadas / Mantas: decidir pela tabela BMJCP
+    const tipo = tipoBMJCP(n);
+    const tams = tamanho(p.produto) || tamanho(p.nome);
+    const linha = TABELA_BMJCP.find(t => t.produto === tipo);
+    if (linha && tams && linha.tamanhos.some(t => tams.includes(t))) {
+      return { ...p, processo: "BMJCP", regra: `${tipo} ${tams[0]} está na tabela BMJCP → BMJCP` };
+    }
+    const motivo = tams ? `${tipo} ${tams[0]} não está na tabela BMJCP` : `${p.produto} não está na tabela BMJCP`;
+    return { ...p, processo: "GIFTS", regra: `${motivo} → Gifts` };
+  }
+  return { ...p, processo: "DESCONHECIDO", regra: "Nenhuma regra corresponde a este produto" };
+}
+
+if (typeof module !== "undefined") module.exports = { classificar, parseNome, PROCESSOS, TABELA_BMJCP, REGRAS };
+
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const ORDEM = ["URGENTES", "GIFTS", "BMJCP", "OMEGA", "OFFSET", "DESCONHECIDO"];
+const ENC_RE = /^\d+_\d+$/;
+
+// ---------- separadores ----------
+document.querySelectorAll("nav button").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("nav button").forEach(x => x.setAttribute("aria-selected", x === b));
+  document.querySelectorAll("section").forEach(s => s.hidden = s.id !== "tab-" + b.dataset.tab);
+  if (b.dataset.tab === "pesquisa") $("#q").focus();
+}));
+
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("show"), 1600);
+}
+async function copiar(texto, msg) {
+  try { await navigator.clipboard.writeText(texto); toast(msg); }
+  catch (e) { toast("Não foi possível copiar"); }
+}
+
+// ---------- pesquisa ----------
+$("#q").addEventListener("input", e => {
+  const v = e.target.value.trim(), res = $("#res");
+  if (!v) { res.classList.remove("show"); return; }
+  const r = classificar(v), P = PROCESSOS[r.processo];
+  res.innerHTML = `
+    <div class="big tint c-${r.processo}">
+      <div class="proc">${esc(P.nome)}</div>
+      <dl><dt>Picagem</dt><dd>${esc(P.picagem)}</dd><dt>Destino</dt><dd>${esc(P.destino)}</dd></dl>
+    </div>
+    <div class="why">Regra aplicada: ${esc(r.regra)}${r.qtd > 1 ? ` · Quantidade: ${r.qtd}` : ""}</div>`;
+  res.classList.add("show");
+});
+
+// ---------- análise de pasta ----------
+function analisar(lista) {
+  // lista: [{canal, enc, produto}]
+  const unicos = new Map();
+  for (const it of lista) unicos.set(it.canal + "|" + it.enc + "|" + it.produto, it);
+  const linhas = [...unicos.values()].map(it => ({ ...it, ...classificar(it.produto) }));
+  linhas.sort((a, b) => a.canal.localeCompare(b.canal) || a.enc.localeCompare(b.enc));
+  render(linhas);
+}
+
+let TAM_BLOCO = 20;
+try { TAM_BLOCO = parseInt(localStorage.getItem("tamBloco"), 10) || 20; } catch (e) {}
+const orderIds = g => [...new Set(g.map(l => l.enc.split("_")[1]))];   // 2.º número da pasta
+function botoesOR(k, g) {
+  const ids = orderIds(g), n = Math.ceil(ids.length / TAM_BLOCO);
+  if (n <= 1) return `<button class="btn small" data-copy="${k}" data-mode="or" data-bloco="0">Pesquisa OR (${ids.length})</button>`;
+  let h = `<span class="meta">Pesquisa OR:</span>`;
+  for (let i = 0; i < n; i++) {
+    const de = i * TAM_BLOCO + 1, ate = Math.min((i + 1) * TAM_BLOCO, ids.length);
+    h += `<button class="btn small" data-copy="${k}" data-mode="or" data-bloco="${i}">${de}–${ate}</button>`;
+  }
+  return h;
+}
+
+function render(linhas) {
+  const out = $("#out"), warn = $("#warn");
+  warn.classList.remove("show");
+  if (!linhas.length) {
+    out.innerHTML = "";
+    warn.textContent = "Não encontrei pastas de encomenda (formato 1234567_1234567) com uma subpasta de produto lá dentro. Confirma que escolheste a pasta do canal.";
+    warn.classList.add("show");
+    return;
+  }
+  const encs = new Set(linhas.map(l => l.enc));
+  const porProc = {}; ORDEM.forEach(k => porProc[k] = []);
+  linhas.forEach(l => porProc[l.processo].push(l));
+  const multi = [...encs].filter(e => linhas.filter(l => l.enc === e).length > 1);
+
+  let html = `<div class="row" style="margin-top:16px;justify-content:flex-end">
+    <label class="meta" for="tamBloco">Order IDs por bloco de pesquisa</label>
+    <select id="tamBloco" class="btn small">${[5, 10, 15, 20, 30, 40].map(v => `<option${v === TAM_BLOCO ? " selected" : ""}>${v}</option>`).join("")}</select>
+  </div>
+  <div class="summary">
+    <div class="stat total"><div class="n">${encs.size}</div><div class="l">Encomendas</div></div>`;
+  for (const k of ORDEM) {
+    if (!porProc[k].length && k === "DESCONHECIDO") continue;
+    html += `<div class="stat tint c-${k}"><div class="n">${porProc[k].length}</div><div class="l">${esc(PROCESSOS[k].nome)}</div></div>`;
+  }
+  html += `</div>`;
+  if (porProc.DESCONHECIDO.length) {
+    html += `<div class="warn show">${porProc.DESCONHECIDO.length} encomenda(s) com um produto que ainda não tem regra. Confirma com o responsável antes de processar.</div>`;
+  }
+  if (multi.length) {
+    html += `<div class="warn show" style="background:var(--offset-bg);color:var(--offset)">${multi.length} encomenda(s) têm mais do que uma pasta de produto: ${multi.map(esc).join(", ")}. Aparecem em cada processo correspondente.</div>`;
+  }
+  const multiCanal = new Set(linhas.map(l => l.canal)).size > 1;
+
+  for (const k of ORDEM) {
+    const g = porProc[k]; if (!g.length) continue;
+    const P = PROCESSOS[k];
+    html += `<div class="group c-${k}">
+      <div class="gh">
+        <div><h3>${esc(P.nome)} · ${g.length}</h3><div class="meta">${esc(P.picagem)} → ${esc(P.destino)}</div></div>
+        <div class="row">
+          <button class="btn small" data-copy="${k}" data-mode="lista">Copiar nºs (um por linha)</button>
+          ${botoesOR(k, g)}
+        </div>
+      </div>
+      <table><thead><tr><th>Encomenda</th>${multiCanal ? "<th>Canal</th>" : ""}<th>Produto</th><th style="text-align:center">Qtd</th></tr></thead><tbody>
+      ${g.map(l => `<tr title="${esc(l.regra)}"><td class="num">${esc(l.enc)}</td>${multiCanal ? `<td class="cat">${esc(l.canal.replace(/^PRESENTES_PERSONALIZADOS\s*-\s*/i, ""))}</td>` : ""}
+        <td><span class="cat">${esc(l.categoria)}${l.categoria ? " › " : ""}</span>${esc(l.produto)}</td><td class="q">${l.qtd}</td></tr>`).join("")}
+      </tbody></table></div>`;
+  }
+  out.innerHTML = html;
+  window.__linhas = porProc;
+  window.__ultimas = linhas;
+  $("#tamBloco").addEventListener("change", e => {
+    TAM_BLOCO = +e.target.value;
+    try { localStorage.setItem("tamBloco", TAM_BLOCO); } catch (err) {}
+    render(window.__ultimas);
+  });
+}
+
+$("#out").addEventListener("click", e => {
+  const b = e.target.closest("[data-copy]"); if (!b) return;
+  const g = window.__linhas[b.dataset.copy];
+  if (b.dataset.mode === "or") {
+    // Só o order id (2.º número). Asteriscos: o Explorador trata "3479509_2062923" como uma só palavra.
+    const i = +b.dataset.bloco, ids = orderIds(g).slice(i * TAM_BLOCO, (i + 1) * TAM_BLOCO);
+    copiar(ids.map(n => `*${n}*`).join(" OR "), `${ids.length} order ID(s) copiados`);
+    b.classList.add("feito");
+    return;
+  }
+  const nums = [...new Set(g.map(l => l.enc))];
+  copiar(nums.join("\n"), `${nums.length} nº(s) copiados`);
+});
+
+// Botão "Escolher pasta…" — usa os caminhos relativos dos ficheiros
+$("#dirInput").addEventListener("change", e => {
+  const lista = [];
+  for (const f of e.target.files) {
+    const seg = (f.webkitRelativePath || "").split("/");
+    for (let i = 0; i < seg.length - 2; i++) {        // enc / produto / (algo)
+      if (ENC_RE.test(seg[i])) {
+        lista.push({ canal: i > 0 ? seg[i - 1] : "", enc: seg[i], produto: seg[i + 1] });
+        break;
+      }
+    }
+  }
+  analisar(lista);
+  e.target.value = "";
+});
+
+// Arrastar e largar — percorre só as pastas (sem ler ficheiros)
+const drop = $("#drop");
+["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", async e => {
+  const entries = [...e.dataTransfer.items].map(i => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
+  if (!entries.length) return;
+  const lista = [];
+  $("#out").innerHTML = `<p class="note">A ler pastas…</p>`;
+  for (const en of entries) await percorrer(en, "", 0, lista);
+  analisar(lista);
+});
+
+function lerDir(dir) {
+  return new Promise((resolve, reject) => {
+    const r = dir.createReader(), todos = [];
+    const lote = () => r.readEntries(ents => { if (!ents.length) resolve(todos); else { todos.push(...ents); lote(); } }, reject);
+    lote();
+  });
+}
+async function percorrer(entry, pai, nivel, lista) {
+  if (!entry.isDirectory || nivel > 4) return;
+  if (ENC_RE.test(entry.name)) {
+    const filhos = await lerDir(entry);
+    filhos.filter(f => f.isDirectory).forEach(f => lista.push({ canal: pai, enc: entry.name, produto: f.name }));
+    return;
+  }
+  const filhos = await lerDir(entry);
+  for (const f of filhos) await percorrer(f, entry.name, nivel + 1, lista);
+}
+
+// ---------- tabelas de referência ----------
+$("#tProc tbody").innerHTML = ["URGENTES", "GIFTS", "BMJCP", "OMEGA", "OFFSET"].map(k =>
+  `<tr class="c-${k}"><td><span class="pill">${esc(PROCESSOS[k].nome)}</span></td><td>${esc(PROCESSOS[k].picagem)}</td><td class="num">${esc(PROCESSOS[k].destino)}</td></tr>`).join("");
+$("#tRegras tbody").innerHTML = REGRAS.map(r => {
+  const [prod, proc] = r.regra.split(" → ");
+  const k = r.processo || null;
+  return `<tr${k ? ` class="c-${k}"` : ""}><td>${esc(prod)}</td><td>${k ? `<span class="pill">${esc(PROCESSOS[k].nome)}</span>` : `<span class="pill c-BMJCP">BMJCP</span> ou <span class="pill c-GIFTS">Gifts</span> <span class="note">(ver tabela abaixo)</span>`}</td></tr>`;
+}).join("") + `<tr class="c-DESCONHECIDO"><td>Qualquer outro produto</td><td><span class="pill">Por confirmar</span> <span class="note">confirmar com o responsável</span></td></tr>`;
+$("#tBmjcp tbody").innerHTML = TABELA_BMJCP.map(t => `<tr><td>${esc(t.produto)}</td><td>${t.tamanhos.map(esc).join(" · ")}</td></tr>`).join("");
+</script>
+</body>
+</html>
