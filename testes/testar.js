@@ -150,6 +150,12 @@ if (pe("3480186_2064704", ["Natal › Bola de Natal"], daEtq, fich) !== JSON.str
 for (const n of ["(x3) - Natal › Bola de Natal Brilhante", "bola natal cores"]) {
   if (Logica.classificar(n).processo !== "OFFSET") falhar(`"${n}" devia ser OFFSET`);
 }
+// Com os dois PDFs, tenta-se primeiro o "_label.pdf"; o "<nº>_<id>.pdf" pode ter só o código de barras
+const ord = Logica.ordemEtiquetas([{ ficheiro: "3480222_2064810.pdf" }, { ficheiro: "3480222_2064810_0000.jpg" },
+  { ficheiro: "3480222_2064810_label.pdf" }]).map(f => f.ficheiro).join("|");
+if (ord !== "3480222_2064810_label.pdf|3480222_2064810.pdf") falhar(`ordemEtiquetas deu ${ord}`);
+// PDF só com o código de barras: sem a linha "Ficheiros de", não dá produto (e passa-se ao seguinte / à imagem)
+if (Logica.produtosDaEtiqueta("*3480222*\n3480222\n").length) falhar("um PDF só com o código de barras deu um produto");
 console.log("ok  encomendas sem pasta de produto (etiqueta e imagem)");
 
 // ---------------------------------------------------------------- gruposPesquisa

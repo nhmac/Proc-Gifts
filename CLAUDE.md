@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.4
+- **Versão atual:** web 1.4.1
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -218,7 +218,7 @@ O resumo mostra a contagem do subprocesso por baixo do processo, e a pesquisa de
 
 | Chave | Nome | Processo | Produtos |
 |---|---|---|---|
-| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 26) |
+| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 27) |
 
 Para acrescentar um: uma entrada em `SUBPROCESSOS` e `sub: "<CHAVE>"` na(s) regra(s). Só com indicação
 do utilizador ("para já só tenho este", 2026-11-12).
@@ -240,25 +240,26 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 5 | contém `moldura atlas` | OMEGA | Moldura Atlas 13x18, 15x20 |
 | 6 | contém `moldura essence` | OMEGA | Moldura Essence 20x20, 20x30, 30x45, 40x60 |
 | 7 | contém `moldura haramukh` | OMEGA | Moldura Haramukh 10x15, 15x20 |
-| 8 | contém `mealheiro` | GIFTS | Oportunidades › Mealheiro |
-| 9 | contém `almofada`, `manta`, `dibu` ou `boneco` | **regras B1-B9** (abaixo): BMJCP ou GIFTS | Almofadas, Mantas, Dibuñecos |
-| 10 | contém `caneca` | GIFTS | Básica, Colorida, Love, Mágica, Preta Personalizada, Simples |
-| 11 | contém `avental` / `aventais` | GIFTS | Aventais › Avental |
-| 12 | contém `baralho` | OFFSET | Puzzles & Jogos / Baraja de cartas › Baralho Cartas (9x6cm) |
-| 13 | contém `puzzle` | GIFTS | Puzzles Simples, Puzzle Coração, Puzzles Madeira |
-| 14 | contém `tapete` | GIFTS | Tapete de Rato Têxtil, Tapete Rato Gaming |
-| 15 | contém `porta chave` / `porta-chave` | GIFTS | Metálico, Coração, Quadrado |
-| 16 | contém `iman` | OFFSET | Íman Quadrado, Ímanes Vintage, Ímanes Redondos |
-| 17 | contém `ornamento` | OMEGA | Ornamento de Natal - Coração, Floco de Neve, Quadrado |
-| 18 | contém `bola de natal` ou `bola natal` | OFFSET | Natal › Bola de Natal; Natal › Bola de Natal Brilhante |
-| 19 | contém `fotos vintage` ou `vintage fotos` (não apanha a Moldura Vintage nem os Ímanes Vintage) | OFFSET | Vintage Fotos › Fotos Vintage |
-| 20 | contém `moldura cubo`, `mold cubo` ou `cubo com fotos` | OFFSET | Moldura Cubo › Cubo com Fotos 10x10 |
-| 21 | contém `azulejo` | GIFTS | Azulejo Português (15x15cm) |
-| 22 | contém `pvc` | OMEGA | Quadro PVC, todos os tamanhos |
-| 23 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
-| 24 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
-| 25 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
-| 26 | contém `cartao de visita` / `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
+| 8 | contém `moldura vintage` ou `mold vintage` | GIFTS | Moldura Vintage (não confundir com Fotos Vintage nem Ímanes Vintage, que são OFFSET) |
+| 9 | contém `mealheiro` | GIFTS | Oportunidades › Mealheiro |
+| 10 | contém `almofada`, `manta`, `dibu` ou `boneco` | **regras B1-B9** (abaixo): BMJCP ou GIFTS | Almofadas, Mantas, Dibuñecos |
+| 11 | contém `caneca` | GIFTS | Básica, Colorida, Love, Mágica, Preta Personalizada, Simples |
+| 12 | contém `avental` / `aventais` | GIFTS | Aventais › Avental |
+| 13 | contém `baralho` | OFFSET | Puzzles & Jogos / Baraja de cartas › Baralho Cartas (9x6cm) |
+| 14 | contém `puzzle` | GIFTS | Puzzles Simples, Puzzle Coração, Puzzles Madeira |
+| 15 | contém `tapete` | GIFTS | Tapete de Rato Têxtil, Tapete Rato Gaming |
+| 16 | contém `porta chave` / `porta-chave` | GIFTS | Metálico, Coração, Quadrado |
+| 17 | contém `iman` | OFFSET | Íman Quadrado, Ímanes Vintage, Ímanes Redondos |
+| 18 | contém `ornamento` | OMEGA | Ornamento de Natal - Coração, Floco de Neve, Quadrado |
+| 19 | contém `bola de natal` ou `bola natal` | OFFSET | Natal › Bola de Natal; Natal › Bola de Natal Brilhante |
+| 20 | contém `fotos vintage` ou `vintage fotos` (não apanha a Moldura Vintage nem os Ímanes Vintage) | OFFSET | Vintage Fotos › Fotos Vintage |
+| 21 | contém `moldura cubo`, `mold cubo` ou `cubo com fotos` | OFFSET | Moldura Cubo › Cubo com Fotos 10x10 |
+| 22 | contém `azulejo` | GIFTS | Azulejo Português (15x15cm) |
+| 23 | contém `pvc` | OMEGA | Quadro PVC, todos os tamanhos |
+| 24 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
+| 25 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
+| 26 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
+| 27 | contém `cartao de visita` / `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
 | — | nenhuma regra bate | **Por confirmar** | |
 
 ### Almofadas, mantas e bonecos: regras B1-B9 (regra 9; decididas pelo utilizador a 2026-11-12)
@@ -408,6 +409,9 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.4.1** (2026-11-12): "Moldura Vintage" → GIFTS (regra 8); com mais do que um PDF na encomenda, tenta-se
+  primeiro o `_label.pdf` e um PDF sem a linha "Ficheiros de …" (só código de barras) não conta. Segundo o
+  utilizador, ter os dois PDFs é raro: o programa da etiqueta cria o `_label.pdf` e apaga o `<nº>_<id>.pdf`.
 - **1.4** (2026-11-12): regras OFFSET para "Vintage Fotos › Fotos Vintage" e "Moldura Cubo › Cubo com
   Fotos 10x10" (a da Vintage não apanha a Moldura Vintage, que é Gifts, nem os Ímanes Vintage); a etiqueta
   também pode chamar-se `<nº>_<id>.pdf`; teste de só leitura.
@@ -616,3 +620,4 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | mold cubo 10x10 | OFFSET |
 | Ímanes › Íman Quadrado | OFFSET |
 | iman fotografico natal 5x5 | OFFSET |
+| Molduras › Moldura Vintage | GIFTS |

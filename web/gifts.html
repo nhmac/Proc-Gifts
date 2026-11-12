@@ -275,7 +275,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.4</div>
+      <div class="versao">Versão web 1.4.1</div>
     </div>
   </aside>
 
@@ -370,6 +370,7 @@ const Logica = (() => {
     { quando: "contém «moldura atlas»", processo: "OMEGA", exemplos: "Moldura Atlas 13x18, 15x20", teste: n => /moldura atlas/.test(n) },
     { quando: "contém «moldura essence»", processo: "OMEGA", exemplos: "Moldura Essence 20x20, 20x30, 30x45, 40x60", teste: n => /moldura essence/.test(n) },
     { quando: "contém «moldura haramukh»", processo: "OMEGA", exemplos: "Moldura Haramukh 10x15, 15x20", teste: n => /moldura haramukh/.test(n) },
+    { quando: "contém «moldura vintage» ou «mold vintage»", processo: "GIFTS", exemplos: "Moldura Vintage (não confundir com Fotos Vintage nem Ímanes Vintage, que são OFFSET)", teste: n => /mold(ura)? vintage/.test(n) },
     { quando: "contém «mealheiro»", processo: "GIFTS", exemplos: "Oportunidades › Mealheiro", teste: n => /mealheiro/.test(n) },
     { quando: "contém «almofada», «manta», «dibu» ou «boneco»", processo: null, exemplos: "Almofadas, Mantas e Dibuñecos (ver as regras B1-B9)", teste: n => /almofada|manta|dibu|boneco/.test(n) },
     { quando: "contém «caneca»", processo: "GIFTS", exemplos: "Básica, Colorida, Love, Mágica, Preta Personalizada, Simples", teste: n => /caneca/.test(n) },
@@ -473,6 +474,10 @@ const Logica = (() => {
     const nome = m[1].replace(/_+/g, " ").trim();
     return nome && !/^label$/i.test(nome) ? nome : null;
   }
+  // Os PDFs da encomenda que podem ser a etiqueta, por ordem: primeiro "<nº>_<id>_label.pdf", depois
+  // "<nº>_<id>.pdf" (que às vezes é a etiqueta e às vezes só tem o código de barras da encomenda).
+  const ordemEtiquetas = ficheiros => ficheiros.filter(f => ehEtiqueta(f.ficheiro))
+    .sort((a, b) => Number(!/_label\.pdf$/i.test(a.ficheiro)) - Number(!/_label\.pdf$/i.test(b.ficheiro)));
   // Texto da etiqueta -> ["Natal › Bola de Natal Brilhante", …]
   function produtosDaEtiqueta(texto) {
     const linhas = String(texto ?? "").split(/\r?\n/).map(l => l.replace(/\s+/g, " ").trim());
@@ -531,7 +536,7 @@ const Logica = (() => {
   return {
     PROCESSOS, SUBPROCESSOS, ORDEM, REGRAS, REGRAS_BMJCP, EXCECOES_BMJCP, normalizar, lerNomeProduto, classificar,
     ehPastaEncomenda, pareceEncomenda, orderId, qtdDaPasta, ehEtiqueta, produtoDaImagem, produtosDaEtiqueta,
-    produtosDaEncomenda, semPastaDeProduto, gruposPesquisa, LIMITE_PESQUISA, MAX_IDS_GRUPO,
+    produtosDaEncomenda, semPastaDeProduto, ordemEtiquetas, gruposPesquisa, LIMITE_PESQUISA, MAX_IDS_GRUPO,
   };
 })();
 </script>
@@ -663,8 +668,15 @@ function criarProgresso(el, tituloBase = document.title) {
   }
 
   // Encomenda sem pasta de produto: produtos pela etiqueta e, sem ela, pelo nome das imagens
-  async function produtosSemPasta(enc, subpastas, etiqueta, ficheiros) {
-    const daEtiqueta = etiqueta ? Logica.produtosDaEtiqueta(await textoDoPdf(etiqueta)) : [];
+  // ficheiros: [{ ficheiro, qtd, obter }], em que obter() devolve o File. Tenta os PDFs da encomenda pela
+  // ordem de Logica.ordemEtiquetas (primeiro o "_label.pdf"); um PDF sem a linha "Ficheiros de …" (por
+  // exemplo, só com o código de barras da encomenda) não conta, e passa-se ao seguinte. Sem nenhum, a imagem.
+  async function produtosSemPasta(enc, subpastas, ficheiros) {
+    let daEtiqueta = [];
+    for (const f of Logica.ordemEtiquetas(ficheiros)) {
+      daEtiqueta = Logica.produtosDaEtiqueta(await textoDoPdf(await f.obter().catch(() => null)));
+      if (daEtiqueta.length) break;
+    }
     return Logica.produtosDaEncomenda(enc, subpastas, daEtiqueta, ficheiros);
   }
 
@@ -746,8 +758,7 @@ function criarProgresso(el, tituloBase = document.title) {
           const qtd = Logica.qtdDaPasta(q.nome);
           for (const f of await q.filhos()) if (!f.pasta) ficheiros.push({ ficheiro: f.nome, qtd, no: f });
         }
-        const etiqueta = ficheiros.find(f => Logica.ehEtiqueta(f.ficheiro));
-        produtos = await produtosSemPasta(no.nome, subpastas.map(f => f.nome), etiqueta && await etiqueta.no.obter(), ficheiros);
+        produtos = await produtosSemPasta(no.nome, subpastas.map(f => f.nome), ficheiros.map(f => ({ ...f, obter: () => f.no.obter() })));
       } else {
         produtos = Logica.produtosDaEncomenda(no.nome, subpastas.map(f => f.nome));
       }
@@ -849,7 +860,7 @@ function criarProgresso(el, tituloBase = document.title) {
     for (const e of porEncomenda.values()) {
       const subpastas = [...e.subpastas];
       const produtos = Logica.semPastaDeProduto(subpastas)
-        ? await produtosSemPasta(e.enc, subpastas, (e.ficheiros.find(f => Logica.ehEtiqueta(f.ficheiro)) || {}).file, e.ficheiros)
+        ? await produtosSemPasta(e.enc, subpastas, e.ficheiros.map(f => ({ ...f, obter: async () => f.file })))
         : Logica.produtosDaEncomenda(e.enc, subpastas);
       if (!produtos.length) entradas.push({ canal: e.canal, enc: e.enc, produto: null });
       for (const p of produtos) entradas.push({ canal: e.canal, enc: e.enc, produto: p.produto, origem: p.origem });
