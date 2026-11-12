@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.4.2
+- **Versão atual:** web 1.4.3
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -204,7 +204,7 @@ Os dados de cada processo vêm da documentação do departamento (Notion).
 | `DESCONHECIDO` | Por confirmar | — | Produto sem regra: confirmar com o responsável |
 
 O processo BOXS AMADOR substituiu o URGENTES na 1.2 (a pedido do utilizador), com os mesmos dois
-produtos; na 1.4.2 juntou-se o Square 21x21. A picagem e o destino do BOXS AMADOR ainda não foram dados pelo utilizador: mostrar "Ver documentação do
+produtos; na 1.4.2 juntou-se o Square 21x21 e na 1.4.3 a Box para Álbum 21x21 cm. A picagem e o destino do BOXS AMADOR ainda não foram dados pelo utilizador: mostrar "Ver documentação do
 processo" até ele os dar. Não inventar. Também está por saber que produtos OMEGA vão para `_#OMEGA` e
 quais para `_#BISCATES`, por isso mostram-se os dois.
 
@@ -218,7 +218,7 @@ O resumo mostra a contagem do subprocesso por baixo do processo, e a pesquisa de
 
 | Chave | Nome | Processo | Produtos |
 |---|---|---|---|
-| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 28) |
+| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 29) |
 
 Para acrescentar um: uma entrada em `SUBPROCESSOS` e `sub: "<CHAVE>"` na(s) regra(s). Só com indicação
 do utilizador ("para já só tenho este", 2026-11-12).
@@ -233,34 +233,35 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 
 | # | Bate quando o texto normalizado… | Processo | Exemplos |
 |---|---|---|---|
-| 1 | contém `landscape 31x23` (com ou sem espaços à volta do x) | BOXS | Horizontais › Landscape 31x23 (Aro 4.5cm) |
+| 1 | contém `landscape 31x23` (com ou sem espaços à volta do x) | BOXS | Horizontais › Landscape 31x23 (Aro 3cm / Aro 4.5cm) |
 | 2 | contém `classic 23x31` | BOXS | Verticais › Classic 23x31 (Aro 3cm / Aro 4.5cm) |
 | 3 | contém `square 21x21` | BOXS | Square 21x21 (Aro 4.5cm) — sem exemplo real ainda (ver Versões, 1.4.2) |
-| 4 | contém `globo` | OFFSET | Foto Globos › Globo Personalizado |
-| 5 | tem a palavra `pin` / `pins` (isolada: não pode apanhar "pinguim") | OFFSET | Pin › Pin |
-| 6 | contém `moldura atlas` | OMEGA | Moldura Atlas 13x18, 15x20 |
-| 7 | contém `moldura essence` | OMEGA | Moldura Essence 20x20, 20x30, 30x45, 40x60 |
-| 8 | contém `moldura haramukh` | OMEGA | Moldura Haramukh 10x15, 15x20 |
-| 9 | contém `moldura vintage` ou `mold vintage` | GIFTS | Moldura Vintage (não confundir com Fotos Vintage nem Ímanes Vintage, que são OFFSET) |
-| 10 | contém `mealheiro` | GIFTS | Oportunidades › Mealheiro |
-| 11 | contém `almofada`, `manta`, `dibu` ou `boneco` | **regras B1-B9** (abaixo): BMJCP ou GIFTS | Almofadas, Mantas, Dibuñecos |
-| 12 | contém `caneca` | GIFTS | Básica, Colorida, Love, Mágica, Preta Personalizada, Simples |
-| 13 | contém `avental` / `aventais` | GIFTS | Aventais › Avental |
-| 14 | contém `baralho` | OFFSET | Puzzles & Jogos / Baraja de cartas › Baralho Cartas (9x6cm) |
-| 15 | contém `puzzle` | GIFTS | Puzzles Simples, Puzzle Coração, Puzzles Madeira |
-| 16 | contém `tapete` | GIFTS | Tapete de Rato Têxtil, Tapete Rato Gaming |
-| 17 | contém `porta chave` / `porta-chave` | GIFTS | Metálico, Coração, Quadrado |
-| 18 | contém `iman` | OFFSET | Íman Quadrado, Ímanes Vintage, Ímanes Redondos |
-| 19 | contém `ornamento` | OMEGA | Ornamento de Natal - Coração, Floco de Neve, Quadrado |
-| 20 | contém `bola de natal` ou `bola natal` | OFFSET | Natal › Bola de Natal; Natal › Bola de Natal Brilhante |
-| 21 | contém `fotos vintage` ou `vintage fotos` (não apanha a Moldura Vintage nem os Ímanes Vintage) | OFFSET | Vintage Fotos › Fotos Vintage |
-| 22 | contém `moldura cubo`, `mold cubo` ou `cubo com fotos` | OFFSET | Moldura Cubo › Cubo com Fotos 10x10 |
-| 23 | contém `azulejo` | GIFTS | Azulejo Português (15x15cm) |
-| 24 | contém `pvc` | OMEGA | Quadro PVC, todos os tamanhos |
-| 25 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
-| 26 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
-| 27 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
-| 28 | contém `cartao de visita` / `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
+| 4 | contém `box para album 21x21` | BOXS | Box para Álbum 21x21 cm — sem exemplo real ainda (ver Versões, 1.4.3) |
+| 5 | contém `globo` | OFFSET | Foto Globos › Globo Personalizado |
+| 6 | tem a palavra `pin` / `pins` (isolada: não pode apanhar "pinguim") | OFFSET | Pin › Pin |
+| 7 | contém `moldura atlas` | OMEGA | Moldura Atlas 13x18, 15x20 |
+| 8 | contém `moldura essence` | OMEGA | Moldura Essence 20x20, 20x30, 30x45, 40x60 |
+| 9 | contém `moldura haramukh` | OMEGA | Moldura Haramukh 10x15, 15x20 |
+| 10 | contém `moldura vintage` ou `mold vintage` | GIFTS | Moldura Vintage (não confundir com Fotos Vintage nem Ímanes Vintage, que são OFFSET) |
+| 11 | contém `mealheiro` | GIFTS | Oportunidades › Mealheiro |
+| 12 | contém `almofada`, `manta`, `dibu` ou `boneco` | **regras B1-B9** (abaixo): BMJCP ou GIFTS | Almofadas, Mantas, Dibuñecos |
+| 13 | contém `caneca` | GIFTS | Básica, Colorida, Love, Mágica, Preta Personalizada, Simples |
+| 14 | contém `avental` / `aventais` | GIFTS | Aventais › Avental |
+| 15 | contém `baralho` | OFFSET | Puzzles & Jogos / Baraja de cartas › Baralho Cartas (9x6cm) |
+| 16 | contém `puzzle` | GIFTS | Puzzles Simples, Puzzle Coração, Puzzles Madeira |
+| 17 | contém `tapete` | GIFTS | Tapete de Rato Têxtil, Tapete Rato Gaming |
+| 18 | contém `porta chave` / `porta-chave` | GIFTS | Metálico, Coração, Quadrado |
+| 19 | contém `iman` | OFFSET | Íman Quadrado, Ímanes Vintage, Ímanes Redondos |
+| 20 | contém `ornamento` | OMEGA | Ornamento de Natal - Coração, Floco de Neve, Quadrado |
+| 21 | contém `bola de natal` ou `bola natal` | OFFSET | Natal › Bola de Natal; Natal › Bola de Natal Brilhante |
+| 22 | contém `fotos vintage` ou `vintage fotos` (não apanha a Moldura Vintage nem os Ímanes Vintage) | OFFSET | Vintage Fotos › Fotos Vintage |
+| 23 | contém `moldura cubo`, `mold cubo` ou `cubo com fotos` | OFFSET | Moldura Cubo › Cubo com Fotos 10x10 |
+| 24 | contém `azulejo` | GIFTS | Azulejo Português (15x15cm) |
+| 25 | contém `pvc` | OMEGA | Quadro PVC, todos os tamanhos |
+| 26 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
+| 27 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
+| 28 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
+| 29 | contém `cartao de visita` / `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
 | — | nenhuma regra bate | **Por confirmar** | |
 
 ### Almofadas, mantas e bonecos: regras B1-B9 (regra 9; decididas pelo utilizador a 2026-11-12)
@@ -294,8 +295,8 @@ normalizado; ganha a primeira que bate:
 
 - **Nunca adivinhar.** Um produto sem regra fica "Por confirmar", a vermelho, com aviso no topo. Um
   produto encaminhado para o processo errado é pior do que um por confirmar.
-- **As regras do BOXS AMADOR são estreitas de propósito** (só esses três produtos: Landscape 31x23, Classic
-  23x31 e Square 21x21). O utilizador ainda não
+- **As regras do BOXS AMADOR são estreitas de propósito** (só estes produtos: Landscape 31x23, Classic
+  23x31, Square 21x21 e Box para Álbum 21x21 cm, todos os aros). O utilizador ainda não
   disse se *tudo* o que está em Horizontais/Verticais vai para BOXS AMADOR. Um tamanho novo dessas pastas
   fica "Por confirmar".
 - A regra é a mesma para todos os canais (AMADOR, FOTOPRIX, …).
@@ -411,6 +412,8 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.4.3** (2026-11-12): "Box para Álbum 21x21 cm" → BOXS AMADOR (regra 4). O utilizador confirmou também
+  o Classic 23x31 e o Landscape 31x23 com Aro 3cm (já cobertos pelas regras 1 e 2). Sem exemplos reais ainda.
 - **1.4.2** (2026-11-12): "Square 21x21 (Aro 4.5cm)" → BOXS AMADOR (regra 3). O utilizador não tinha um
   exemplo real; acredita que a pasta é igual às do Landscape e do Classic (`<Categoria> › Square 21x21 (Aro
   4.5cm)`). A regra bate no nome do produto, seja qual for a categoria. Confirmar quando aparecer um caso.
@@ -627,3 +630,5 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | iman fotografico natal 5x5 | OFFSET |
 | Molduras › Moldura Vintage | GIFTS |
 | Quadrados › Square 21x21 (Aro 4.5cm) | BOXS |
+| Boxs › Box para Álbum 21x21 cm | BOXS |
+| Horizontais › Landscape 31x23 (Aro 3cm) | BOXS |

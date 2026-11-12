@@ -275,7 +275,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.4.2</div>
+      <div class="versao">Versão web 1.4.3</div>
     </div>
   </aside>
 
@@ -363,9 +363,10 @@ const Logica = (() => {
   // Por ordem: ganha a primeira que bate. processo null = decidir pelas regras BMJCP (B1-B9).
   // teste recebe o texto normalizado "categoria › produto".
   const REGRAS = [
-    { quando: "contém «landscape 31x23»", processo: "BOXS", exemplos: "Horizontais › Landscape 31x23 (Aro 4.5cm)", teste: n => /landscape 31\s*x\s*23/.test(n) },
+    { quando: "contém «landscape 31x23»", processo: "BOXS", exemplos: "Horizontais › Landscape 31x23 (Aro 3cm, Aro 4.5cm)", teste: n => /landscape 31\s*x\s*23/.test(n) },
     { quando: "contém «classic 23x31»", processo: "BOXS", exemplos: "Verticais › Classic 23x31 (Aro 3cm, Aro 4.5cm)", teste: n => /classic 23\s*x\s*31/.test(n) },
     { quando: "contém «square 21x21»", processo: "BOXS", exemplos: "Square 21x21 (Aro 4.5cm)", teste: n => /square 21\s*x\s*21/.test(n) },
+    { quando: "contém «box para album 21x21»", processo: "BOXS", exemplos: "Box para Álbum 21x21 cm", teste: n => /box para album 21\s*x\s*21/.test(n) },
     { quando: "contém «globo»", processo: "OFFSET", exemplos: "Foto Globos › Globo Personalizado", teste: n => /globo/.test(n) },
     { quando: "tem a palavra «pin» ou «pins»", processo: "OFFSET", exemplos: "Pin › Pin", teste: n => /(^|[^a-z])pins?([^a-z]|$)/.test(n) },
     { quando: "contém «moldura atlas»", processo: "OMEGA", exemplos: "Moldura Atlas 13x18, 15x20", teste: n => /moldura atlas/.test(n) },
