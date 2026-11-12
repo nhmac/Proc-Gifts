@@ -6,7 +6,7 @@ e prepara a pesquisa no Explorador do Windows para ver só as encomendas de cada
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.2: subprocessos dentro de um processo (OFFSET › CARTÕES, os Cartões de Visita) e o processo URGENTES passa a chamar-se BOXS AMADOR. Antes, na 1.1: almofadas, mantas e bonecos pelas regras B1-B9, pastas de encomenda renomeadas ou com `- URGENTE` passam a ser lidas, aviso das pastas fora do formato e o "Escolher pasta…" passa a ver as subpastas de produto vazias
+- **Versão atual:** web 1.2.1: picagem e destino das pastas escondidos no ecrã, por decisão do utilizador (para reativar quando ele disser). Na 1.2: subprocessos dentro de um processo (OFFSET › CARTÕES, os Cartões de Visita) e o processo URGENTES passa a chamar-se BOXS AMADOR. Antes, na 1.1: almofadas, mantas e bonecos pelas regras B1-B9, pastas de encomenda renomeadas ou com `- URGENTE` passam a ser lidas, aviso das pastas fora do formato e o "Escolher pasta…" passa a ver as subpastas de produto vazias
 
 A app só lê nomes de pastas, no browser; nada é enviado para lado nenhum.
 

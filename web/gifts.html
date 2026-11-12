@@ -275,7 +275,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.2</div>
+      <div class="versao">Versão web 1.2.1</div>
     </div>
   </aside>
 
@@ -585,6 +585,10 @@ function criarProgresso(el, tituloBase = document.title) {
     return e;
   };
   const NIVEIS = 5; // procurar pastas de encomenda até 5 níveis abaixo da pasta escolhida
+
+  // Picagem e destino das pastas: ESCONDIDOS por decisão do utilizador (2026-11-12, versão 1.2.1).
+  // Os dados continuam em Logica.PROCESSOS. Só voltar a pôr a true quando o utilizador o pedir.
+  const MOSTRAR_PICAGEM_DESTINO = false;
 
   // A pasta lida: encomendas [{canal, enc, produtos: [nome da pasta]}]
   let lida = null;
@@ -940,7 +944,7 @@ function criarProgresso(el, tituloBase = document.title) {
     const topo = el("div", { className: "processo-topo" },
       el("div", {},
         el("h3", { textContent: `${P.nome} · ${fmt(linhas.length)}` }),
-        el("dl", {},
+        MOSTRAR_PICAGEM_DESTINO && el("dl", {},
           el("dt", { textContent: "Picagem" }), el("dd", { textContent: P.picagem }),
           el("dt", { textContent: "Destino" }), el("dd", { textContent: P.destino }))),
       botaoCopiar("Copiar nºs", "btn pequeno", () => pastas.join("\n")));
@@ -977,8 +981,8 @@ function criarProgresso(el, tituloBase = document.title) {
     $("resposta").replaceChildren(el("div", { className: `resposta p-${r.processo}` },
       el("div", { className: "nome-processo", textContent: r.sub ? `${P.nome} › ${SUBPROCESSOS[r.sub].nome}` : P.nome }),
       el("dl", {},
-        el("dt", { textContent: "Picagem" }), el("dd", { textContent: P.picagem }),
-        el("dt", { textContent: "Destino" }), el("dd", { className: "mono", textContent: P.destino }),
+        MOSTRAR_PICAGEM_DESTINO && el("dt", { textContent: "Picagem" }), MOSTRAR_PICAGEM_DESTINO && el("dd", { textContent: P.picagem }),
+        MOSTRAR_PICAGEM_DESTINO && el("dt", { textContent: "Destino" }), MOSTRAR_PICAGEM_DESTINO && el("dd", { className: "mono", textContent: P.destino }),
         el("dt", { textContent: "Regra" }), el("dd", { textContent: r.regra }),
         r.qtd > 1 && el("dt", { textContent: "Quantidade" }), r.qtd > 1 && el("dd", { textContent: String(r.qtd) }))));
   });
@@ -991,8 +995,10 @@ function criarProgresso(el, tituloBase = document.title) {
 
   $("regras").replaceChildren(
     el("h3", { textContent: "Processos" }),
-    tabelaSimples(["Processo", "Picagem", "Destino das pastas"],
-      ORDEM.map(k => [pill(k), PROCESSOS[k].picagem, el("code", { textContent: PROCESSOS[k].destino })])),
+    MOSTRAR_PICAGEM_DESTINO
+      ? tabelaSimples(["Processo", "Picagem", "Destino das pastas"],
+        ORDEM.map(k => [pill(k), PROCESSOS[k].picagem, el("code", { textContent: PROCESSOS[k].destino })]))
+      : el("p", {}, ...ORDEM.flatMap((k, i) => [i ? " " : "", pill(k)])),
     el("h3", { textContent: "Produto → Processo" }),
     el("p", { textContent: "Aplicam-se por esta ordem ao nome da pasta sem acentos e em minúsculas; ganha a primeira que bate." }),
     tabelaSimples(["#", "Bate quando o nome…", "Processo", "Exemplos"], [

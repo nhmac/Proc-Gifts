@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.2
+- **Versão atual:** web 1.2.1
 
 Tudo corre no browser: a app **só lê nomes de pastas**, nunca abre ficheiros e **nada é enviado para
 lado nenhum**. Não introduzir pedidos de rede, CDNs nem bibliotecas.
@@ -139,8 +139,13 @@ PRESENTES_PERSONALIZADOS - AMADOR/
 
 ### Os processos
 
-Os dados de cada processo vêm da documentação do departamento (Notion). Mostrar a picagem e o destino
-junto de cada processo.
+Os dados de cada processo vêm da documentação do departamento (Notion).
+
+> **Picagem e destino estão escondidos no ecrã desde a 1.2.1, por decisão do utilizador (2026-11-12).**
+> Os dados ficam na `Logica.PROCESSOS` (e nesta tabela), mas a página não os mostra: nem no cartão de
+> cada processo, nem na pesquisa de produto, nem no separador Regras. O interruptor é a constante
+> `MOSTRAR_PICAGEM_DESTINO` (em `false`) no início da interface. **Só voltar a pô-la a `true` quando o
+> utilizador o pedir.**
 
 | Chave | Nome | Picagem | Destino das pastas |
 |---|---|---|---|
@@ -242,6 +247,8 @@ normalizado; ganha a primeira que bate:
   disse se *tudo* o que está em Horizontais/Verticais vai para BOXS AMADOR. Um tamanho novo dessas pastas
   fica "Por confirmar".
 - A regra é a mesma para todos os canais (AMADOR, FOTOPRIX, …).
+- **Picagem e destino escondidos** (1.2.1, decisão do utilizador): `MOSTRAR_PICAGEM_DESTINO = false`. Não
+  reativar sem o utilizador pedir.
 - **Almofadas, mantas e bonecos** (desde a 1.1): Com Margem é sempre GIFTS; Sem Margem, Polar, Frente e
   Verso e mantas são sempre BMJCP; o que não é BMJCP é GIFTS. Não voltar à tabela por tamanho.
 - **URGENTE não tem tratamento especial** (decisão do utilizador, 1.1): a encomenda é lida como as outras
@@ -279,12 +286,12 @@ curtos e passos no infinitivo.
     de produto;
   - um cartão por processo (pela ordem BOXS AMADOR, BMJCP, OMEGA, OFFSET, Por confirmar, GIFTS: o GIFTS é o maior volume
     e fica no fim, porque o operador trata-o como "o resto" depois de tirar os outros processos),
-    com o nome, a picagem e o destino no cabeçalho e uma tabela: encomenda, canal (só se houver mais
+    com o nome (a picagem e o destino só com `MOSTRAR_PICAGEM_DESTINO`) no cabeçalho e uma tabela: encomenda, canal (só se houver mais
     de um), `Categoria › Produto` e quantidade. A regra aplicada aparece como dica (`title`);
   - em cada cartão, os botões de pesquisa (ver abaixo) e "Copiar nºs" (nomes completos das pastas, um
     por linha).
 - **Pesquisar produto:** um campo onde se cola ou escreve um nome de pasta (ou parte dele) e se vê logo o
-  processo, a picagem, o destino e a regra aplicada.
+  processo e a regra aplicada (a picagem e o destino só com `MOSTRAR_PICAGEM_DESTINO`).
 - **Regras:** as tabelas de processos, regras e BMJCP, geradas a partir dos mesmos dados que a lógica usa
   (nunca escritas à mão duas vezes).
 - As cores dos processos devem ser distintas e legíveis no tema escuro (usar as variáveis da família como
@@ -352,6 +359,8 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.2.1** (2026-11-12): picagem e destino das pastas escondidos no ecrã, por decisão do utilizador
+  (`MOSTRAR_PICAGEM_DESTINO = false`; os dados ficam guardados para reativar quando ele disser).
 
 ---
 
