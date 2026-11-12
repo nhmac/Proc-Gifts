@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.0
+- **Versão atual:** web 1.1
 
 Tudo corre no browser: a app **só lê nomes de pastas**, nunca abre ficheiros e **nada é enviado para
 lado nenhum**. Não introduzir pedidos de rede, CDNs nem bibliotecas.
@@ -112,8 +112,22 @@ PRESENTES_PERSONALIZADOS - AMADOR/
       COMPLETED
 ```
 
-- **Pasta da encomenda:** `^\d+_\d+$`. O **order id** é o **segundo número** (o da direita):
-  `3477501_2057613` → `2057613`.
+- **Pasta da encomenda:** começa sempre por `<nº>_<order id>`; a seguir pode vir nada, ou um
+  separador (espaço, `-` ou `›`) e qualquer texto: `^(\d+)_(\d+)(?:[\s\-›>].*)?$`. O **order id** é
+  o **segundo número** (o da direita): `3477501_2057613` → `2057613`. Formatos vistos (desde a 1.1):
+
+  | Pasta | Origem |
+  |---|---|
+  | `3477501_2057613` | software |
+  | `3480124_2064550 - URGENTE` | software |
+  | `6531391_1512223 - Caneca Simples Low Cost` | software (outra loja) |
+  | `10124485_10167488 › 1 Boneco` | renomeada pelo utilizador no processo BMJCP |
+  | `3431834_1942428 -› Almofada (40x40) - Sem Margem` | renomeada |
+  | `3478693_2060827 - URGENTE › Manta Polar 90x140` | renomeada |
+
+  O texto a seguir ao número (produto escrito à mão, quantidade, URGENTE) **não entra na
+  classificação**: o processo vem só da subpasta de produto. Uma pasta que comece por `<nº>_<nº>` mas
+  não encaixe no formato (ex.: `3480124_2064550abc`) não é lida, e a página **avisa sempre**.
 - **Pasta de produto:** `Categoria › Produto` (o separador é `›`, U+203A). Pode ter um prefixo de
   quantidade, `(x2) - Natal › Bola de Natal`. Em todos os dados vistos há exatamente uma pasta de
   produto por encomenda, mas a app tem de aguentar mais do que uma (a encomenda aparece em cada
@@ -141,13 +155,13 @@ A picagem e o destino do URGENTES ainda não foram dados pelo utilizador: mostra
 processo" até ele os dar. Não inventar. Também está por saber que produtos OMEGA vão para `_#OMEGA` e
 quais para `_#BISCATES`, por isso mostram-se os dois.
 
-### As regras (validadas pelo utilizador a 2026-11-09)
+### As regras (validadas pelo utilizador a 2026-11-09; almofadas, mantas e bonecos a 2026-11-12)
 
 A classificação faz-se sobre o texto **normalizado** `Categoria › Produto`: descodificar `#Uxxxx`,
 tirar o prefixo `(xN) - ` (guardar N como quantidade), tirar acentos (NFD), minúsculas e espaços
 seguidos reduzidos a um. As regras aplicam-se **por esta ordem** e ganha a primeira que bate. A ordem
-importa: `Puzzles & Jogos › Baralho Cartas` tem de cair no Baralho antes da regra dos puzzles, o
-Dibuñecos antes das almofadas, e o Ornamento e a Bola de Natal são ambos da categoria Natal.
+importa: `Puzzles & Jogos › Baralho Cartas` tem de cair no Baralho antes da regra dos puzzles, e o
+Ornamento e a Bola de Natal são ambos da categoria Natal.
 
 | # | Bate quando o texto normalizado… | Processo | Exemplos |
 |---|---|---|---|
@@ -159,43 +173,50 @@ Dibuñecos antes das almofadas, e o Ornamento e a Bola de Natal são ambos da ca
 | 6 | contém `moldura essence` | OMEGA | Moldura Essence 20x20, 20x30, 30x45, 40x60 |
 | 7 | contém `moldura haramukh` | OMEGA | Moldura Haramukh 10x15, 15x20 |
 | 8 | contém `mealheiro` | GIFTS | Oportunidades › Mealheiro |
-| 9 | contém `dibu` ou `boneco` | BMJCP | Dibuñecos › Dibunecos (= Boneco Fotoprix) |
-| 10 | contém `almofada` ou `manta` | **tabela BMJCP** (abaixo) | |
-| 11 | contém `caneca` | GIFTS | Básica, Colorida, Love, Mágica, Preta Personalizada, Simples |
-| 12 | contém `avental` / `aventais` | GIFTS | Aventais › Avental |
-| 13 | contém `baralho` | OFFSET | Puzzles & Jogos / Baraja de cartas › Baralho Cartas (9x6cm) |
-| 14 | contém `puzzle` | GIFTS | Puzzles Simples, Puzzle Coração, Puzzles Madeira |
-| 15 | contém `tapete` | GIFTS | Tapete de Rato Têxtil, Tapete Rato Gaming |
-| 16 | contém `porta chave` / `porta-chave` | GIFTS | Metálico, Coração, Quadrado |
-| 17 | contém `iman` | OFFSET | Íman Quadrado, Ímanes Vintage, Ímanes Redondos |
-| 18 | contém `ornamento` | OMEGA | Ornamento de Natal - Coração, Floco de Neve, Quadrado |
-| 19 | contém `bola de natal` | OFFSET | Natal › Bola de Natal |
-| 20 | contém `azulejo` | GIFTS | Azulejo Português (15x15cm) |
-| 21 | contém `pvc` | OMEGA | Quadro PVC, todos os tamanhos |
-| 22 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
-| 23 | contém `peluche`, `coelhinho`, `reninha`, `sapinho` ou `ursinho` | GIFTS | Coelhinho Bunny, Reninha Knut, Sapinho Paddy, Ursinho Barney |
-| 24 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
-| 25 | contém `cartao de visita` / `cartoes visita` | OFFSET | Cartões Visita › Cartões de Visita |
+| 9 | contém `almofada`, `manta`, `dibu` ou `boneco` | **regras B1-B9** (abaixo): BMJCP ou GIFTS | Almofadas, Mantas, Dibuñecos |
+| 10 | contém `caneca` | GIFTS | Básica, Colorida, Love, Mágica, Preta Personalizada, Simples |
+| 11 | contém `avental` / `aventais` | GIFTS | Aventais › Avental |
+| 12 | contém `baralho` | OFFSET | Puzzles & Jogos / Baraja de cartas › Baralho Cartas (9x6cm) |
+| 13 | contém `puzzle` | GIFTS | Puzzles Simples, Puzzle Coração, Puzzles Madeira |
+| 14 | contém `tapete` | GIFTS | Tapete de Rato Têxtil, Tapete Rato Gaming |
+| 15 | contém `porta chave` / `porta-chave` | GIFTS | Metálico, Coração, Quadrado |
+| 16 | contém `iman` | OFFSET | Íman Quadrado, Ímanes Vintage, Ímanes Redondos |
+| 17 | contém `ornamento` | OMEGA | Ornamento de Natal - Coração, Floco de Neve, Quadrado |
+| 18 | contém `bola de natal` | OFFSET | Natal › Bola de Natal |
+| 19 | contém `azulejo` | GIFTS | Azulejo Português (15x15cm) |
+| 20 | contém `pvc` | OMEGA | Quadro PVC, todos os tamanhos |
+| 21 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
+| 22 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
+| 23 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
+| 24 | contém `cartao de visita` / `cartoes visita` | OFFSET | Cartões Visita › Cartões de Visita |
 | — | nenhuma regra bate | **Por confirmar** | |
 
-### Tabela BMJCP (regra 10: almofadas e mantas)
+### Almofadas, mantas e bonecos: regras B1-B9 (regra 9; decididas pelo utilizador a 2026-11-12)
 
-Almofadas e mantas cujo **tipo** e **tamanho** estão nesta tabela vão para **BMJCP**. Se o tamanho
-(ou o produto) não estiver na tabela, vão para **GIFTS** (por exemplo, a Almofada Preta, que não tem
-tamanho). O tamanho lê-se do nome (`35x35`, `70x105`) e compara-se nos dois sentidos (`70x40` = `40x70`).
+A tabela BMJCP por tipo e tamanho da 1.0 **foi abandonada** a pedido do utilizador: estava errada (mandava
+para BMJCP almofadas simples e Com Margem, que são GIFTS). As regras abaixo foram conferidas contra um lote
+só com encomendas BMJCP (354 encomendas, todas dão BMJCP). Aplicam-se **por esta ordem** ao nome
+normalizado; ganha a primeira que bate:
 
-| Produto | Tamanhos |
-|---|---|
-| Manta Simples | 70x105 · 90x140 · 105x180 |
-| Manta Polar | 70x105 · 90x140 · 105x180 |
-| Almofada Polar | 30x50 · 45x45 · 70x40 |
-| Almofada 1 Face | 70x40 · 35x35 · 40x40 · 45x45 |
-| Almofada 2 Faces | 35x35 · 40x40 · 45x45 |
-| Boneco Fotoprix | Tamanho Único (é o Dibuñecos, regra 9) |
+| # | Bate quando… | Processo | Exemplos |
+|---|---|---|---|
+| B1 | contém `com margem` | **GIFTS** | Almofadas com Margem › Almofada 35x35 - Com Margem |
+| B2 | contém `sem margem` | **BMJCP** | Almofada 45x45 - Sem Margem - Impressão Frente e Verso; Almofadas › Almofada (40x40) - Sem Margem |
+| B3 | é uma almofada e acaba em `- s` | **BMJCP** | Almofadas › Almofada (35x35) - S; Almofadas › Almofada (45x45) - S |
+| B4 | contém `polar` | **BMJCP** | Almofada 45x45 Polar; Almofadas › Almofada Polar 30x50; Manta Polar |
+| B5 | contém `frente e verso` | **BMJCP** | Almofadas frente e verso › Almofada 35x35 - Impressão Frente e Verso |
+| B6 | contém `manta` | **BMJCP** | Manta Simples 70x105; Mantas › Manta Polar 105x180 |
+| B7 | contém `dibu` ou `boneco` | **BMJCP** | Dibuñecos › Dibunecos |
+| B8 | está na lista `EXCECOES_BMJCP` (nome exato) | **BMJCP** | `Almofadas › Almofada 70x40` (a única, por agora) |
+| B9 | qualquer outra almofada | **GIFTS** | Almofadas Simples › Almofada 45x45; Almofada Preta › Almofada Preta |
 
-Como se decide o tipo: `manta` + `polar` → Manta Polar; `manta` sem `polar` → Manta Simples;
-`almofada` + `polar` → Almofada Polar; `almofada` com `frente e verso`, `2 faces` ou `duas faces` →
-Almofada 2 Faces; qualquer outra almofada (Simples, Sem Margem, Com Margem) → Almofada 1 Face.
+- **B1 vem antes de tudo:** "Com Margem é sempre GIFTS".
+- **B2, B4, B5 e B6 valem para qualquer tamanho** ("sempre BMJCP", nas palavras do utilizador).
+- **B3:** o `- S` no fim é o software a cortar o nome ("Sem Margem - Impressão Frente e Verso"); as pastas de
+  encomenda destes casos confirmam-no. Conta como Sem Margem.
+- **B8:** nomes exatos que são BMJCP mas que nenhuma outra regra apanha. Por confirmar com o utilizador se
+  a 70x40 é sempre BMJCP (noutras categorias); até lá, só esse nome.
+- **"Se não é BMJCP, é GIFTS"** (decisão do utilizador): por isso a B9 apanha tudo o que sobra.
 
 ### Decisões já tomadas (não desfazer sem o utilizador pedir)
 
@@ -205,6 +226,13 @@ Almofada 2 Faces; qualquer outra almofada (Simples, Sem Margem, Com Margem) → 
   disse se *tudo* o que está em Horizontais/Verticais vai para URGENTES. Um tamanho novo dessas pastas
   fica "Por confirmar".
 - A regra é a mesma para todos os canais (AMADOR, FOTOPRIX, …).
+- **Almofadas, mantas e bonecos** (desde a 1.1): Com Margem é sempre GIFTS; Sem Margem, Polar, Frente e
+  Verso e mantas são sempre BMJCP; o que não é BMJCP é GIFTS. Não voltar à tabela por tamanho.
+- **URGENTE não tem tratamento especial** (decisão do utilizador, 1.1): a encomenda é lida como as outras
+  e vai para o processo do seu produto. O problema da 1.0 era só a pasta ser ignorada. Não confundir com
+  o processo URGENTES (Landscape e Classic).
+- **Nunca ignorar uma pasta sem avisar** (1.1): a 1.0 descartava em silêncio as pastas com texto depois
+  do número, e 86 encomendas dos lotes de teste desapareceram sem ninguém dar por isso.
 - Para acrescentar um produto novo: o utilizador diz o processo, acrescenta-se uma linha nas regras
   (pela ordem certa), um caso no anexo e corre-se os testes. Os produtos novos que caírem numa regra
   por semelhança (por exemplo um peluche novo) devem ser mostrados ao utilizador para confirmar.
@@ -216,11 +244,16 @@ baixo, poucos pop-ups (só avisos e erros; não há pop-up de sucesso), portugu�
 curtos e passos no infinitivo.
 
 - **Sidebar:** título "Proc-Gifts", subtítulo "Para encaminhar encomendas de Presentes Personalizados",
-  **Escolher pasta…** (`<input type="file" webkitdirectory>`) ou arrastar a pasta, chip com o nome da
+  **Escolher pasta…** (`showDirectoryPicker`; ver abaixo) ou arrastar a pasta, chip com o nome da
   pasta e o nº de encomendas, nota de privacidade ("Só são lidos os nomes das pastas; nada é enviado"),
   botão verde e "Versão web 1.0" no rodapé.
-- **Arrastar e largar:** usar `webkitGetAsEntry()` e percorrer **só pastas** (não ler ficheiros), parando
-  ao encontrar uma pasta de encomenda. Com o input `webkitdirectory`, usar o `webkitRelativePath`.
+- **Ler as pastas (1.1):** o "Escolher pasta…" usa o `window.showDirectoryPicker()` (Chrome e Edge) e o
+  arrastar usa o `webkitGetAsEntry()`. Os dois passam pelo mesmo `percorrer()`, que anda **só por pastas**
+  (nunca abre ficheiros) e pára em cada pasta de encomenda.
+  **Não voltar ao `<input webkitdirectory>` como caminho principal:** só lista ficheiros, por isso uma
+  subpasta de produto **vazia** fica invisível. As encomendas `65…_…` (a outra loja) vêm com a subpasta
+  de produto vazia: na 1.0 eram 84 no 3.º lote de teste e 53 no lote BMJCP, todas dadas como "sem pasta de
+  produto". O input antigo fica só como recurso para browsers sem `showDirectoryPicker`.
 - **Barra de progresso:** o `criarProgresso()` da família (igual ao do Scanner), com "A ler pastas · n
   encomendas".
 - **Área principal, depois de analisar:**
@@ -263,10 +296,12 @@ O objetivo é colar na pesquisa da pasta e ver só as encomendas de um processo.
 
 O `<script id="logica">` expõe um objeto `Logica` e não mexe no DOM, para se poder testar com o Node:
 
-- `PROCESSOS` (chave → nome, picagem, destino), `REGRAS` (lista ordenada), `TABELA_BMJCP`;
+- `PROCESSOS` (chave → nome, picagem, destino), `REGRAS` (lista ordenada), `REGRAS_BMJCP` (B1-B9),
+  `EXCECOES_BMJCP`;
 - `normalizar(texto)`, `lerNomeProduto(nome)` → `{nome, qtd, categoria, produto}`;
 - `classificar(nomePasta)` → `{processo, regra, qtd, categoria, produto, nome}`;
-- `orderId(pastaEncomenda)` → o segundo número;
+- `ehPastaEncomenda(nome)`, `pareceEncomenda(nome)` (começa por `<nº>_<nº>` mas está fora do formato) e
+  `orderId(pastaEncomenda)` → o segundo número, em todos os formatos;
 - `gruposPesquisa(ids)` → `[{ids, texto}]`, já com os asteriscos.
 
 ## Testar
@@ -274,7 +309,8 @@ O `<script id="logica">` expõe um objeto `Logica` e não mexe no DOM, para se p
 `node testes/testar.js` extrai o `<script id="logica">` do `web/gifts.html`, corre-o e confere:
 
 - todos os casos do anexo (nome da pasta → processo);
-- `orderId("3477501_2057613") === "2057613"`;
+- `orderId` e `ehPastaEncomenda` em todos os formatos de pasta de encomenda (e os nomes que têm de ser
+  recusados);
 - `gruposPesquisa`: nenhum texto com mais de 400 caracteres nem mais de 23 ids, a ordem mantém-se,
   todos os ids aparecem uma só vez e cada um com asteriscos.
 
@@ -287,28 +323,41 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 
 ---
 
+## Versões
+
+- **1.0** (2026-11-09, `6b5a43c`): primeira versão.
+- **1.1** (2026-11-12): regras B1-B9 para almofadas, mantas e bonecos (substituem a tabela BMJCP); pastas
+  de encomenda com texto depois do número (`- URGENTE`, `- <produto>`, renomeadas com `›`) passam a ser
+  lidas; aviso das pastas fora do formato; `rena` e `sapo` na regra dos peluches; o "Escolher pasta…" passa
+  ao `showDirectoryPicker` (o input antigo não via as subpastas de produto vazias). Plano em
+  `plano-versao-1.1.md`. Conferida contra os 4 lotes de teste: 135 / 493 / 1.134 / 354 encomendas, com
+  os números da tabela do plano.
+
+---
+
 ## Anexo: casos de teste
 
 Todos os nomes de pasta de produto que apareceram nos três lotes reais analisados a 2026-11-09
-(1.676 encomendas), mais alguns casos inventados no fim (prefixo de quantidade, nome escapado do ZIP,
-tamanho fora da tabela BMJCP e produtos sem regra). O processo esperado foi confirmado pelo utilizador.
+(1.676 encomendas) e no lote BMJCP de 2026-11-12 (354), mais alguns casos inventados (prefixo de
+quantidade, nome escapado do ZIP, tamanhos novos e produtos sem regra). O processo esperado foi
+confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 
 | Pasta de produto | Processo |
 |---|---|
 | (x2) - Almofadas sem Margem › Almofada 35x35 - Sem Margem | BMJCP |
-| (x5) - Almofadas com Margem › Almofada 40x40 - Com Margem | BMJCP |
-| Almofadas com Margem › Almofada 35x35 - Com Margem | BMJCP |
+| (x5) - Almofadas com Margem › Almofada 40x40 - Com Margem | GIFTS |
+| Almofadas com Margem › Almofada 35x35 - Com Margem | GIFTS |
 | Almofadas frente e verso › Almofada 35x35 - Impressão Frente e Verso | BMJCP |
 | Almofadas frente e verso › Almofada 40x40 - Impressão Frente e Verso | BMJCP |
 | Almofadas frente e verso › Almofada 45x45  - Impressão Frente e Verso | BMJCP |
 | Almofadas Polares › Almofada 30x50 Polar | BMJCP |
 | Almofadas Polares › Almofada 45x45 Polar | BMJCP |
 | Almofadas sem Margem › Almofada 35x35 - Sem Margem | BMJCP |
-| Almofadas Simples › Almofada 35x35 | BMJCP |
+| Almofadas Simples › Almofada 35x35 | GIFTS |
 | Almofadas Simples › Almofada 35x35 - Sem Margem - Impressão Frente e Verso | BMJCP |
-| Almofadas Simples › Almofada 40x40 | BMJCP |
+| Almofadas Simples › Almofada 40x40 | GIFTS |
 | Almofadas Simples › Almofada 40x40 - Sem Margem - Impressão Frente e Verso | BMJCP |
-| Almofadas Simples › Almofada 45x45 | BMJCP |
+| Almofadas Simples › Almofada 45x45 | GIFTS |
 | Almofadas Simples › Almofada 45x45 - Sem Margem - Impressão Frente e Verso | BMJCP |
 | Dibuñecos › Dibunecos | BMJCP |
 | Mantas Polares › Manta Polar 105x180 | BMJCP |
@@ -357,7 +406,7 @@ tamanho fora da tabela BMJCP e produtos sem regra). O processo esperado foi conf
 | Canecas › Caneca Preta Personalizada | GIFTS |
 | Canecas › Caneca Simples | GIFTS |
 | Canecas #U203a Caneca B#U00e1sica | GIFTS |
-| Mantas Simples › Manta Simples 120x200 | GIFTS |
+| Mantas Simples › Manta Simples 120x200 | BMJCP |
 | Peluches › Coelhinho Bunny | GIFTS |
 | Peluches › Reninha Knut | GIFTS |
 | Peluches › Sapinho Paddy | GIFTS |
@@ -431,3 +480,48 @@ tamanho fora da tabela BMJCP e produtos sem regra). O processo esperado foi conf
 | Horizontais › Landscape 31x23 (Aro 4.5cm) | URGENTES |
 | Verticais › Classic 23x31 (Aro 3cm) | URGENTES |
 | Verticais › Classic 23x31 (Aro 4.5cm) | URGENTES |
+| Almofadas Polares › Almofada 70x40 Polar | BMJCP |
+| (x2) - Almofadas Simples › Almofada 40x40 - Sem Margem - Impressão Frente e Verso | BMJCP |
+| (x2) - Mantas Simples › Manta Simples 105x180 | BMJCP |
+| (x2) - Almofadas Polares › Almofada 45x45 Polar | BMJCP |
+| (x2) - Almofadas Simples › Almofada 45x45 - Sem Margem - Impressão Frente e Verso | BMJCP |
+| Almofadas Simples › Almofada 35x35 - Sem Margem | BMJCP |
+| Almofadas Simples › Almofada 45x45 - Sem Margem | BMJCP |
+| Almofadas Simples › Almofada 40x40 - Sem Margem | BMJCP |
+| (x2) - Almofadas Simples › Almofada 35x35 - Sem Margem | BMJCP |
+| Almofadas sem Margem › Almofada 45x45 - Sem Margem | BMJCP |
+| Almofadas sem Margem › Almofada 40x40 - Sem Margem | BMJCP |
+| Almofadas › Almofada (40x40) - Sem Margem | BMJCP |
+| Almofadas › Almofada Polar 30x50 | BMJCP |
+| Almofadas › Almofada (35x35) - Sem Margem | BMJCP |
+| Almofadas › Almofada (35x35) - S | BMJCP |
+| Mantas › Manta Simples 70x105 | BMJCP |
+| Almofadas › Almofada (45x45) - Sem Margem | BMJCP |
+| Almofadas › Almofada 70x40 | BMJCP |
+| Almofadas › Almofada (35x35) - Sem Margem - Impressão Frente e Verso | BMJCP |
+| Almofadas › Almofada (45x45) - S | BMJCP |
+| Mantas › Manta Polar 90x140 | BMJCP |
+| Mantas › Manta Simples 105x180 | BMJCP |
+| Mantas › Manta Polar 105x180 | BMJCP |
+| Almofadas › Almofada Polar 45x45 | BMJCP |
+| Mantas › Manta Simples 90x140 | BMJCP |
+| Canecas › Caneca Simples Low Cost | GIFTS |
+| Aventais › Avental em Polyester (60x85) | GIFTS |
+| Puzzles & Jogos › Puzzle A3 (192pcs) | GIFTS |
+| Puzzles & Jogos › Puzzle (500pcs) | GIFTS |
+| Porta-Chaves › Porta-Chaves Coração | GIFTS |
+| Porta-Chaves › Porta-Chaves Quadrado | GIFTS |
+| Porta-Chaves › Porta-Chaves Metálico Matte | GIFTS |
+| Canecas › Caneca Preta | GIFTS |
+| Canecas › Caneca Amor | GIFTS |
+| Canecas › Caneca Refresco | GIFTS |
+| Canecas › Caneca Mágica | GIFTS |
+| Peluches › Sapo Paddy | GIFTS |
+| Peluches › Rena Knut | GIFTS |
+| Almofadas › Almofada (40x40) - Com Margem | GIFTS |
+| Almofadas Simples › Almofada 50x50 - Sem Margem | BMJCP |
+| Almofadas Polares › Almofada 60x60 Polar | BMJCP |
+| Almofadas › Almofada (40x40) - S | BMJCP |
+| Almofadas com Margem › Almofada 45x45 - Com Margem | GIFTS |
+| Almofadas Simples › Almofada 70x40 | GIFTS |
+| Peluches › Pinguim | GIFTS |

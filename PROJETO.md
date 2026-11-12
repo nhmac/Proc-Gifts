@@ -6,7 +6,7 @@ e prepara a pesquisa no Explorador do Windows para ver só as encomendas de cada
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.0
+- **Versão atual:** web 1.1: almofadas, mantas e bonecos pelas regras B1-B9 (Com Margem → Gifts; Sem Margem, Polar, Frente e Verso e mantas → BMJCP), pastas de encomenda com texto depois do número (`- URGENTE`, renomeadas com `›`) passam a ser lidas, aviso das pastas fora do formato, e o "Escolher pasta…" passa a ver as subpastas de produto vazias
 
 A app só lê nomes de pastas, no browser; nada é enviado para lado nenhum.
 

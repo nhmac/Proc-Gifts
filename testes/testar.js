@@ -1,7 +1,8 @@
 // Testes da lógica do Proc-Gifts: node testes/testar.js (na raiz do repositório)
 // Extrai o <script id="logica"> do web/gifts.html, corre-o e confere:
 //   - os casos do anexo do CLAUDE.md (nome da pasta de produto -> processo)
-//   - orderId
+//   - pastas de encomenda (todos os formatos) e orderId
+//   - regras B1-B9
 //   - gruposPesquisa (tamanho, nº de ids, ordem, asteriscos)
 // Pára ao primeiro caso errado, com código de saída 1.
 // Também corre com o gjs (gjs -m não é preciso: gjs testes/testar.js), para PCs sem Node.
@@ -58,12 +59,53 @@ if (z.categoria !== "Canecas" || z.produto !== "Caneca Básica") falhar(`nome es
 if (Logica.classificar("Peluches › Pinguim").processo !== "GIFTS") falhar("pinguim caiu na regra do pin");
 console.log("ok  quantidade, nomes escapados, pin");
 
-// ---------------------------------------------------------------- orderId
-const ids = { "3477501_2057613": "2057613", "3479094_2061915": "2061915", "abc": "", "3479094_2061915_label.pdf": "" };
-for (const [pasta, esperado] of Object.entries(ids)) {
+// ---------------------------------------------------------------- pastas de encomenda e orderId
+// Formatos vistos (1.1): do software, com "- URGENTE", com "- <produto>" e renomeadas no processo
+const pastasOk = {
+  "3477501_2057613": "2057613",
+  "3479094_2061915": "2061915",
+  "3480124_2064550 - URGENTE": "2064550",
+  "6531391_1512223 - Caneca Simples Low Cost": "1512223",
+  "10124485_10167488 › 1 Boneco": "10167488",
+  "10124485_10167488 #U203a 1 Boneco": "10167488",
+  "3431834_1942428 -› Almofada (40x40) - Sem Margem": "1942428",
+  "3458598_2008032 › Manta Simples 70x105 - URGENTE": "2008032",
+  "3478693_2060827 - URGENTE › Manta Polar 90x140": "2060827",
+  "3478693_2060827 › 1 Manta Polar 90x140-URGENTE": "2060827",
+};
+for (const [pasta, esperado] of Object.entries(pastasOk)) {
+  if (!Logica.ehPastaEncomenda(pasta)) falhar(`ehPastaEncomenda("${pasta}") deu falso`);
+  if (Logica.pareceEncomenda(pasta)) falhar(`pareceEncomenda("${pasta}") deu verdadeiro`);
   if (Logica.orderId(pasta) !== esperado) falhar(`orderId("${pasta}") deu "${Logica.orderId(pasta)}", esperado "${esperado}"`);
 }
-console.log("ok  orderId");
+// Recusadas: as duas primeiras não começam por <nº>_<nº>; as outras começam, e a página avisa
+const recusadas = { "abc": false, "Arquivo 2026": false, "3480124-2064550": false,
+  "3480124_2064550abc": true, "3479094_2061915_label.pdf": true };
+for (const [pasta, avisa] of Object.entries(recusadas)) {
+  if (Logica.ehPastaEncomenda(pasta)) falhar(`ehPastaEncomenda("${pasta}") devia ser falso`);
+  if (Logica.orderId(pasta) !== "") falhar(`orderId("${pasta}") devia ser vazio`);
+  if (Logica.pareceEncomenda(pasta) !== avisa) falhar(`pareceEncomenda("${pasta}") devia ser ${avisa}`);
+}
+console.log("ok  pastas de encomenda e orderId");
+
+// ---------------------------------------------------------------- regras B1-B9 (almofadas, mantas, bonecos)
+const regraB = (pasta, id) => {
+  const r = Logica.classificar(pasta);
+  if (!r.regra.startsWith(`Regra ${id}:`)) falhar(`"${pasta}" devia cair na ${id}, caiu em: ${r.regra}`);
+};
+regraB("Almofadas com Margem › Almofada 35x35 - Com Margem", "B1");
+regraB("Almofadas Simples › Almofada 45x45 - Sem Margem - Impressão Frente e Verso", "B2");
+regraB("Almofadas › Almofada (45x45) - S", "B3");
+regraB("Almofadas Polares › Almofada 45x45 Polar", "B4");
+regraB("Almofadas frente e verso › Almofada 45x45  - Impressão Frente e Verso", "B5");
+regraB("Mantas Simples › Manta Simples 70x105", "B6");
+regraB("Dibuñecos › Dibunecos", "B7");
+regraB("Almofadas › Almofada 70x40", "B8");
+regraB("Almofada Preta › Almofada Preta", "B9");
+// "rena" e "sapo" só como palavras: "Serena" não é um peluche
+if (Logica.classificar("Peluches › Rena Knut").processo !== "GIFTS") falhar("Rena Knut");
+if (Logica.classificar("Canecas › Caneca Serena").regra.includes("peluche")) falhar("«serena» caiu nos peluches");
+console.log("ok  regras B1-B9");
 
 // ---------------------------------------------------------------- gruposPesquisa
 for (const total of [0, 1, 2, 22, 23, 24, 50, 271, 1000]) {

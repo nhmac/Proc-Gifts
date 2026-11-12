@@ -270,7 +270,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.0</div>
+      <div class="versao">Versão web 1.1</div>
     </div>
   </aside>
 
@@ -314,7 +314,8 @@
 <script id="logica">
 // Classificação das encomendas de Presentes Personalizados pelo nome da pasta de produto.
 // Sem acesso ao DOM, para poder ser testada à parte (testes/testar.js).
-// Regras validadas pelo utilizador a 2026-11-09 contra 1.676 encomendas reais (ver CLAUDE.md).
+// Regras validadas pelo utilizador a 2026-11-09 contra 1.676 encomendas reais e, as BMJCP, a 2026-11-12
+// contra um lote só com encomendas BMJCP (354). Ver CLAUDE.md.
 const Logica = (() => {
   const VER_DOC = "Ver documentação do processo";
   const PROCESSOS = {
@@ -329,17 +330,25 @@ const Logica = (() => {
   // depois de tirar os outros processos. Por confirmar logo antes, para não se misturar com o resto.
   const ORDEM = ["URGENTES", "BMJCP", "OMEGA", "OFFSET", "DESCONHECIDO", "GIFTS"];
 
-  // Almofadas e mantas com tipo e tamanho nesta tabela vão para BMJCP; as outras, para GIFTS
-  const TABELA_BMJCP = [
-    { produto: "Manta Simples",    tamanhos: ["70x105", "90x140", "105x180"] },
-    { produto: "Manta Polar",      tamanhos: ["70x105", "90x140", "105x180"] },
-    { produto: "Almofada Polar",   tamanhos: ["30x50", "45x45", "70x40"] },
-    { produto: "Almofada 1 Face",  tamanhos: ["70x40", "35x35", "40x40", "45x45"] },
-    { produto: "Almofada 2 Faces", tamanhos: ["35x35", "40x40", "45x45"] },
-    { produto: "Boneco Fotoprix",  tamanhos: ["Tamanho Único"] },
+  // Nomes exatos que são BMJCP mas que nenhuma regra B apanha (comparados já normalizados)
+  const EXCECOES_BMJCP = ["Almofadas › Almofada 70x40"];
+
+  // Almofadas, mantas e bonecos: por esta ordem, ganha a primeira que bate (decisões de 2026-11-12).
+  // "Com Margem" é sempre GIFTS; "Sem Margem", "Polar", "Frente e Verso" e mantas são sempre BMJCP,
+  // em qualquer tamanho; o que não é BMJCP é GIFTS.
+  const REGRAS_BMJCP = [
+    { id: "B1", quando: "contém «com margem»", processo: "GIFTS", exemplos: "Almofadas com Margem › Almofada 35x35 - Com Margem", teste: n => /com margem/.test(n) },
+    { id: "B2", quando: "contém «sem margem»", processo: "BMJCP", exemplos: "Almofada 45x45 - Sem Margem - Impressão Frente e Verso; Almofada (40x40) - Sem Margem", teste: n => /sem margem/.test(n) },
+    { id: "B3", quando: "é uma almofada e acaba em «- S» (nome cortado pelo software: Sem Margem)", processo: "BMJCP", exemplos: "Almofadas › Almofada (35x35) - S", teste: n => /almofada/.test(n) && /- s$/.test(n) },
+    { id: "B4", quando: "contém «polar»", processo: "BMJCP", exemplos: "Almofada 45x45 Polar; Almofada Polar 30x50; Manta Polar", teste: n => /polar/.test(n) },
+    { id: "B5", quando: "contém «frente e verso»", processo: "BMJCP", exemplos: "Almofadas frente e verso › Almofada 35x35 - Impressão Frente e Verso", teste: n => /frente e verso/.test(n) },
+    { id: "B6", quando: "contém «manta»", processo: "BMJCP", exemplos: "Manta Simples 70x105; Manta Polar 105x180", teste: n => /manta/.test(n) },
+    { id: "B7", quando: "contém «dibu» ou «boneco»", processo: "BMJCP", exemplos: "Dibuñecos › Dibunecos", teste: n => /dibu|boneco/.test(n) },
+    { id: "B8", quando: "está na lista de exceções BMJCP", processo: "BMJCP", exemplos: EXCECOES_BMJCP.join("; "), teste: n => EXCECOES_BMJCP_N.includes(n) },
+    { id: "B9", quando: "qualquer outra almofada", processo: "GIFTS", exemplos: "Almofadas Simples › Almofada 45x45; Almofada Preta", teste: () => true },
   ];
 
-  // Por ordem: ganha a primeira que bate. processo null = decidir pela tabela BMJCP.
+  // Por ordem: ganha a primeira que bate. processo null = decidir pelas regras BMJCP (B1-B9).
   // teste recebe o texto normalizado "categoria › produto".
   const REGRAS = [
     { quando: "contém «landscape 31x23»", processo: "URGENTES", exemplos: "Horizontais › Landscape 31x23 (Aro 4.5cm)", teste: n => /landscape 31\s*x\s*23/.test(n) },
@@ -350,8 +359,7 @@ const Logica = (() => {
     { quando: "contém «moldura essence»", processo: "OMEGA", exemplos: "Moldura Essence 20x20, 20x30, 30x45, 40x60", teste: n => /moldura essence/.test(n) },
     { quando: "contém «moldura haramukh»", processo: "OMEGA", exemplos: "Moldura Haramukh 10x15, 15x20", teste: n => /moldura haramukh/.test(n) },
     { quando: "contém «mealheiro»", processo: "GIFTS", exemplos: "Oportunidades › Mealheiro", teste: n => /mealheiro/.test(n) },
-    { quando: "contém «dibu» ou «boneco»", processo: "BMJCP", exemplos: "Dibuñecos › Dibunecos (= Boneco Fotoprix)", teste: n => /dibu|boneco/.test(n) },
-    { quando: "contém «almofada» ou «manta»", processo: null, exemplos: "Almofadas e Mantas (ver a tabela BMJCP)", teste: n => /almofada|manta/.test(n) },
+    { quando: "contém «almofada», «manta», «dibu» ou «boneco»", processo: null, exemplos: "Almofadas, Mantas e Dibuñecos (ver as regras B1-B9)", teste: n => /almofada|manta|dibu|boneco/.test(n) },
     { quando: "contém «caneca»", processo: "GIFTS", exemplos: "Básica, Colorida, Love, Mágica, Preta Personalizada, Simples", teste: n => /caneca/.test(n) },
     { quando: "contém «avental» ou «aventais»", processo: "GIFTS", exemplos: "Aventais › Avental", teste: n => /avental|aventais/.test(n) },
     { quando: "contém «baralho»", processo: "OFFSET", exemplos: "Baralho Cartas (9x6cm)", teste: n => /baralho/.test(n) },
@@ -364,7 +372,7 @@ const Logica = (() => {
     { quando: "contém «azulejo»", processo: "GIFTS", exemplos: "Azulejo Português (15x15cm)", teste: n => /azulejo/.test(n) },
     { quando: "contém «pvc»", processo: "OMEGA", exemplos: "Quadro PVC, todos os tamanhos", teste: n => /pvc/.test(n) },
     { quando: "contém «mont blanc»", processo: "OMEGA", exemplos: "Moldura Mont Blanc 10X15", teste: n => /mont blanc/.test(n) },
-    { quando: "contém «peluche», «coelhinho», «reninha», «sapinho» ou «ursinho»", processo: "GIFTS", exemplos: "Coelhinho Bunny, Reninha Knut, Sapinho Paddy, Ursinho Barney", teste: n => /peluche|coelhinho|reninha|sapinho|ursinho/.test(n) },
+    { quando: "contém «peluche», «coelhinho», «reninha», «sapinho», «ursinho» ou as palavras «rena», «sapo»", processo: "GIFTS", exemplos: "Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney", teste: n => /peluche|coelhinho|reninha|sapinho|ursinho/.test(n) || /(^|[^a-z])(rena|sapo)([^a-z]|$)/.test(n) },
     { quando: "contém «caderno»", processo: "OFFSET", exemplos: "Cadernos › Caderno A5", teste: n => /caderno/.test(n) },
     { quando: "contém «cartao de visita» ou «cartoes visita»", processo: "OFFSET", exemplos: "Cartões Visita › Cartões de Visita", teste: n => /cartoes? (de )?visita/.test(n) },
   ];
@@ -390,18 +398,7 @@ const Logica = (() => {
     return { nome, qtd, categoria, produto };
   }
 
-  // O tamanho "35x35" nos dois sentidos, ou null
-  function tamanho(texto) {
-    const m = normalizar(texto).match(/(\d+)\s*x\s*(\d+)/);
-    return m ? [`${m[1]}x${m[2]}`, `${m[2]}x${m[1]}`] : null;
-  }
-
-  function tipoBMJCP(n) {
-    if (/manta/.test(n)) return /polar/.test(n) ? "Manta Polar" : "Manta Simples";
-    if (/polar/.test(n)) return "Almofada Polar";
-    if (/frente e verso|2 faces|duas faces/.test(n)) return "Almofada 2 Faces";
-    return "Almofada 1 Face";
-  }
+  const EXCECOES_BMJCP_N = EXCECOES_BMJCP.map(normalizar);
 
   const nomeProcesso = k => PROCESSOS[k].nome;
 
@@ -415,26 +412,27 @@ const Logica = (() => {
       if (r.processo) {
         return { ...p, processo: r.processo, numRegra: num, regra: `Regra ${num}: ${r.quando} → ${nomeProcesso(r.processo)}` };
       }
-      // Almofadas e mantas: pela tabela BMJCP
-      const tipo = tipoBMJCP(n);
-      const tams = tamanho(p.produto) || tamanho(p.nome);
-      const linha = TABELA_BMJCP.find(t => t.produto === tipo);
-      if (linha && tams && linha.tamanhos.some(t => tams.includes(t))) {
-        return { ...p, processo: "BMJCP", numRegra: num, regra: `Regra ${num}: ${tipo} ${tams[0]} está na tabela BMJCP → BMJCP` };
-      }
-      const motivo = tams ? `${tipo} ${tams[0]}` : `${p.produto} (sem tamanho)`;
-      return { ...p, processo: "GIFTS", numRegra: num, regra: `Regra ${num}: ${motivo} não está na tabela BMJCP → ${nomeProcesso("GIFTS")}` };
+      // Almofadas, mantas e bonecos: pelas regras B1-B9 (a B9 apanha sempre)
+      const b = REGRAS_BMJCP.find(rb => rb.teste(n));
+      return { ...p, processo: b.processo, numRegra: num, regra: `Regra ${b.id}: ${b.quando} → ${nomeProcesso(b.processo)}` };
     }
     return { ...p, processo: "DESCONHECIDO", numRegra: 0, regra: "Nenhuma regra corresponde a este produto: confirmar com o responsável" };
   }
 
-  // Pasta da encomenda "<nº>_<order id>"
-  const PASTA_ENCOMENDA = /^\d+_\d+$/;
-  const ehPastaEncomenda = nome => PASTA_ENCOMENDA.test(nome);
-  // O order id é o segundo número: "3477501_2057613" -> "2057613"
+  // Pasta da encomenda: "<nº>_<order id>", sozinho ou seguido de um separador (espaço, "-" ou "›") e de
+  // qualquer texto. Formatos vistos: "3477501_2057613", "3480124_2064550 - URGENTE",
+  // "6531391_1512223 - Caneca Simples" e as pastas renomeadas no processo, como
+  // "10124485_10167488 › 1 Boneco" ou "3431834_1942428 -› Almofada (40x40) - Sem Margem".
+  // O texto a seguir ao número (URGENTE incluído) não entra na classificação: o processo vem só da
+  // subpasta de produto.
+  const PASTA_ENCOMENDA = /^(\d+)_(\d+)(?:[\s\-›>].*)?$/;
+  const ehPastaEncomenda = nome => PASTA_ENCOMENDA.test(descodificar(nome).trim());
+  // Começa por "<nº>_<nº>" mas não encaixa no formato: não é lida, e a página avisa
+  const pareceEncomenda = nome => /^\d+_\d+/.test(descodificar(nome).trim()) && !ehPastaEncomenda(nome);
+  // O order id é o segundo número: "3477501_2057613" -> "2057613", "10124485_10167488 › 1 Boneco" -> "10167488"
   function orderId(pasta) {
-    const m = /^\d+_(\d+)$/.exec(String(pasta).trim());
-    return m ? m[1] : "";
+    const m = PASTA_ENCOMENDA.exec(descodificar(pasta).trim());
+    return m ? m[2] : "";
   }
 
   // Pesquisa no Explorador do Windows: cada id entre asteriscos ("*2057529* OR *2057613*"), porque o
@@ -463,8 +461,8 @@ const Logica = (() => {
   }
 
   return {
-    PROCESSOS, ORDEM, REGRAS, TABELA_BMJCP, normalizar, lerNomeProduto, classificar,
-    ehPastaEncomenda, orderId, gruposPesquisa, LIMITE_PESQUISA, MAX_IDS_GRUPO,
+    PROCESSOS, ORDEM, REGRAS, REGRAS_BMJCP, EXCECOES_BMJCP, normalizar, lerNomeProduto, classificar,
+    ehPastaEncomenda, pareceEncomenda, orderId, gruposPesquisa, LIMITE_PESQUISA, MAX_IDS_GRUPO,
   };
 })();
 </script>
@@ -564,7 +562,7 @@ function criarProgresso(el, tituloBase = document.title) {
 
 <script>
 (() => {
-  const { PROCESSOS, ORDEM, REGRAS, TABELA_BMJCP } = Logica;
+  const { PROCESSOS, ORDEM, REGRAS, REGRAS_BMJCP, EXCECOES_BMJCP } = Logica;
   const $ = id => document.getElementById(id);
   const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   const s = n => (n === 1 ? "" : "s");
@@ -577,6 +575,7 @@ function criarProgresso(el, tituloBase = document.title) {
 
   // A pasta lida: encomendas [{canal, enc, produtos: [nome da pasta]}]
   let lida = null;
+  let ignoradas = []; // pastas "<nº>_<nº>…" fora do formato: não são lidas, mas a página avisa
   let ocupado = false;
 
   function estado(texto, tipo = "idle") {
@@ -612,8 +611,9 @@ function criarProgresso(el, tituloBase = document.title) {
     return [...mapa.values()].sort((a, b) => a.canal.localeCompare(b.canal) || a.enc.localeCompare(b.enc));
   }
 
-  function definirPasta(encomendas, nome) {
+  function definirPasta(encomendas, nome, foraDoFormato = []) {
     lida = encomendas;
+    ignoradas = [...new Set(foraDoFormato)].sort((a, b) => a.localeCompare(b));
     const n = encomendas.length;
     $("nome-pasta").textContent = nome;
     $("chip").classList.add("escolhida");
@@ -628,18 +628,93 @@ function criarProgresso(el, tituloBase = document.title) {
     }
   }
 
-  // Escolher pasta: o browser dá a lista de ficheiros; as pastas saem do webkitRelativePath
-  $("btn-pasta").addEventListener("click", () => $("input-pasta").click());
+  // Percorre só pastas (nunca abre ficheiros) e pára em cada pasta de encomenda. Funciona sobre "nós"
+  // { nome, pasta, filhos() }, para servir tanto o "Escolher pasta…" (showDirectoryPicker) como o
+  // arrastar (webkitGetAsEntry). As subpastas de produto podem estar vazias (as encomendas "65…_…" da
+  // outra loja vêm assim): por isso nunca se depende de haver ficheiros lá dentro.
+  async function percorrer(no, pai, nivel, entradas, contar, foraDoFormato) {
+    if (!no.pasta || nivel > NIVEIS) return;
+    if (Logica.pareceEncomenda(no.nome)) { foraDoFormato.push(no.nome); return; }
+    const filhos = await no.filhos();
+    if (Logica.ehPastaEncomenda(no.nome)) {
+      const produtos = filhos.filter(f => f.pasta);
+      if (!produtos.length) entradas.push({ canal: pai, enc: no.nome, produto: null });
+      for (const p of produtos) entradas.push({ canal: pai, enc: no.nome, produto: p.nome });
+      contar();
+      return;
+    }
+    for (const f of filhos) await percorrer(f, no.nome, nivel + 1, entradas, contar, foraDoFormato);
+  }
+
+  // Nó a partir de um FileSystemDirectoryHandle / FileSystemFileHandle (showDirectoryPicker)
+  function noDeHandle(h) {
+    return {
+      nome: h.name,
+      pasta: h.kind === "directory",
+      filhos: async () => { const l = []; for await (const f of h.values()) l.push(noDeHandle(f)); return l; },
+    };
+  }
+
+  // Nó a partir de um FileSystemEntry (arrastar)
+  function lerEntradas(dir) {
+    return new Promise((ok, erro) => {
+      const leitor = dir.createReader(), todas = [];
+      const lote = () => leitor.readEntries(l => { if (!l.length) ok(todas); else { todas.push(...l); lote(); } }, erro);
+      lote();
+    });
+  }
+  function noDeEntrada(e) {
+    return { nome: e.name, pasta: e.isDirectory, filhos: async () => (await lerEntradas(e)).map(noDeEntrada) };
+  }
+
+  // Lê uma ou mais pastas (nós) e guarda o resultado
+  async function lerNos(nos, nomePasta) {
+    setOcupado(true);
+    barraProgresso.iniciar("A ler pastas…");
+    const entradas = [];
+    const foraDoFormato = [];
+    let n = 0;
+    const contar = () => { n++; barraProgresso.fase(`A ler pastas · ${fmt(n)} encomenda${s(n)}`); };
+    try {
+      for (const no of nos) await percorrer(no, "", 0, entradas, contar, foraDoFormato);
+      setOcupado(false);
+      definirPasta(juntar(entradas), nomePasta, foraDoFormato);
+    } catch (erro) {
+      setOcupado(false);
+      barraProgresso.concluir(false, "Não foi possível ler a pasta");
+      estado("Erro ao ler a pasta.", "erro");
+    }
+  }
+
+  // Escolher pasta: no Chrome e no Edge, o showDirectoryPicker (vê as pastas vazias). Sem ele, o
+  // seletor antigo (webkitdirectory), que só lista ficheiros: as subpastas de produto vazias não
+  // aparecem e essas encomendas ficam no aviso "sem pasta de produto".
+  $("btn-pasta").addEventListener("click", async () => {
+    if (typeof window.showDirectoryPicker !== "function") { $("input-pasta").click(); return; }
+    let dir;
+    try {
+      dir = await window.showDirectoryPicker({ id: "proc-gifts", mode: "read" });
+    } catch (erro) {
+      if (erro && erro.name === "AbortError") return; // o operador fechou a janela
+      $("input-pasta").click();
+      return;
+    }
+    await lerNos([noDeHandle(dir)], dir.name);
+  });
+
+  // Seletor antigo: o browser dá a lista de ficheiros; as pastas saem do webkitRelativePath
   $("input-pasta").addEventListener("change", e => {
     const todos = [...e.target.files];
     e.target.value = "";
     if (!todos.length) return;
     barraProgresso.iniciar("A ler pastas…");
     const entradas = [];
+    const foraDoFormato = [];
     for (const f of todos) {
       const seg = (f.webkitRelativePath || "").split("/");
       // seg: [pasta escolhida, …, encomenda, produto, …, ficheiro]
       for (let i = 0; i <= NIVEIS && i < seg.length - 1; i++) {
+        if (Logica.pareceEncomenda(seg[i])) { foraDoFormato.push(seg[i]); break; }
         if (!Logica.ehPastaEncomenda(seg[i])) continue;
         const temProduto = i + 2 < seg.length; // há uma pasta (e não só um ficheiro) dentro da encomenda
         entradas.push({ canal: i > 0 ? seg[i - 1] : "", enc: seg[i], produto: temProduto ? seg[i + 1] : null });
@@ -647,30 +722,10 @@ function criarProgresso(el, tituloBase = document.title) {
       }
     }
     const pasta = (todos[0].webkitRelativePath || "").split("/")[0] || "Pasta";
-    definirPasta(juntar(entradas), pasta);
+    definirPasta(juntar(entradas), pasta, foraDoFormato);
   });
 
-  // Arrastar: percorre só as pastas (nunca abre ficheiros) e pára em cada pasta de encomenda
-  function lerPasta(dir) {
-    return new Promise((ok, erro) => {
-      const leitor = dir.createReader(), todas = [];
-      const lote = () => leitor.readEntries(l => { if (!l.length) ok(todas); else { todas.push(...l); lote(); } }, erro);
-      lote();
-    });
-  }
-  async function percorrer(entrada, pai, nivel, entradas, contar) {
-    if (!entrada.isDirectory || nivel > NIVEIS) return;
-    const filhos = await lerPasta(entrada);
-    if (Logica.ehPastaEncomenda(entrada.name)) {
-      const produtos = filhos.filter(f => f.isDirectory);
-      if (!produtos.length) entradas.push({ canal: pai, enc: entrada.name, produto: null });
-      for (const p of produtos) entradas.push({ canal: pai, enc: entrada.name, produto: p.name });
-      contar();
-      return;
-    }
-    for (const f of filhos) await percorrer(f, entrada.name, nivel + 1, entradas, contar);
-  }
-
+  // Arrastar
   let arrastos = 0;
   addEventListener("dragenter", e => { if (ocupado) return; e.preventDefault(); arrastos++; $("largar").hidden = false; });
   addEventListener("dragleave", () => { if (--arrastos <= 0) { arrastos = 0; $("largar").hidden = true; } });
@@ -683,20 +738,7 @@ function criarProgresso(el, tituloBase = document.title) {
     const pastas = [...e.dataTransfer.items].map(i => i.webkitGetAsEntry && i.webkitGetAsEntry())
       .filter(x => x && x.isDirectory);
     if (!pastas.length) { estado("Largue uma pasta (não ficheiros).", "erro"); return; }
-    setOcupado(true);
-    barraProgresso.iniciar("A ler pastas…");
-    const entradas = [];
-    let n = 0;
-    const contar = () => { n++; barraProgresso.fase(`A ler pastas · ${fmt(n)} encomenda${s(n)}`); };
-    try {
-      for (const p of pastas) await percorrer(p, "", 0, entradas, contar);
-      setOcupado(false);
-      definirPasta(juntar(entradas), pastas.length === 1 ? pastas[0].name : `${pastas.length} pastas`);
-    } catch (erro) {
-      setOcupado(false);
-      barraProgresso.concluir(false, "Não foi possível ler a pasta");
-      estado("Erro ao ler a pasta.", "erro");
-    }
+    await lerNos(pastas.map(noDeEntrada), pastas.length === 1 ? pastas[0].name : `${pastas.length} pastas`);
   });
 
   function setOcupado(sim) {
@@ -751,12 +793,29 @@ function criarProgresso(el, tituloBase = document.title) {
     estado("Pronto para iniciar");
   }
 
+  // Pastas que começam por "<nº>_<nº>" mas não estão no formato: nunca se descartam em silêncio
+  const MAX_NOMES_AVISO = 10;
+  function avisoForaDoFormato() {
+    const n = ignoradas.length;
+    const nomes = ignoradas.slice(0, MAX_NOMES_AVISO).map(t => el("li", { textContent: t }));
+    if (n > MAX_NOMES_AVISO) nomes.push(el("li", { textContent: `e mais ${fmt(n - MAX_NOMES_AVISO)}` }));
+    return el("div", { className: "aviso erro", role: "alert" },
+      el("b", { textContent: `${fmt(n)} pasta${s(n)} não ${n === 1 ? "foi lida" : "foram lidas"}. ` }),
+      "O nome começa por nº_id mas não está no formato esperado (nº_id sozinho, ou seguido de espaço, «-» ou «›»). Confirmar e tratar à mão:",
+      el("ul", {}, ...nomes));
+  }
+
   function analisar() {
     if (ocupado) return;
     if (!lida) { estado("Selecione uma pasta primeiro!", "erro"); return; }
     limpar();
     mostrarTab("encomendas");
-    if (!lida.length) { estado("Nenhuma pasta de encomenda (nº_id) nesta pasta.", "erro"); return; }
+    const avisoIgnoradas = ignoradas.length ? [avisoForaDoFormato()] : [];
+    if (!lida.length) {
+      $("avisos").replaceChildren(...avisoIgnoradas);
+      estado("Nenhuma pasta de encomenda (nº_id) nesta pasta.", "erro");
+      return;
+    }
 
     // Uma linha por (encomenda, pasta de produto)
     const linhas = [];
@@ -780,7 +839,7 @@ function criarProgresso(el, tituloBase = document.title) {
     $("stats").hidden = false;
 
     // Avisos
-    const avisos = [];
+    const avisos = [...avisoIgnoradas];
     const desconhecidos = porProcesso.DESCONHECIDO;
     if (desconhecidos.length) {
       const nomes = [...new Set(desconhecidos.map(l => l.nome))].sort((a, b) => a.localeCompare(b));
@@ -903,11 +962,13 @@ function criarProgresso(el, tituloBase = document.title) {
     el("p", { textContent: "Aplicam-se por esta ordem ao nome da pasta sem acentos e em minúsculas; ganha a primeira que bate." }),
     tabelaSimples(["#", "Bate quando o nome…", "Processo", "Exemplos"], [
       ...REGRAS.map((r, i) => [String(i + 1), r.quando,
-        r.processo ? pill(r.processo) : el("span", {}, "tabela BMJCP: ", pill("BMJCP"), " ou ", pill("GIFTS")), r.exemplos]),
+        r.processo ? pill(r.processo) : el("span", {}, "regras B1-B9: ", pill("BMJCP"), " ou ", pill("GIFTS")), r.exemplos]),
       ["—", "nenhuma regra bate", pill("DESCONHECIDO"), "confirmar com o responsável"],
     ]),
-    el("h3", { textContent: "Tabela BMJCP (almofadas e mantas)" }),
-    el("p", { textContent: "Almofadas e mantas cujo tipo e tamanho estão nesta tabela vão para BMJCP; as outras (outro tamanho, ou sem tamanho) vão para GIFTS. O tamanho compara-se nos dois sentidos (70x40 = 40x70). Manta com «polar» é Manta Polar; almofada com «polar» é Almofada Polar; com «frente e verso», «2 faces» ou «duas faces» é Almofada 2 Faces; as restantes são Almofada 1 Face." }),
-    tabelaSimples(["Produto", "Tamanhos"], TABELA_BMJCP.map(t => [t.produto, t.tamanhos.join(" · ")])));
+    el("h3", { textContent: "Almofadas, mantas e bonecos (BMJCP ou GIFTS)" }),
+    el("p", { textContent: "Por esta ordem; ganha a primeira que bate. «Com Margem» é sempre GIFTS; «Sem Margem», «Polar», «Frente e Verso» e mantas são sempre BMJCP, em qualquer tamanho. O que não é BMJCP é GIFTS." }),
+    tabelaSimples(["#", "Bate quando o nome…", "Processo", "Exemplos"],
+      REGRAS_BMJCP.map(r => [r.id, r.quando, pill(r.processo), r.exemplos])),
+    el("p", {}, "Exceções BMJCP (nome exato): ", ...EXCECOES_BMJCP.flatMap((x, i) => [i ? ", " : "", el("code", { textContent: x })]), "."));
 })();
 </script>
