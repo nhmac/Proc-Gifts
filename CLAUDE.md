@@ -109,8 +109,16 @@ PRESENTES_PERSONALIZADOS - AMADOR/
   3479094_2061915/                       ← pasta da encomenda: <nº>_<order id>
     3479094_2061915_label.pdf
     Natal › Ornamento de Natal - Coração/  ← pasta de produto: "Categoria › Produto"
+      3479094_2061915_ornamento_0000.jpg   ← a imagem do cliente (num dia normal está sempre lá)
       COMPLETED
 ```
+
+Nos lotes de teste o utilizador tirou os `.jpg` para os ZIPs ficarem pequenos, mas **num dia normal cada
+pasta de produto traz as imagens** (ex.: `3479788_2063638/Aventais › Avental/3479788_2063638_avental_0000.jpg`).
+Não servem para nada na classificação: o seletor de pastas e o arrastar **nunca entram nas pastas de
+produto** (só listam as subpastas da encomenda), por isso o número de imagens não pesa. Só o seletor antigo
+(`webkitdirectory`, recurso para browsers sem `showDirectoryPicker`) recebe a lista de todos os ficheiros,
+imagens incluídas. Algumas subpastas de produto vêm vazias (encomendas `65…_…`): ver "Ler as pastas".
 
 - **Pasta da encomenda:** começa sempre por `<nº>_<order id>`; a seguir pode vir nada, ou um
   separador (espaço, `-` ou `›`) e qualquer texto: `^(\d+)_(\d+)(?:[\s\-›>].*)?$`. O **order id** é
