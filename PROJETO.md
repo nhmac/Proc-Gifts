@@ -6,7 +6,7 @@ e prepara a pesquisa no Explorador do Windows para ver só as encomendas de cada
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.1: almofadas, mantas e bonecos pelas regras B1-B9 (Com Margem → Gifts; Sem Margem, Polar, Frente e Verso e mantas → BMJCP), pastas de encomenda com texto depois do número (`- URGENTE`, renomeadas com `›`) passam a ser lidas, aviso das pastas fora do formato, e o "Escolher pasta…" passa a ver as subpastas de produto vazias
+- **Versão atual:** web 1.2: subprocessos dentro de um processo (OFFSET › CARTÕES, os Cartões de Visita) e o processo URGENTES passa a chamar-se BOXS AMADOR. Antes, na 1.1: almofadas, mantas e bonecos pelas regras B1-B9, pastas de encomenda renomeadas ou com `- URGENTE` passam a ser lidas, aviso das pastas fora do formato e o "Escolher pasta…" passa a ver as subpastas de produto vazias
 
 A app só lê nomes de pastas, no browser; nada é enviado para lado nenhum.
 
@@ -14,7 +14,7 @@ A app só lê nomes de pastas, no browser; nada é enviado para lado nenhum.
 
 1. **Escolher pasta…** (ou arrastar a pasta para a janela): a pasta do canal, por exemplo
    `PRESENTES_PERSONALIZADOS - AMADOR`, ou uma pasta com vários canais.
-2. **Analisar**: um cartão por processo (URGENTES, Gifts, BMJCP, OMEGA, Offset Digital, Por confirmar),
+2. **Analisar**: um cartão por processo (Boxs Amador, Gifts, BMJCP, OMEGA, Offset Digital, Por confirmar),
    com a picagem, o destino e as encomendas.
 3. Em cada cartão, **Copiar** um grupo de cada vez e colar na pesquisa da pasta no Explorador: aparecem
    só as encomendas desse processo. **Copiar nºs** copia os nomes completos das pastas, um por linha.

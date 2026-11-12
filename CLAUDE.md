@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.1
+- **Versão atual:** web 1.2
 
 Tudo corre no browser: a app **só lê nomes de pastas**, nunca abre ficheiros e **nada é enviado para
 lado nenhum**. Não introduzir pedidos de rede, CDNs nem bibliotecas.
@@ -148,12 +148,28 @@ junto de cada processo.
 | `BMJCP` | BMJCP | Serviços Externos | `A:\ENTRADA_RAWS\BMJCP` |
 | `OMEGA` | OMEGA | Pré Impressão | `A:\PRE_IMPRESSAO\_#OMEGA` (UV) · `_#BISCATES` (Lembranças) |
 | `OFFSET` | OFFSET | Pré Impressão | `A:\PRE_IMPRESSAO\_#OFFSET_DIGITAL` |
-| `URGENTES` | URGENTES | *por confirmar* | *por confirmar* |
+| `BOXS` | BOXS AMADOR | *por confirmar* | *por confirmar* |
 | `DESCONHECIDO` | Por confirmar | — | Produto sem regra: confirmar com o responsável |
 
-A picagem e o destino do URGENTES ainda não foram dados pelo utilizador: mostrar "Ver documentação do
+O processo BOXS AMADOR substituiu o URGENTES na 1.2 (a pedido do utilizador), com os mesmos dois
+produtos. A picagem e o destino do BOXS AMADOR ainda não foram dados pelo utilizador: mostrar "Ver documentação do
 processo" até ele os dar. Não inventar. Também está por saber que produtos OMEGA vão para `_#OMEGA` e
 quais para `_#BISCATES`, por isso mostram-se os dois.
+
+### Subprocessos (desde a 1.2)
+
+Alguns produtos, dentro de um processo, são tratados à parte (um subprocesso da documentação do
+departamento). Ficam marcados na regra com `sub` e aparecem num **bloco próprio dentro do cartão do
+processo**, com a sua pesquisa OR e o seu "Copiar nºs"; os restantes ficam em "Outros produtos <processo>".
+O resumo mostra a contagem do subprocesso por baixo do processo, e a pesquisa de produto mostra
+`OFFSET › CARTÕES`.
+
+| Chave | Nome | Processo | Produtos |
+|---|---|---|---|
+| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 24) |
+
+Para acrescentar um: uma entrada em `SUBPROCESSOS` e `sub: "<CHAVE>"` na(s) regra(s). Só com indicação
+do utilizador ("para já só tenho este", 2026-11-12).
 
 ### As regras (validadas pelo utilizador a 2026-11-09; almofadas, mantas e bonecos a 2026-11-12)
 
@@ -165,8 +181,8 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 
 | # | Bate quando o texto normalizado… | Processo | Exemplos |
 |---|---|---|---|
-| 1 | contém `landscape 31x23` (com ou sem espaços à volta do x) | URGENTES | Horizontais › Landscape 31x23 (Aro 4.5cm) |
-| 2 | contém `classic 23x31` | URGENTES | Verticais › Classic 23x31 (Aro 3cm / Aro 4.5cm) |
+| 1 | contém `landscape 31x23` (com ou sem espaços à volta do x) | BOXS | Horizontais › Landscape 31x23 (Aro 4.5cm) |
+| 2 | contém `classic 23x31` | BOXS | Verticais › Classic 23x31 (Aro 3cm / Aro 4.5cm) |
 | 3 | contém `globo` | OFFSET | Foto Globos › Globo Personalizado |
 | 4 | tem a palavra `pin` / `pins` (isolada: não pode apanhar "pinguim") | OFFSET | Pin › Pin |
 | 5 | contém `moldura atlas` | OMEGA | Moldura Atlas 13x18, 15x20 |
@@ -222,15 +238,16 @@ normalizado; ganha a primeira que bate:
 
 - **Nunca adivinhar.** Um produto sem regra fica "Por confirmar", a vermelho, com aviso no topo. Um
   produto encaminhado para o processo errado é pior do que um por confirmar.
-- **As regras do URGENTES são estreitas de propósito** (só esses dois produtos). O utilizador ainda não
-  disse se *tudo* o que está em Horizontais/Verticais vai para URGENTES. Um tamanho novo dessas pastas
+- **As regras do BOXS AMADOR são estreitas de propósito** (só esses dois produtos). O utilizador ainda não
+  disse se *tudo* o que está em Horizontais/Verticais vai para BOXS AMADOR. Um tamanho novo dessas pastas
   fica "Por confirmar".
 - A regra é a mesma para todos os canais (AMADOR, FOTOPRIX, …).
 - **Almofadas, mantas e bonecos** (desde a 1.1): Com Margem é sempre GIFTS; Sem Margem, Polar, Frente e
   Verso e mantas são sempre BMJCP; o que não é BMJCP é GIFTS. Não voltar à tabela por tamanho.
 - **URGENTE não tem tratamento especial** (decisão do utilizador, 1.1): a encomenda é lida como as outras
-  e vai para o processo do seu produto. O problema da 1.0 era só a pasta ser ignorada. Não confundir com
-  o processo URGENTES (Landscape e Classic).
+  e vai para o processo do seu produto. O problema da 1.0 era só a pasta ser ignorada. (Até à 1.1 havia
+  um processo chamado URGENTES, para o Landscape e o Classic, sem relação com isto: na 1.2 passou a
+  chamar-se BOXS AMADOR.)
 - **Nunca ignorar uma pasta sem avisar** (1.1): a 1.0 descartava em silêncio as pastas com texto depois
   do número, e 86 encomendas dos lotes de teste desapareceram sem ninguém dar por isso.
 - Para acrescentar um produto novo: o utilizador diz o processo, acrescenta-se uma linha nas regras
@@ -260,7 +277,7 @@ curtos e passos no infinitivo.
   - resumo compacto: total de encomendas e uma contagem por processo, cada uma na cor do processo;
   - avisos: produtos "Por confirmar" (lista dos nomes em falta) e encomendas com mais do que uma pasta
     de produto;
-  - um cartão por processo (pela ordem URGENTES, BMJCP, OMEGA, OFFSET, Por confirmar, GIFTS: o GIFTS é o maior volume
+  - um cartão por processo (pela ordem BOXS AMADOR, BMJCP, OMEGA, OFFSET, Por confirmar, GIFTS: o GIFTS é o maior volume
     e fica no fim, porque o operador trata-o como "o resto" depois de tirar os outros processos),
     com o nome, a picagem e o destino no cabeçalho e uma tabela: encomenda, canal (só se houver mais
     de um), `Categoria › Produto` e quantidade. A regra aplicada aparece como dica (`title`);
@@ -271,7 +288,7 @@ curtos e passos no infinitivo.
 - **Regras:** as tabelas de processos, regras e BMJCP, geradas a partir dos mesmos dados que a lógica usa
   (nunca escritas à mão duas vezes).
 - As cores dos processos devem ser distintas e legíveis no tema escuro (usar as variáveis da família como
-  base; no protótipo: Gifts verde-azulado, BMJCP âmbar, OMEGA roxo, Offset azul, URGENTES laranja, Por
+  base; no protótipo: Gifts verde-azulado, BMJCP âmbar, OMEGA roxo, Offset azul, BOXS AMADOR laranja, Por
   confirmar vermelho).
 
 ### Pesquisa no Explorador do Windows (validado pelo utilizador a 2026-11-09)
@@ -296,10 +313,10 @@ O objetivo é colar na pesquisa da pasta e ver só as encomendas de um processo.
 
 O `<script id="logica">` expõe um objeto `Logica` e não mexe no DOM, para se poder testar com o Node:
 
-- `PROCESSOS` (chave → nome, picagem, destino), `REGRAS` (lista ordenada), `REGRAS_BMJCP` (B1-B9),
+- `PROCESSOS` (chave → nome, picagem, destino), `SUBPROCESSOS`, `REGRAS` (lista ordenada; `sub` opcional), `REGRAS_BMJCP` (B1-B9),
   `EXCECOES_BMJCP`;
 - `normalizar(texto)`, `lerNomeProduto(nome)` → `{nome, qtd, categoria, produto}`;
-- `classificar(nomePasta)` → `{processo, regra, qtd, categoria, produto, nome}`;
+- `classificar(nomePasta)` → `{processo, sub, regra, qtd, categoria, produto, nome}` (`sub` é `null` sem subprocesso);
 - `ehPastaEncomenda(nome)`, `pareceEncomenda(nome)` (começa por `<nº>_<nº>` mas está fora do formato) e
   `orderId(pastaEncomenda)` → o segundo número, em todos os formatos;
 - `gruposPesquisa(ids)` → `[{ids, texto}]`, já com os asteriscos.
@@ -332,6 +349,9 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
   ao `showDirectoryPicker` (o input antigo não via as subpastas de produto vazias). Plano em
   `plano-versao-1.1.md`. Conferida contra os 4 lotes de teste: 135 / 493 / 1.134 / 354 encomendas, com
   os números da tabela do plano.
+- **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
+  Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
+  (Landscape 31x23 e Classic 23x31).
 
 ---
 
@@ -477,9 +497,9 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Quadro PVC › Quadro Pvc 50x50 | OMEGA |
 | Quadro PVC › Quadro Pvc 50x75 | OMEGA |
 | Quadro PVC › Quadro Pvc 60x90 | OMEGA |
-| Horizontais › Landscape 31x23 (Aro 4.5cm) | URGENTES |
-| Verticais › Classic 23x31 (Aro 3cm) | URGENTES |
-| Verticais › Classic 23x31 (Aro 4.5cm) | URGENTES |
+| Horizontais › Landscape 31x23 (Aro 4.5cm) | BOXS |
+| Verticais › Classic 23x31 (Aro 3cm) | BOXS |
+| Verticais › Classic 23x31 (Aro 4.5cm) | BOXS |
 | Almofadas Polares › Almofada 70x40 Polar | BMJCP |
 | (x2) - Almofadas Simples › Almofada 40x40 - Sem Margem - Impressão Frente e Verso | BMJCP |
 | (x2) - Mantas Simples › Manta Simples 105x180 | BMJCP |

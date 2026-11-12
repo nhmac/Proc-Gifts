@@ -3,6 +3,7 @@
 //   - os casos do anexo do CLAUDE.md (nome da pasta de produto -> processo)
 //   - pastas de encomenda (todos os formatos) e orderId
 //   - regras B1-B9
+//   - subprocessos
 //   - gruposPesquisa (tamanho, nº de ids, ordem, asteriscos)
 // Pára ao primeiro caso errado, com código de saída 1.
 // Também corre com o gjs (gjs -m não é preciso: gjs testes/testar.js), para PCs sem Node.
@@ -106,6 +107,21 @@ regraB("Almofada Preta › Almofada Preta", "B9");
 if (Logica.classificar("Peluches › Rena Knut").processo !== "GIFTS") falhar("Rena Knut");
 if (Logica.classificar("Canecas › Caneca Serena").regra.includes("peluche")) falhar("«serena» caiu nos peluches");
 console.log("ok  regras B1-B9");
+
+// ---------------------------------------------------------------- subprocessos (1.2)
+const sub = pasta => Logica.classificar(pasta).sub;
+if (sub("Cartões Visita › Cartões de Visita") !== "CARTOES") falhar("Cartões de Visita devia ser OFFSET › CARTOES");
+if (sub("(x3) - Cartões Visita › Cartões de Visita") !== "CARTOES") falhar("Cartões de Visita com quantidade");
+for (const pasta of ["Ímanes › Íman Quadrado", "Pin › Pin", "Canecas › Caneca Simples", "Dibuñecos › Dibunecos", "Coisa Nova › Sem Regra"]) {
+  if (sub(pasta) !== null) falhar(`"${pasta}" não devia ter subprocesso`);
+}
+for (const [c, sp] of Object.entries(Logica.SUBPROCESSOS)) {
+  if (!(sp.processo in Logica.PROCESSOS)) falhar(`subprocesso ${c} aponta para um processo desconhecido`);
+}
+for (const r of Logica.REGRAS) {
+  if (r.sub && (!Logica.SUBPROCESSOS[r.sub] || Logica.SUBPROCESSOS[r.sub].processo !== r.processo)) falhar(`regra «${r.quando}»: subprocesso ${r.sub} inválido`);
+}
+console.log("ok  subprocessos");
 
 // ---------------------------------------------------------------- gruposPesquisa
 for (const total of [0, 1, 2, 22, 23, 24, 50, 271, 1000]) {

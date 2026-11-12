@@ -28,7 +28,7 @@
     --p-bmjcp: #f0b25a;  --p-bmjcp-bg: #36280f;
     --p-omega: #b89cf5;  --p-omega-bg: #2a2140;
     --p-offset: #7fb0f5; --p-offset-bg: #18273f;
-    --p-urg: #fb923c;    --p-urg-bg: #3b2210;
+    --p-boxs: #fb923c;   --p-boxs-bg: #3b2210;
     --p-unk: #f5867b;    --p-unk-bg: #3a1a17;
     --sans: "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
     --display: "Inter Display", "Inter", "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
@@ -145,7 +145,7 @@
   .p-BMJCP { --c: var(--p-bmjcp); --cb: var(--p-bmjcp-bg); }
   .p-OMEGA { --c: var(--p-omega); --cb: var(--p-omega-bg); }
   .p-OFFSET { --c: var(--p-offset); --cb: var(--p-offset-bg); }
-  .p-URGENTES { --c: var(--p-urg); --cb: var(--p-urg-bg); }
+  .p-BOXS { --c: var(--p-boxs); --cb: var(--p-boxs-bg); }
   .p-DESCONHECIDO { --c: var(--p-unk); --cb: var(--p-unk-bg); }
 
   .pill {
@@ -178,6 +178,11 @@
   .processo-topo dt { color: var(--texto-sec); }
   .processo-topo dd { margin: 0; font-family: var(--mono); overflow-wrap: anywhere; }
   .processo-corpo { padding: 14px 18px; display: grid; gap: 14px; }
+  /* Subprocessos (1.2): um bloco por subprocesso dentro do cartão do processo */
+  .subprocesso + .subprocesso { border-top: 1px solid var(--borda); }
+  .subprocesso-topo { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .subprocesso-topo h4 { margin: 0; font: 600 15px/1.3 var(--display); color: var(--c); letter-spacing: .02em; }
+  .stat small { display: block; margin-top: 2px; color: var(--c, var(--texto-sec)); font-size: 12px; }
   .dica { font-size: 12.5px; color: var(--texto-sec); }
 
   /* Pesquisa no Explorador: os IDs em grupos que cabem na caixa de pesquisa, um Copiar por grupo */
@@ -270,7 +275,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.1</div>
+      <div class="versao">Versão web 1.2</div>
     </div>
   </aside>
 
@@ -319,16 +324,22 @@
 const Logica = (() => {
   const VER_DOC = "Ver documentação do processo";
   const PROCESSOS = {
-    URGENTES:     { nome: "URGENTES",       picagem: VER_DOC,              destino: VER_DOC },
+    BOXS:         { nome: "BOXS AMADOR",    picagem: VER_DOC,              destino: VER_DOC },
     BMJCP:        { nome: "BMJCP",          picagem: "Serviços Externos",  destino: "A:\\ENTRADA_RAWS\\BMJCP" },
     OMEGA:        { nome: "OMEGA",          picagem: "Pré Impressão",      destino: "A:\\PRE_IMPRESSAO\\_#OMEGA (UV) · _#BISCATES (Lembranças)" },
     OFFSET:       { nome: "OFFSET",         picagem: "Pré Impressão",      destino: "A:\\PRE_IMPRESSAO\\_#OFFSET_DIGITAL" },
     GIFTS:        { nome: "GIFTS",          picagem: "G1.3 Pré Impressão", destino: "A:\\PRE_IMPRESSAO\\_#GIFTS" },
     DESCONHECIDO: { nome: "Por confirmar",  picagem: "—",                  destino: "Produto sem regra: confirmar com o responsável" },
   };
+  // Subprocessos: produtos que, dentro de um processo, são tratados à parte (1.2). Aparecem num bloco
+  // próprio dentro do cartão do processo, com a sua pesquisa. Os restantes ficam em "Outros produtos".
+  const SUBPROCESSOS = {
+    CARTOES: { nome: "CARTÕES", processo: "OFFSET" },
+  };
+
   // Ordem dos cartões no ecrã. GIFTS no fim: é o maior volume e o operador trata-o como "o resto"
   // depois de tirar os outros processos. Por confirmar logo antes, para não se misturar com o resto.
-  const ORDEM = ["URGENTES", "BMJCP", "OMEGA", "OFFSET", "DESCONHECIDO", "GIFTS"];
+  const ORDEM = ["BOXS", "BMJCP", "OMEGA", "OFFSET", "DESCONHECIDO", "GIFTS"];
 
   // Nomes exatos que são BMJCP mas que nenhuma regra B apanha (comparados já normalizados)
   const EXCECOES_BMJCP = ["Almofadas › Almofada 70x40"];
@@ -351,8 +362,8 @@ const Logica = (() => {
   // Por ordem: ganha a primeira que bate. processo null = decidir pelas regras BMJCP (B1-B9).
   // teste recebe o texto normalizado "categoria › produto".
   const REGRAS = [
-    { quando: "contém «landscape 31x23»", processo: "URGENTES", exemplos: "Horizontais › Landscape 31x23 (Aro 4.5cm)", teste: n => /landscape 31\s*x\s*23/.test(n) },
-    { quando: "contém «classic 23x31»", processo: "URGENTES", exemplos: "Verticais › Classic 23x31 (Aro 3cm, Aro 4.5cm)", teste: n => /classic 23\s*x\s*31/.test(n) },
+    { quando: "contém «landscape 31x23»", processo: "BOXS", exemplos: "Horizontais › Landscape 31x23 (Aro 4.5cm)", teste: n => /landscape 31\s*x\s*23/.test(n) },
+    { quando: "contém «classic 23x31»", processo: "BOXS", exemplos: "Verticais › Classic 23x31 (Aro 3cm, Aro 4.5cm)", teste: n => /classic 23\s*x\s*31/.test(n) },
     { quando: "contém «globo»", processo: "OFFSET", exemplos: "Foto Globos › Globo Personalizado", teste: n => /globo/.test(n) },
     { quando: "tem a palavra «pin» ou «pins»", processo: "OFFSET", exemplos: "Pin › Pin", teste: n => /(^|[^a-z])pins?([^a-z]|$)/.test(n) },
     { quando: "contém «moldura atlas»", processo: "OMEGA", exemplos: "Moldura Atlas 13x18, 15x20", teste: n => /moldura atlas/.test(n) },
@@ -374,7 +385,7 @@ const Logica = (() => {
     { quando: "contém «mont blanc»", processo: "OMEGA", exemplos: "Moldura Mont Blanc 10X15", teste: n => /mont blanc/.test(n) },
     { quando: "contém «peluche», «coelhinho», «reninha», «sapinho», «ursinho» ou as palavras «rena», «sapo»", processo: "GIFTS", exemplos: "Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney", teste: n => /peluche|coelhinho|reninha|sapinho|ursinho/.test(n) || /(^|[^a-z])(rena|sapo)([^a-z]|$)/.test(n) },
     { quando: "contém «caderno»", processo: "OFFSET", exemplos: "Cadernos › Caderno A5", teste: n => /caderno/.test(n) },
-    { quando: "contém «cartao de visita» ou «cartoes visita»", processo: "OFFSET", exemplos: "Cartões Visita › Cartões de Visita", teste: n => /cartoes? (de )?visita/.test(n) },
+    { quando: "contém «cartao de visita» ou «cartoes visita»", processo: "OFFSET", sub: "CARTOES", exemplos: "Cartões Visita › Cartões de Visita", teste: n => /cartoes? (de )?visita/.test(n) },
   ];
 
   // Nomes vindos de um ZIP trazem os caracteres escapados: "#U203a" -> "›"
@@ -402,7 +413,7 @@ const Logica = (() => {
 
   const nomeProcesso = k => PROCESSOS[k].nome;
 
-  // Nome da pasta de produto -> { processo, regra, numRegra, qtd, categoria, produto, nome }
+  // Nome da pasta de produto -> { processo, sub, regra, numRegra, qtd, categoria, produto, nome }
   function classificar(nomePasta) {
     const p = lerNomeProduto(nomePasta);
     const n = normalizar(p.nome);
@@ -410,13 +421,15 @@ const Logica = (() => {
       if (!r.teste(n)) continue;
       const num = i + 1;
       if (r.processo) {
-        return { ...p, processo: r.processo, numRegra: num, regra: `Regra ${num}: ${r.quando} → ${nomeProcesso(r.processo)}` };
+        const sub = r.sub || null;
+        const destino = sub ? `${nomeProcesso(r.processo)} › ${SUBPROCESSOS[sub].nome}` : nomeProcesso(r.processo);
+        return { ...p, processo: r.processo, sub, numRegra: num, regra: `Regra ${num}: ${r.quando} → ${destino}` };
       }
       // Almofadas, mantas e bonecos: pelas regras B1-B9 (a B9 apanha sempre)
       const b = REGRAS_BMJCP.find(rb => rb.teste(n));
-      return { ...p, processo: b.processo, numRegra: num, regra: `Regra ${b.id}: ${b.quando} → ${nomeProcesso(b.processo)}` };
+      return { ...p, processo: b.processo, sub: null, numRegra: num, regra: `Regra ${b.id}: ${b.quando} → ${nomeProcesso(b.processo)}` };
     }
-    return { ...p, processo: "DESCONHECIDO", numRegra: 0, regra: "Nenhuma regra corresponde a este produto: confirmar com o responsável" };
+    return { ...p, processo: "DESCONHECIDO", sub: null, numRegra: 0, regra: "Nenhuma regra corresponde a este produto: confirmar com o responsável" };
   }
 
   // Pasta da encomenda: "<nº>_<order id>", sozinho ou seguido de um separador (espaço, "-" ou "›") e de
@@ -461,7 +474,7 @@ const Logica = (() => {
   }
 
   return {
-    PROCESSOS, ORDEM, REGRAS, REGRAS_BMJCP, EXCECOES_BMJCP, normalizar, lerNomeProduto, classificar,
+    PROCESSOS, SUBPROCESSOS, ORDEM, REGRAS, REGRAS_BMJCP, EXCECOES_BMJCP, normalizar, lerNomeProduto, classificar,
     ehPastaEncomenda, pareceEncomenda, orderId, gruposPesquisa, LIMITE_PESQUISA, MAX_IDS_GRUPO,
   };
 })();
@@ -562,7 +575,7 @@ function criarProgresso(el, tituloBase = document.title) {
 
 <script>
 (() => {
-  const { PROCESSOS, ORDEM, REGRAS, REGRAS_BMJCP, EXCECOES_BMJCP } = Logica;
+  const { PROCESSOS, SUBPROCESSOS, ORDEM, REGRAS, REGRAS_BMJCP, EXCECOES_BMJCP } = Logica;
   const $ = id => document.getElementById(id);
   const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   const s = n => (n === 1 ? "" : "s");
@@ -833,7 +846,10 @@ function criarProgresso(el, tituloBase = document.title) {
     for (const k of ORDEM) {
       const n = porProcesso[k].length;
       if (!n && k === "DESCONHECIDO") continue;
-      stats.push(el("div", { className: `card stat p-${k}` }, el("b", { textContent: fmt(n) }), el("span", { textContent: PROCESSOS[k].nome })));
+      const subs = Object.entries(SUBPROCESSOS).filter(([, sp]) => sp.processo === k)
+        .map(([c, sp]) => [sp.nome, porProcesso[k].filter(l => l.sub === c).length]).filter(([, m]) => m);
+      stats.push(el("div", { className: `card stat p-${k}` }, el("b", { textContent: fmt(n) }), el("span", { textContent: PROCESSOS[k].nome }),
+        ...subs.map(([nome, m]) => el("small", { textContent: `${fmt(m)} ${nome}` }))));
     }
     $("stats").replaceChildren(...stats);
     $("stats").hidden = false;
@@ -875,20 +891,9 @@ function criarProgresso(el, tituloBase = document.title) {
     else estado(`Concluído: ${fmt(n)} encomenda${s(n)}.`, "ok");
   }
 
-  function cartaoProcesso(k, linhas, variosCanais) {
-    const P = PROCESSOS[k];
+  // Pesquisa no Explorador + tabela das encomendas de um conjunto de linhas (um processo ou um subprocesso)
+  function blocoEncomendas(k, linhas, variosCanais, nomeEstado) {
     const ids = [...new Set(linhas.map(l => Logica.orderId(l.enc)))];
-    const pastas = [...new Set(linhas.map(l => l.enc))];
-
-    const topo = el("div", { className: "processo-topo" },
-      el("div", {},
-        el("h3", { textContent: `${P.nome} · ${fmt(linhas.length)}` }),
-        el("dl", {},
-          el("dt", { textContent: "Picagem" }), el("dd", { textContent: P.picagem }),
-          el("dt", { textContent: "Destino" }), el("dd", { textContent: P.destino }))),
-      botaoCopiar("Copiar nºs", "btn pequeno", () => pastas.join("\n")));
-
-    // Pesquisa no Explorador
     const grupos = Logica.gruposPesquisa(ids);
     const g = grupos.length;
     const pesquisa = el("div", { className: "grupos" },
@@ -905,7 +910,7 @@ function criarProgresso(el, tituloBase = document.title) {
         const rotulo = el("div", { className: "dica", textContent: `${g > 1 ? `Grupo ${i + 1} de ${g} · ` : ""}${m} ID${s(m)}` });
         const botao = botaoCopiar("Copiar", "btn-principal azul copiar", () => grupo.texto, codigo, () => {
           if (!rotulo.querySelector(".feito")) rotulo.append(el("span", { className: "feito", textContent: " · copiado ✓" }));
-          estado(`${P.nome}: grupo ${i + 1} de ${g} copiado (${m} ID${s(m)}).`, "ok");
+          estado(`${nomeEstado}: grupo ${i + 1} de ${g} copiado (${m} ID${s(m)}).`, "ok");
         });
         return el("div", { className: "grupo-ids" }, rotulo, el("div", { className: "campo" }, codigo, botao));
       }));
@@ -925,9 +930,39 @@ function criarProgresso(el, tituloBase = document.title) {
     const detalhes = el("details", { open: k === "DESCONHECIDO" || linhas.length <= 15 },
       el("summary", { textContent: `Ver encomendas (${fmt(linhas.length)})` }),
       el("div", { className: "tabela-scroll" }, tabela));
+    return [pesquisa, detalhes];
+  }
 
+  function cartaoProcesso(k, linhas, variosCanais) {
+    const P = PROCESSOS[k];
+    const pastas = [...new Set(linhas.map(l => l.enc))];
+
+    const topo = el("div", { className: "processo-topo" },
+      el("div", {},
+        el("h3", { textContent: `${P.nome} · ${fmt(linhas.length)}` }),
+        el("dl", {},
+          el("dt", { textContent: "Picagem" }), el("dd", { textContent: P.picagem }),
+          el("dt", { textContent: "Destino" }), el("dd", { textContent: P.destino }))),
+      botaoCopiar("Copiar nºs", "btn pequeno", () => pastas.join("\n")));
+
+    // Com subprocessos: um bloco por subprocesso e um para os outros produtos, cada um com a sua pesquisa
+    const subs = Object.entries(SUBPROCESSOS).filter(([c, sp]) => sp.processo === k && linhas.some(l => l.sub === c));
+    if (!subs.length) {
+      return el("section", { className: `card processo p-${k}` }, topo,
+        el("div", { className: "processo-corpo" }, ...blocoEncomendas(k, linhas, variosCanais, P.nome)));
+    }
+    const blocos = subs.map(([c, sp]) => [sp.nome, linhas.filter(l => l.sub === c)]);
+    const resto = linhas.filter(l => !l.sub);
+    if (resto.length) blocos.push([`Outros produtos ${P.nome}`, resto]);
     return el("section", { className: `card processo p-${k}` }, topo,
-      el("div", { className: "processo-corpo" }, pesquisa, detalhes));
+      ...blocos.map(([nome, ls]) => {
+        const pastasBloco = [...new Set(ls.map(l => l.enc))];
+        return el("div", { className: "processo-corpo subprocesso" },
+          el("div", { className: "subprocesso-topo" },
+            el("h4", { textContent: `${nome} · ${fmt(ls.length)}` }),
+            botaoCopiar("Copiar nºs", "btn pequeno", () => pastasBloco.join("\n"))),
+          ...blocoEncomendas(k, ls, variosCanais, `${P.nome} › ${nome}`));
+      }));
   }
 
   $("btn-analisar").addEventListener("click", analisar);
@@ -940,7 +975,7 @@ function criarProgresso(el, tituloBase = document.title) {
     const r = Logica.classificar(texto);
     const P = PROCESSOS[r.processo];
     $("resposta").replaceChildren(el("div", { className: `resposta p-${r.processo}` },
-      el("div", { className: "nome-processo", textContent: P.nome }),
+      el("div", { className: "nome-processo", textContent: r.sub ? `${P.nome} › ${SUBPROCESSOS[r.sub].nome}` : P.nome }),
       el("dl", {},
         el("dt", { textContent: "Picagem" }), el("dd", { textContent: P.picagem }),
         el("dt", { textContent: "Destino" }), el("dd", { className: "mono", textContent: P.destino }),
@@ -962,7 +997,8 @@ function criarProgresso(el, tituloBase = document.title) {
     el("p", { textContent: "Aplicam-se por esta ordem ao nome da pasta sem acentos e em minúsculas; ganha a primeira que bate." }),
     tabelaSimples(["#", "Bate quando o nome…", "Processo", "Exemplos"], [
       ...REGRAS.map((r, i) => [String(i + 1), r.quando,
-        r.processo ? pill(r.processo) : el("span", {}, "regras B1-B9: ", pill("BMJCP"), " ou ", pill("GIFTS")), r.exemplos]),
+        r.processo ? el("span", {}, pill(r.processo), r.sub ? ` › ${SUBPROCESSOS[r.sub].nome}` : "")
+          : el("span", {}, "regras B1-B9: ", pill("BMJCP"), " ou ", pill("GIFTS")), r.exemplos]),
       ["—", "nenhuma regra bate", pill("DESCONHECIDO"), "confirmar com o responsável"],
     ]),
     el("h3", { textContent: "Almofadas, mantas e bonecos (BMJCP ou GIFTS)" }),
