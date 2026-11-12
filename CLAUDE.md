@@ -14,10 +14,12 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.2.1
+- **Versão atual:** web 1.3
 
-Tudo corre no browser: a app **só lê nomes de pastas**, nunca abre ficheiros e **nada é enviado para
-lado nenhum**. Não introduzir pedidos de rede, CDNs nem bibliotecas.
+Tudo corre no browser e **nada é enviado para lado nenhum**. A app lê nomes de pastas e, desde a 1.3, só
+abre um ficheiro num caso: a **etiqueta PDF** das encomendas que não têm pasta "Categoria › Produto" (ver
+"Encomendas sem pasta de produto"). Não introduzir pedidos de rede nem CDNs; a única biblioteca é o pdf.js
+(`web/vendor/pdfjs`, a mesma cópia do Proc-Separador).
 
 ---
 
@@ -96,6 +98,7 @@ existem nos PCs.
 | `PROJETO.md` | O que a app faz, pastas, como atualizar (o README do projeto). |
 | `README.md` | O do GitHub, comentado de propósito. |
 | `Inter/`, `icone.ico`, `web/icon-*.png` | Fonte Inter (SIL OFL) e ícones, iguais aos da família. |
+| `web/vendor/pdfjs/` | pdf.js 3.11.174 (Apache 2.0), cópia do Proc-Separador: lê o texto das etiquetas (1.3). |
 | `referencia/prototipo.html` | Protótipo da 1.ª sessão. Apagar depois da 1.0, com o acordo do utilizador. |
 
 ## O domínio
@@ -119,6 +122,36 @@ Não servem para nada na classificação: o seletor de pastas e o arrastar **nun
 produto** (só listam as subpastas da encomenda), por isso o número de imagens não pesa. Só o seletor antigo
 (`webkitdirectory`, recurso para browsers sem `showDirectoryPicker`) recebe a lista de todos os ficheiros,
 imagens incluídas. Algumas subpastas de produto vêm vazias (encomendas `65…_…`): ver "Ler as pastas".
+
+### Encomendas sem pasta de produto (desde a 1.3)
+
+Alguns produtos (vistos: a Bola de Natal Brilhante, Offset) **não têm pasta "Categoria › Produto"**:
+
+```
+3480186_2064704/                                  ← quantidade 1: tudo na pasta da encomenda
+  3480186_2064704_bola_natal_cores_0000.jpg
+  3480186_2064704_label.pdf
+  COMPLETED
+3480186_2064705/                                  ← quantidade ≠ 1: a imagem vai para uma pasta "x3"
+  3480186_2064705_label.pdf
+  x3/
+    3480186_2064705_bola_natal_cores_0000.jpg
+    COMPLETED
+```
+
+Na 1.2.1 a primeira ficava em "sem pasta de produto" e a segunda era classificada como um produto
+chamado "x3"; o utilizador deu por falta delas na separação da manhã. Desde a 1.3, quando uma encomenda
+não tem nenhuma subpasta além das de quantidade (`x<N>`), o produto lê-se:
+
+1. da **etiqueta PDF** (`<nº>_<id>_label.pdf`, na pasta da encomenda), na linha
+   `Ficheiros de Natal › Bola de Natal Brilhante` → `Natal › Bola de Natal Brilhante` (sugestão do
+   utilizador: é a fonte certa; o nome da imagem diz só "bola natal cores");
+2. se não houver etiqueta ou ela não tiver essa linha, do **nome da imagem**:
+   `3480186_2064704_bola_natal_cores_0000.jpg` → `bola natal cores`.
+
+A tabela mostra "· lido da etiqueta" ou "· pelo nome da imagem" ao lado do produto. **A quantidade não
+interessa para a separação** (palavras do utilizador); guarda-se só para mostrar. Só se abrem as etiquetas
+destas encomendas: nos lotes de teste, nenhuma das outras 2.200 encomendas abriu um PDF.
 
 - **Pasta da encomenda:** começa sempre por `<nº>_<order id>`; a seguir pode vir nada, ou um
   separador (espaço, `-` ou `›`) e qualquer texto: `^(\d+)_(\d+)(?:[\s\-›>].*)?$`. O **order id** é
@@ -281,7 +314,7 @@ curtos e passos no infinitivo.
   botão verde e "Versão web 1.0" no rodapé.
 - **Ler as pastas (1.1):** o "Escolher pasta…" usa o `window.showDirectoryPicker()` (Chrome e Edge) e o
   arrastar usa o `webkitGetAsEntry()`. Os dois passam pelo mesmo `percorrer()`, que anda **só por pastas**
-  (nunca abre ficheiros) e pára em cada pasta de encomenda.
+  (só abre a etiqueta das encomendas sem pasta de produto) e pára em cada pasta de encomenda.
   **Não voltar ao `<input webkitdirectory>` como caminho principal:** só lista ficheiros, por isso uma
   subpasta de produto **vazia** fica invisível. As encomendas `65…_…` (a outra loja) vêm com a subpasta
   de produto vazia: na 1.0 eram 84 no 3.º lote de teste e 53 no lote BMJCP, todas dadas como "sem pasta de
@@ -367,6 +400,8 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.3** (2026-11-12): encomendas sem pasta de produto (só ficheiros, ou uma pasta `x3`): o produto
+  lê-se da etiqueta PDF (pdf.js) ou, sem ela, do nome da imagem; "bola natal" na regra da Bola de Natal.
 - **1.2.1** (2026-11-12): picagem e destino das pastas escondidos no ecrã, por decisão do utilizador
   (`MOSTRAR_PICAGEM_DESTINO = false`; os dados ficam guardados para reativar quando ele disser).
 
@@ -562,3 +597,6 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Almofadas com Margem › Almofada 45x45 - Com Margem | GIFTS |
 | Almofadas Simples › Almofada 70x40 | GIFTS |
 | Peluches › Pinguim | GIFTS |
+| Natal › Bola de Natal Brilhante | OFFSET |
+| (x3) - Natal › Bola de Natal Brilhante | OFFSET |
+| bola natal cores | OFFSET |

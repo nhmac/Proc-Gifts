@@ -24,6 +24,9 @@ DESTINO = os.path.join(PROJETO, "_site")
 NOME = "Proc-Gifts"
 
 COPIAR = {
+    "vendor/pdfjs/pdf.min.js": "web/vendor/pdfjs/pdf.min.js",
+    "vendor/pdfjs/pdf.worker.min.js": "web/vendor/pdfjs/pdf.worker.min.js",
+    "vendor/pdfjs/LICENSE": "web/vendor/pdfjs/LICENSE",
     "fonts/Inter_18pt-Regular.ttf": "Inter/static/Inter_18pt-Regular.ttf",
     "fonts/Inter_18pt-SemiBold.ttf": "Inter/static/Inter_18pt-SemiBold.ttf",
     "fonts/Inter_24pt-SemiBold.ttf": "Inter/static/Inter_24pt-SemiBold.ttf",

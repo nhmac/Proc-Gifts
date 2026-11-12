@@ -4,6 +4,7 @@
 //   - pastas de encomenda (todos os formatos) e orderId
 //   - regras B1-B9
 //   - subprocessos
+//   - encomendas sem pasta de produto: produto pela etiqueta PDF ou pelo nome da imagem
 //   - gruposPesquisa (tamanho, nº de ids, ordem, asteriscos)
 // Pára ao primeiro caso errado, com código de saída 1.
 // Também corre com o gjs (gjs -m não é preciso: gjs testes/testar.js), para PCs sem Node.
@@ -122,6 +123,33 @@ for (const r of Logica.REGRAS) {
   if (r.sub && (!Logica.SUBPROCESSOS[r.sub] || Logica.SUBPROCESSOS[r.sub].processo !== r.processo)) falhar(`regra «${r.quando}»: subprocesso ${r.sub} inválido`);
 }
 console.log("ok  subprocessos");
+
+// ---------------------------------------------------------------- encomendas sem pasta de produto (1.3)
+// 3480186_2064704/  imagem + etiqueta na própria pasta (quantidade 1)
+// 3480186_2064705/x3/  imagem numa pasta com a quantidade; a etiqueta fica na pasta da encomenda
+if (Logica.qtdDaPasta("x3") !== 3 || Logica.qtdDaPasta("X 12") !== 12 || Logica.qtdDaPasta("Canecas › Caneca") !== 0) falhar("qtdDaPasta");
+if (!Logica.semPastaDeProduto([]) || !Logica.semPastaDeProduto(["x3"]) || Logica.semPastaDeProduto(["Natal › Bola de Natal"])) falhar("semPastaDeProduto");
+if (!Logica.ehEtiqueta("3480186_2064704_label.pdf") || Logica.ehEtiqueta("3480186_2064704_bola_natal_cores_0000.jpg")) falhar("ehEtiqueta");
+const img = Logica.produtoDaImagem("3480186_2064704", "3480186_2064704_bola_natal_cores_0000.jpg");
+if (img !== "bola natal cores") falhar(`produtoDaImagem deu "${img}"`);
+if (Logica.produtoDaImagem("3480186_2064704", "3480186_2064704_label.pdf") !== null) falhar("produtoDaImagem aceitou a etiqueta");
+if (Logica.produtoDaImagem("3480186_2064704", "COMPLETED") !== null) falhar("produtoDaImagem aceitou o COMPLETED");
+if (Logica.produtoDaImagem("3480186_2064704", "9999999_1111111_caneca_0000.jpg") !== null) falhar("produtoDaImagem aceitou a imagem de outra encomenda");
+// Texto da etiqueta, como o pdf.js o devolve (uma linha por linha do PDF)
+const etiqueta = ["Encomenda 3480186_685081 - (4/4)", "Item Produto Acabamento Qtd", "2064705 Bola de Natal Brilhante 3",
+  "› Cor Dourada", "Ficheiros de Natal › Bola de Natal Brilhante", "x3 3480186_2064705..."].join("\n");
+const daEtq = Logica.produtosDaEtiqueta(etiqueta);
+if (daEtq.join("|") !== "Natal › Bola de Natal Brilhante") falhar(`produtosDaEtiqueta deu ${JSON.stringify(daEtq)}`);
+if (Logica.produtosDaEtiqueta("sem linha de ficheiros").length) falhar("produtosDaEtiqueta inventou um produto");
+const pe = (...a) => JSON.stringify(Logica.produtosDaEncomenda(...a));
+const fich = [{ ficheiro: "3480186_2064705_label.pdf", qtd: 1 }, { ficheiro: "3480186_2064705_bola_natal_cores_0000.jpg", qtd: 3 }];
+if (pe("3480186_2064705", ["x3"], daEtq, fich) !== JSON.stringify([{ produto: "(x3) - Natal › Bola de Natal Brilhante", origem: "etiqueta" }])) falhar(`etiqueta: ${pe("3480186_2064705", ["x3"], daEtq, fich)}`);
+if (pe("3480186_2064705", ["x3"], [], fich) !== JSON.stringify([{ produto: "(x3) - bola natal cores", origem: "imagem" }])) falhar(`imagem: ${pe("3480186_2064705", ["x3"], [], fich)}`);
+if (pe("3480186_2064704", ["Natal › Bola de Natal"], daEtq, fich) !== JSON.stringify([{ produto: "Natal › Bola de Natal", origem: "pasta" }])) falhar("a pasta de produto devia mandar");
+for (const n of ["(x3) - Natal › Bola de Natal Brilhante", "bola natal cores"]) {
+  if (Logica.classificar(n).processo !== "OFFSET") falhar(`"${n}" devia ser OFFSET`);
+}
+console.log("ok  encomendas sem pasta de produto (etiqueta e imagem)");
 
 // ---------------------------------------------------------------- gruposPesquisa
 for (const total of [0, 1, 2, 22, 23, 24, 50, 271, 1000]) {
