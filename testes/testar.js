@@ -129,7 +129,8 @@ console.log("ok  subprocessos");
 // 3480186_2064705/x3/  imagem numa pasta com a quantidade; a etiqueta fica na pasta da encomenda
 if (Logica.qtdDaPasta("x3") !== 3 || Logica.qtdDaPasta("X 12") !== 12 || Logica.qtdDaPasta("Canecas › Caneca") !== 0) falhar("qtdDaPasta");
 if (!Logica.semPastaDeProduto([]) || !Logica.semPastaDeProduto(["x3"]) || Logica.semPastaDeProduto(["Natal › Bola de Natal"])) falhar("semPastaDeProduto");
-if (!Logica.ehEtiqueta("3480186_2064704_label.pdf") || Logica.ehEtiqueta("3480186_2064704_bola_natal_cores_0000.jpg")) falhar("ehEtiqueta");
+if (!Logica.ehEtiqueta("3480186_2064704_label.pdf") || !Logica.ehEtiqueta("3480222_2064810.pdf")
+  || Logica.ehEtiqueta("3480186_2064704_bola_natal_cores_0000.jpg") || Logica.ehEtiqueta("outro.pdf")) falhar("ehEtiqueta");
 const img = Logica.produtoDaImagem("3480186_2064704", "3480186_2064704_bola_natal_cores_0000.jpg");
 if (img !== "bola natal cores") falhar(`produtoDaImagem deu "${img}"`);
 if (Logica.produtoDaImagem("3480186_2064704", "3480186_2064704_label.pdf") !== null) falhar("produtoDaImagem aceitou a etiqueta");
@@ -172,5 +173,14 @@ if (ex.length !== 1 || ex[0].texto !== "*2057529* OR *2057613*") falhar(`exemplo
 const longos = Logica.gruposPesquisa(Array.from({ length: 40 }, (_, i) => String(10 ** 14 + i)));
 if (longos.some(g => g.texto.length > Logica.LIMITE_PESQUISA)) falhar("ids compridos passam dos 400 caracteres");
 console.log("ok  gruposPesquisa");
+
+// ---------------------------------------------------------------- só leitura (decisão do utilizador, 1.4)
+// A app nunca pode alterar, mover, renomear ou apagar ficheiros ou pastas, nem enviar nada para fora.
+const proibidos = [/createWritable/, /removeEntry/, /\.move\s*\(/, /readwrite/, /showSaveFilePicker/,
+  /requestPermission/, /\bfetch\s*\(/, /XMLHttpRequest/, /sendBeacon/, /WebSocket/, /getFileHandle\([^)]*create/,
+  /getDirectoryHandle\([^)]*create/];
+for (const re of proibidos) if (re.test(html)) falhar(`o web/gifts.html usa ${re}: a app tem de ser só de leitura`);
+if (!/showDirectoryPicker\(\{[^}]*mode: "read"/.test(html)) falhar('o showDirectoryPicker tem de ser chamado com mode: "read"');
+console.log("ok  só leitura (nada de escrever, apagar, mover ou enviar)");
 
 console.log("Todos os testes passaram.");

@@ -14,7 +14,12 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.3
+- **Versão atual:** web 1.4
+
+**A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
+renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
+`testes/testar.js` falha se o `web/gifts.html` usar APIs de escrita, de apagar ou de rede
+(`createWritable`, `removeEntry`, `move`, `readwrite`, `fetch`, …). Não mudar isto sem o utilizador pedir.
 
 Tudo corre no browser e **nada é enviado para lado nenhum**. A app lê nomes de pastas e, desde a 1.3, só
 abre um ficheiro num caso: a **etiqueta PDF** das encomendas que não têm pasta "Categoria › Produto" (ver
@@ -143,7 +148,8 @@ Na 1.2.1 a primeira ficava em "sem pasta de produto" e a segunda era classificad
 chamado "x3"; o utilizador deu por falta delas na separação da manhã. Desde a 1.3, quando uma encomenda
 não tem nenhuma subpasta além das de quantidade (`x<N>`), o produto lê-se:
 
-1. da **etiqueta PDF** (`<nº>_<id>_label.pdf`, na pasta da encomenda), na linha
+1. da **etiqueta PDF** (`<nº>_<id>_label.pdf` ou, nalgumas encomendas, só `<nº>_<id>.pdf`, na pasta da
+   encomenda), na linha
    `Ficheiros de Natal › Bola de Natal Brilhante` → `Natal › Bola de Natal Brilhante` (sugestão do
    utilizador: é a fonte certa; o nome da imagem diz só "bola natal cores");
 2. se não houver etiqueta ou ela não tiver essa linha, do **nome da imagem**:
@@ -212,7 +218,7 @@ O resumo mostra a contagem do subprocesso por baixo do processo, e a pesquisa de
 
 | Chave | Nome | Processo | Produtos |
 |---|---|---|---|
-| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 24) |
+| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 26) |
 
 Para acrescentar um: uma entrada em `SUBPROCESSOS` e `sub: "<CHAVE>"` na(s) regra(s). Só com indicação
 do utilizador ("para já só tenho este", 2026-11-12).
@@ -244,13 +250,15 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 15 | contém `porta chave` / `porta-chave` | GIFTS | Metálico, Coração, Quadrado |
 | 16 | contém `iman` | OFFSET | Íman Quadrado, Ímanes Vintage, Ímanes Redondos |
 | 17 | contém `ornamento` | OMEGA | Ornamento de Natal - Coração, Floco de Neve, Quadrado |
-| 18 | contém `bola de natal` | OFFSET | Natal › Bola de Natal |
-| 19 | contém `azulejo` | GIFTS | Azulejo Português (15x15cm) |
-| 20 | contém `pvc` | OMEGA | Quadro PVC, todos os tamanhos |
-| 21 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
-| 22 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
-| 23 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
-| 24 | contém `cartao de visita` / `cartoes visita` | OFFSET | Cartões Visita › Cartões de Visita |
+| 18 | contém `bola de natal` ou `bola natal` | OFFSET | Natal › Bola de Natal; Natal › Bola de Natal Brilhante |
+| 19 | contém `fotos vintage` ou `vintage fotos` (não apanha a Moldura Vintage nem os Ímanes Vintage) | OFFSET | Vintage Fotos › Fotos Vintage |
+| 20 | contém `moldura cubo`, `mold cubo` ou `cubo com fotos` | OFFSET | Moldura Cubo › Cubo com Fotos 10x10 |
+| 21 | contém `azulejo` | GIFTS | Azulejo Português (15x15cm) |
+| 22 | contém `pvc` | OMEGA | Quadro PVC, todos os tamanhos |
+| 23 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
+| 24 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
+| 25 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
+| 26 | contém `cartao de visita` / `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
 | — | nenhuma regra bate | **Por confirmar** | |
 
 ### Almofadas, mantas e bonecos: regras B1-B9 (regra 9; decididas pelo utilizador a 2026-11-12)
@@ -400,6 +408,9 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.4** (2026-11-12): regras OFFSET para "Vintage Fotos › Fotos Vintage" e "Moldura Cubo › Cubo com
+  Fotos 10x10" (a da Vintage não apanha a Moldura Vintage, que é Gifts, nem os Ímanes Vintage); a etiqueta
+  também pode chamar-se `<nº>_<id>.pdf`; teste de só leitura.
 - **1.3** (2026-11-12): encomendas sem pasta de produto (só ficheiros, ou uma pasta `x3`): o produto
   lê-se da etiqueta PDF (pdf.js) ou, sem ela, do nome da imagem; "bola natal" na regra da Bola de Natal.
 - **1.2.1** (2026-11-12): picagem e destino das pastas escondidos no ecrã, por decisão do utilizador
@@ -600,3 +611,8 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Natal › Bola de Natal Brilhante | OFFSET |
 | (x3) - Natal › Bola de Natal Brilhante | OFFSET |
 | bola natal cores | OFFSET |
+| Vintage Fotos › Fotos Vintage | OFFSET |
+| Moldura Cubo › Cubo com Fotos 10x10 | OFFSET |
+| mold cubo 10x10 | OFFSET |
+| Ímanes › Íman Quadrado | OFFSET |
+| iman fotografico natal 5x5 | OFFSET |

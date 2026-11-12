@@ -275,7 +275,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.3</div>
+      <div class="versao">Versão web 1.4</div>
     </div>
   </aside>
 
@@ -381,6 +381,8 @@ const Logica = (() => {
     { quando: "contém «iman»", processo: "OFFSET", exemplos: "Íman Quadrado, Ímanes Vintage, Ímanes Redondos", teste: n => /iman/.test(n) },
     { quando: "contém «ornamento»", processo: "OMEGA", exemplos: "Ornamento de Natal: Coração, Floco de Neve, Quadrado", teste: n => /ornamento/.test(n) },
     { quando: "contém «bola de natal» ou «bola natal»", processo: "OFFSET", exemplos: "Natal › Bola de Natal; Natal › Bola de Natal Brilhante", teste: n => /bola (de )?natal/.test(n) },
+    { quando: "contém «fotos vintage» ou «vintage fotos» (não apanha a Moldura Vintage nem os Ímanes Vintage)", processo: "OFFSET", exemplos: "Vintage Fotos › Fotos Vintage", teste: n => /fotos? vintage|vintage fotos?/.test(n) },
+    { quando: "contém «moldura cubo», «mold cubo» ou «cubo com fotos»", processo: "OFFSET", exemplos: "Moldura Cubo › Cubo com Fotos 10x10", teste: n => /mold(ura)? cubo|cubo com fotos/.test(n) },
     { quando: "contém «azulejo»", processo: "GIFTS", exemplos: "Azulejo Português (15x15cm)", teste: n => /azulejo/.test(n) },
     { quando: "contém «pvc»", processo: "OMEGA", exemplos: "Quadro PVC, todos os tamanhos", teste: n => /pvc/.test(n) },
     { quando: "contém «mont blanc»", processo: "OMEGA", exemplos: "Moldura Mont Blanc 10X15", teste: n => /mont blanc/.test(n) },
@@ -451,7 +453,7 @@ const Logica = (() => {
 
   // Encomendas sem pasta "Categoria › Produto" (1.3). A imagem do cliente fica na própria pasta da
   // encomenda (quantidade 1) ou numa subpasta com a quantidade ("x3"), e o produto lê-se:
-  //   1. da etiqueta PDF da encomenda ("<nº>_<id>_label.pdf"), na linha
+  //   1. da etiqueta PDF da encomenda ("<nº>_<id>_label.pdf" ou "<nº>_<id>.pdf"), na linha
   //      "Ficheiros de Natal › Bola de Natal Brilhante" -> "Natal › Bola de Natal Brilhante";
   //   2. se não houver etiqueta ou ela não tiver essa linha, do nome da imagem:
   //      "3480186_2064704_bola_natal_cores_0000.jpg" -> "bola natal cores".
@@ -461,7 +463,8 @@ const Logica = (() => {
     const m = PASTA_QUANTIDADE.exec(descodificar(nome).trim());
     return m ? parseInt(m[1], 10) : 0;
   }
-  const ehEtiqueta = ficheiro => /_label\.pdf$/i.test(descodificar(ficheiro).trim());
+  // A etiqueta chama-se "<nº>_<id>_label.pdf" ou, em algumas encomendas, só "<nº>_<id>.pdf"
+  const ehEtiqueta = ficheiro => /^\d+_\d+(?:_label)?\.pdf$/i.test(descodificar(ficheiro).trim());
   function produtoDaImagem(pastaEnc, ficheiro) {
     const e = PASTA_ENCOMENDA.exec(descodificar(pastaEnc).trim());
     if (!e) return null;
