@@ -276,7 +276,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.6.1</div>
+      <div class="versao">Versão web 1.7</div>
     </div>
   </aside>
 
@@ -384,6 +384,8 @@ const Logica = (() => {
     { quando: "contém «keychain» (antes da regra dos porta-chaves: é OMEGA, não Gifts)", processo: "OMEGA", exemplos: "Porta-Chaves › Keychain", teste: n => /keychain/.test(n) },
     { quando: "contém «imas de natal» ou «ima de natal» (grafia brasileira; não são os Ímanes, que são OFFSET)", processo: "OMEGA", exemplos: "Christmas Gifts › Ímãs de Natal - Bola, Ímãs de Natal - Estrela", teste: n => /imas? de natal/.test(n) },
     { quando: "contém «porta chave» ou «porta-chave»", processo: "GIFTS", exemplos: "Metálico, Coração, Quadrado", teste: n => /porta.?chave/.test(n) },
+    { quando: "contém «iman quadrado»: depende do prefixo da encomenda", processo: "DESCONHECIDO", exemplos: "Ímanes › Íman Quadrado (10…_… e 3…_… → OFFSET; 65…_… → OMEGA)", teste: n => /iman quadrado/.test(n),
+      porPrefixo: { "1": "OFFSET", "3": "OFFSET", "6": "OMEGA" } },
     { quando: "contém «pack de imanes» (antes da regra dos ímanes, que é OFFSET)", processo: "OMEGA", exemplos: "Ímanes › Pack de ímanes", teste: n => /pack de imanes?/.test(n) },
     { quando: "contém «iman»", processo: "OFFSET", exemplos: "Íman Quadrado, Ímanes Vintage, Ímanes Redondos, Imans Fotográficos 6x8cm / 5x5cm, Iman Fotográfico Redondo 5,5cm", teste: n => /iman/.test(n) },
     { quando: "contém «ornamento» (em Bétula vai para OFFSET: ver o material na etiqueta)", processo: "OMEGA", exemplos: "Ornamento de Natal: Coração, Floco de Neve, Quadrado", teste: n => /ornamento/.test(n),
@@ -425,14 +427,26 @@ const Logica = (() => {
 
   const nomeProcesso = k => PROCESSOS[k].nome;
 
-  // Nome da pasta de produto (+ material lido da etiqueta, quando a regra o pede) ->
+  // Nome da pasta de produto (+ material lido da etiqueta e pasta da encomenda, quando a regra os pede) ->
   // { processo, sub, regra, numRegra, qtd, categoria, produto, nome }
-  function classificar(nomePasta, material = null) {
+  function classificar(nomePasta, material = null, pastaEnc = null) {
     const p = lerNomeProduto(nomePasta);
     const n = normalizar(p.nome);
     for (const [i, r] of REGRAS.entries()) {
       if (!r.teste(n)) continue;
       const num = i + 1;
+      // Por prefixo da encomenda (1.7): ex. Íman Quadrado, 1… e 3… -> OFFSET, 6… (outra loja) -> OMEGA.
+      // Sem a pasta da encomenda (ex.: separador Pesquisar) ou com outro prefixo: "Por confirmar".
+      if (r.porPrefixo) {
+        const prefixo = pastaEnc ? descodificar(pastaEnc).trim().charAt(0) : "";
+        const lista = Object.entries(r.porPrefixo).map(([k, v]) => `${k}… → ${nomeProcesso(v)}`).join("; ");
+        const nomeCurto = r.quando.replace(/^contém «([^»]+)».*$/, "$1");
+        const proc = r.porPrefixo[prefixo];
+        if (proc) return { ...p, processo: proc, sub: null, numRegra: num, regra: `Regra ${num}: ${nomeCurto} em encomenda ${prefixo}… → ${nomeProcesso(proc)}` };
+        return { ...p, processo: "DESCONHECIDO", sub: null, numRegra: num, regra: prefixo
+          ? `Regra ${num}: ${nomeCurto} em encomenda ${prefixo}…: prefixo sem regra (${lista}). Confirmar com o responsável.`
+          : `Regra ${num}: ${nomeCurto} depende do prefixo da encomenda (${lista}). Indicar a pasta: "<nº>_<id> / ${p.nome}".` };
+      }
       if (r.processo) {
         // Exceção por material (1.6): ex. Ornamento de Natal em Bétula -> OFFSET (por norma é OMEGA)
         const pm = material && (r.porMaterial || []).find(x => x.teste(material));
@@ -1018,7 +1032,7 @@ function criarProgresso(el, tituloBase = document.title) {
       for (const produto of enc.produtos) {
         const precisa = Logica.precisaMaterial(produto);
         linhas.push({ ...enc, pasta: produto, origem: enc.origem.get(produto) || "pasta", precisaMaterial: precisa,
-          ...Logica.classificar(produto, precisa ? enc.material : null) });
+          ...Logica.classificar(produto, precisa ? enc.material : null, enc.enc) });
       }
     }
     const porProcesso = Object.fromEntries(ORDEM.map(k => [k, linhas.filter(l => l.processo === k)]));
@@ -1160,7 +1174,9 @@ function criarProgresso(el, tituloBase = document.title) {
   $("pesquisa").addEventListener("input", e => {
     const texto = e.target.value.trim();
     if (!texto) { $("resposta").replaceChildren(); return; }
-    const r = Logica.classificar(texto);
+    // Também aceita "<nº>_<id> / Categoria › Produto", para as regras que dependem da encomenda
+    const m = /^(\d+_\d+)[^\/\\]*[\/\\]\s*(.+)$/.exec(texto);
+    const r = m ? Logica.classificar(m[2], null, m[1]) : Logica.classificar(texto);
     const P = PROCESSOS[r.processo];
     $("resposta").replaceChildren(el("div", { className: `resposta p-${r.processo}` },
       el("div", { className: "nome-processo", textContent: r.sub ? `${P.nome} › ${SUBPROCESSOS[r.sub].nome}` : P.nome }),
@@ -1187,7 +1203,9 @@ function criarProgresso(el, tituloBase = document.title) {
     el("p", { textContent: "Aplicam-se por esta ordem ao nome da pasta sem acentos e em minúsculas; ganha a primeira que bate." }),
     tabelaSimples(["#", "Bate quando o nome…", "Processo", "Exemplos"], [
       ...REGRAS.map((r, i) => [String(i + 1), r.quando,
-        r.processo ? el("span", {}, pill(r.processo), r.sub ? ` › ${SUBPROCESSOS[r.sub].nome}` : "")
+        r.porPrefixo ? el("span", {}, ...Object.entries(r.porPrefixo).flatMap(([k, v], i) => [i ? "  " : "", `${k}… `, pill(v)]))
+        : r.processo ? el("span", {}, pill(r.processo), r.sub ? ` › ${SUBPROCESSOS[r.sub].nome}` : "",
+          ...(r.porMaterial || []).flatMap(x => [` · em ${x.material}: `, pill(x.processo)]))
           : el("span", {}, "regras B1-B9: ", pill("BMJCP"), " ou ", pill("GIFTS")), r.exemplos]),
       ["—", "nenhuma regra bate", pill("DESCONHECIDO"), "confirmar com o responsável"],
     ]),

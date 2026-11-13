@@ -38,14 +38,18 @@ if (!anexo) falhar('não encontrei a secção "## Anexo" no CLAUDE.md');
 const casos = anexo.split("\n")
   .map(l => l.match(/^\|\s*(.+?)\s*\|\s*([A-Z]+)\s*\|\s*$/))
   .filter(Boolean)
-  .map(([, pasta, processo]) => ({ pasta, processo }));
+  .map(([, pasta, processo]) => {
+    // "<nº>_<id> :: Categoria › Produto" para as regras que dependem da pasta da encomenda (1.7)
+    const m = pasta.match(/^(\d+_\d+)\s*::\s*(.+)$/);
+    return m ? { enc: m[1], pasta: m[2], processo } : { enc: null, pasta, processo };
+  });
 if (casos.length < 100) falhar(`só encontrei ${casos.length} casos no anexo`);
 
 for (const c of casos) {
   if (!(c.processo in Logica.PROCESSOS)) falhar(`processo desconhecido no anexo: ${c.processo} (${c.pasta})`);
-  const r = Logica.classificar(c.pasta);
+  const r = Logica.classificar(c.pasta, null, c.enc);
   if (r.processo !== c.processo) {
-    falhar(`"${c.pasta}" deu ${r.processo}, esperado ${c.processo} (${r.regra})`);
+    falhar(`"${c.enc ? c.enc + " :: " : ""}${c.pasta}" deu ${r.processo}, esperado ${c.processo} (${r.regra})`);
   }
 }
 console.log(`ok  ${casos.length} casos do anexo`);
@@ -175,6 +179,22 @@ if (Logica.classificar(orn, "Pvc").processo !== "OMEGA") falhar("ornamento em Pv
 if (Logica.classificar(orn).processo !== "OMEGA") falhar("ornamento sem material devia ser OMEGA");
 if (Logica.classificar("Canecas › Caneca Simples", "Bétula").processo !== "GIFTS") falhar("o material não pode mudar outros produtos");
 console.log("ok  material da etiqueta (ornamento em Bétula → OFFSET)");
+
+// ---------------------------------------------------------------- prefixo da encomenda (1.7)
+// Íman Quadrado: 1… e 3… -> OFFSET; 6… (outra loja) -> OMEGA; outro prefixo ou sem encomenda -> Por confirmar
+const iq = "Ímanes › Íman Quadrado";
+const porEnc = { "10250365_10351761": "OFFSET", "3480222_2064810": "OFFSET", "6537480_1525722 - Íman Quadrado": "OMEGA",
+  "6536897_1524318": "OMEGA", "2480000_1000000": "DESCONHECIDO" };
+for (const [enc, esperado] of Object.entries(porEnc)) {
+  const r = Logica.classificar(iq, null, enc);
+  if (r.processo !== esperado) falhar(`Íman Quadrado em ${enc} deu ${r.processo}, esperado ${esperado} (${r.regra})`);
+}
+if (Logica.classificar(iq).processo !== "DESCONHECIDO") falhar("Íman Quadrado sem encomenda devia ficar Por confirmar");
+if (Logica.classificar("(x2) - " + iq, null, "6537480_1525722").processo !== "OMEGA") falhar("Íman Quadrado com quantidade");
+for (const [n, e] of [["Ímanes › Ímanes Vintage", "OFFSET"], ["Ímanes › Pack de ímanes", "OMEGA"], ["Christmas Gifts › Imans Fotográficos - 6x8cm", "OFFSET"]]) {
+  if (Logica.classificar(n, null, "6537480_1525722").processo !== e) falhar(`${n} numa encomenda 6… devia ser ${e}`);
+}
+console.log("ok  prefixo da encomenda (Íman Quadrado)");
 
 // ---------------------------------------------------------------- gruposPesquisa
 for (const total of [0, 1, 2, 22, 23, 24, 50, 271, 1000]) {
