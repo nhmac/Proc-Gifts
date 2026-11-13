@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.6
+- **Versão atual:** web 1.6.1
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -219,7 +219,7 @@ O resumo mostra a contagem do subprocesso por baixo do processo, e a pesquisa de
 
 | Chave | Nome | Processo | Produtos |
 |---|---|---|---|
-| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 32) |
+| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 33) |
 
 Para acrescentar um: uma entrada em `SUBPROCESSOS` e `sub: "<CHAVE>"` na(s) regra(s). Só com indicação
 do utilizador ("para já só tenho este", 2026-11-12).
@@ -254,18 +254,19 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 18 | contém `keychain` (antes da regra dos porta-chaves: é OMEGA, não Gifts) | OMEGA | Porta-Chaves › Keychain |
 | 19 | contém `imas de natal` ou `ima de natal` (grafia brasileira; não são os Ímanes, que são OFFSET) | OMEGA | Christmas Gifts › Ímãs de Natal - Bola, Ímãs de Natal - Estrela |
 | 20 | contém `porta chave` ou `porta-chave` | GIFTS | Metálico, Coração, Quadrado |
-| 21 | contém `iman` | OFFSET | Íman Quadrado, Ímanes Vintage, Ímanes Redondos, Imans Fotográficos 6x8cm / 5x5cm, Iman Fotográfico Redondo 5,5cm |
-| 22 | contém `ornamento` (em Bétula vai para OFFSET: ver o material na etiqueta) | OMEGA (em Bétula: OFFSET) | Ornamento de Natal: Coração, Floco de Neve, Quadrado |
-| 23 | contém `bola de natal` ou `bola natal` | OFFSET | Natal › Bola de Natal; Natal › Bola de Natal Brilhante |
-| 24 | contém `paper ball` | OFFSET | Christmas Gifts › Christmas Paper Ball |
-| 25 | contém `fotos vintage` ou `vintage fotos` (não apanha a Moldura Vintage nem os Ímanes Vintage) | OFFSET | Vintage Fotos › Fotos Vintage |
-| 26 | contém `moldura cubo`, `mold cubo`, `cubo com fotos` ou `cubo 10x10` | OFFSET | Moldura Cubo › Cubo com Fotos 10x10; Christmas Gifts › Cubo 10x10 |
-| 27 | contém `azulejo` | GIFTS | Azulejo Português (15x15cm) |
-| 28 | contém `pvc` | OMEGA | Quadro PVC, todos os tamanhos |
-| 29 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
-| 30 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
-| 31 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
-| 32 | contém `cartao de visita` ou `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
+| 21 | contém `pack de imanes` (antes da regra dos ímanes, que é OFFSET) | OMEGA | Ímanes › Pack de ímanes |
+| 22 | contém `iman` | OFFSET | Íman Quadrado, Ímanes Vintage, Ímanes Redondos, Imans Fotográficos 6x8cm / 5x5cm, Iman Fotográfico Redondo 5,5cm |
+| 23 | contém `ornamento` (em Bétula vai para OFFSET: ver o material na etiqueta) | OMEGA (em Bétula: OFFSET) | Ornamento de Natal: Coração, Floco de Neve, Quadrado |
+| 24 | contém `bola de natal` ou `bola natal` | OFFSET | Natal › Bola de Natal; Natal › Bola de Natal Brilhante |
+| 25 | contém `paper ball` | OFFSET | Christmas Gifts › Christmas Paper Ball |
+| 26 | contém `fotos vintage` ou `vintage fotos` (não apanha a Moldura Vintage nem os Ímanes Vintage) | OFFSET | Vintage Fotos › Fotos Vintage |
+| 27 | contém `moldura cubo`, `mold cubo`, `cubo com fotos` ou `cubo 10x10` | OFFSET | Moldura Cubo › Cubo com Fotos 10x10; Christmas Gifts › Cubo 10x10 |
+| 28 | contém `azulejo` | GIFTS | Azulejo Português (15x15cm) |
+| 29 | contém `pvc` | OMEGA | Quadro PVC, todos os tamanhos |
+| 30 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
+| 31 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
+| 32 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
+| 33 | contém `cartao de visita` ou `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
 | — | nenhuma regra bate | **Por confirmar** | |
 
 ### Almofadas, mantas e bonecos: regras B1-B9 (regra 9; decididas pelo utilizador a 2026-11-12)
@@ -416,6 +417,8 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.6.1** (2026-11-13): "Pack de ímanes" → OMEGA (regra própria, antes da regra geral dos ímanes, que é
+  OFFSET).
 - **1.6** (2026-11-13): **exceção por material**. O utilizador explicou que o "Ornamento de Natal" é por norma
   OMEGA, mas em **Bétula** é OFFSET; o material vem na etiqueta ("Tipo de Material:"). A regra do ornamento
   tem `porMaterial`; nas encomendas cujo produto o pede (`precisaMaterial`), a app lê a etiqueta e passa o
@@ -665,6 +668,6 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Christmas Gifts › Ornamento de Natal - Bola | OMEGA |
 | Christmas Gifts › Ornamento de Natal - Presente | OMEGA |
 | Christmas Gifts › Ornamento de Natal - Estrela 10x10cm | OMEGA |
-| Ímanes › Pack de ímanes | OFFSET |
+| Ímanes › Pack de ímanes | OMEGA |
 | Pin › Pin Personalizado | OFFSET |
 | Azulejo › Azulejo (15x15) | GIFTS |

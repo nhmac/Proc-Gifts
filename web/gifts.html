@@ -276,7 +276,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.6</div>
+      <div class="versao">Versão web 1.6.1</div>
     </div>
   </aside>
 
@@ -384,6 +384,7 @@ const Logica = (() => {
     { quando: "contém «keychain» (antes da regra dos porta-chaves: é OMEGA, não Gifts)", processo: "OMEGA", exemplos: "Porta-Chaves › Keychain", teste: n => /keychain/.test(n) },
     { quando: "contém «imas de natal» ou «ima de natal» (grafia brasileira; não são os Ímanes, que são OFFSET)", processo: "OMEGA", exemplos: "Christmas Gifts › Ímãs de Natal - Bola, Ímãs de Natal - Estrela", teste: n => /imas? de natal/.test(n) },
     { quando: "contém «porta chave» ou «porta-chave»", processo: "GIFTS", exemplos: "Metálico, Coração, Quadrado", teste: n => /porta.?chave/.test(n) },
+    { quando: "contém «pack de imanes» (antes da regra dos ímanes, que é OFFSET)", processo: "OMEGA", exemplos: "Ímanes › Pack de ímanes", teste: n => /pack de imanes?/.test(n) },
     { quando: "contém «iman»", processo: "OFFSET", exemplos: "Íman Quadrado, Ímanes Vintage, Ímanes Redondos, Imans Fotográficos 6x8cm / 5x5cm, Iman Fotográfico Redondo 5,5cm", teste: n => /iman/.test(n) },
     { quando: "contém «ornamento» (em Bétula vai para OFFSET: ver o material na etiqueta)", processo: "OMEGA", exemplos: "Ornamento de Natal: Coração, Floco de Neve, Quadrado", teste: n => /ornamento/.test(n),
       porMaterial: [{ material: "Bétula", processo: "OFFSET", teste: m => /b[eé]tula/i.test(m) }] },
