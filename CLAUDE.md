@@ -663,3 +663,8 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Christmas Gifts › Ornamento de Natal - Bola 10x10cm | OMEGA |
 | Christmas Gifts › Ornamento de Natal - Pinheiro de Natal 10x10cm | OMEGA |
 | Christmas Gifts › Ornamento de Natal - Bola | OMEGA |
+| Christmas Gifts › Ornamento de Natal - Presente | OMEGA |
+| Christmas Gifts › Ornamento de Natal - Estrela 10x10cm | OMEGA |
+| Ímanes › Pack de ímanes | OFFSET |
+| Pin › Pin Personalizado | OFFSET |
+| Azulejo › Azulejo (15x15) | GIFTS |
