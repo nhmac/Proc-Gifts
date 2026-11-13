@@ -206,6 +206,7 @@
   td.mono { font: 13px/20px var(--mono); white-space: nowrap; }
   td.qtd { text-align: center; font-variant-numeric: tabular-nums; }
   .cat { color: var(--texto-sec); }
+  .cat.aviso-texto { color: var(--etiqueta-texto); }
   .tabela-scroll { overflow-x: auto; }
 
   /* Pesquisar produto */
@@ -270,12 +271,12 @@
 
     <div class="privado">
       <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M4 7V5a4 4 0 0 1 8 0v2M3 7h10v7H3z"/></svg>
-      <span>Só são lidos os nomes das pastas e, nas encomendas sem pasta de produto, a etiqueta PDF; nada é enviado.</span>
+      <span>Só são lidos os nomes das pastas e, quando é preciso (sem pasta de produto, ou ornamentos), a etiqueta PDF; nada é enviado.</span>
     </div>
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.5</div>
+      <div class="versao">Versão web 1.6</div>
     </div>
   </aside>
 
@@ -384,7 +385,8 @@ const Logica = (() => {
     { quando: "contém «imas de natal» ou «ima de natal» (grafia brasileira; não são os Ímanes, que são OFFSET)", processo: "OMEGA", exemplos: "Christmas Gifts › Ímãs de Natal - Bola, Ímãs de Natal - Estrela", teste: n => /imas? de natal/.test(n) },
     { quando: "contém «porta chave» ou «porta-chave»", processo: "GIFTS", exemplos: "Metálico, Coração, Quadrado", teste: n => /porta.?chave/.test(n) },
     { quando: "contém «iman»", processo: "OFFSET", exemplos: "Íman Quadrado, Ímanes Vintage, Ímanes Redondos, Imans Fotográficos 6x8cm / 5x5cm, Iman Fotográfico Redondo 5,5cm", teste: n => /iman/.test(n) },
-    { quando: "contém «ornamento»", processo: "OMEGA", exemplos: "Ornamento de Natal: Coração, Floco de Neve, Quadrado", teste: n => /ornamento/.test(n) },
+    { quando: "contém «ornamento» (em Bétula vai para OFFSET: ver o material na etiqueta)", processo: "OMEGA", exemplos: "Ornamento de Natal: Coração, Floco de Neve, Quadrado", teste: n => /ornamento/.test(n),
+      porMaterial: [{ material: "Bétula", processo: "OFFSET", teste: m => /b[eé]tula/i.test(m) }] },
     { quando: "contém «bola de natal» ou «bola natal»", processo: "OFFSET", exemplos: "Natal › Bola de Natal; Natal › Bola de Natal Brilhante", teste: n => /bola (de )?natal/.test(n) },
     { quando: "contém «paper ball»", processo: "OFFSET", exemplos: "Christmas Gifts › Christmas Paper Ball", teste: n => /paper ball/.test(n) },
     { quando: "contém «fotos vintage» ou «vintage fotos» (não apanha a Moldura Vintage nem os Ímanes Vintage)", processo: "OFFSET", exemplos: "Vintage Fotos › Fotos Vintage", teste: n => /fotos? vintage|vintage fotos?/.test(n) },
@@ -422,14 +424,21 @@ const Logica = (() => {
 
   const nomeProcesso = k => PROCESSOS[k].nome;
 
-  // Nome da pasta de produto -> { processo, sub, regra, numRegra, qtd, categoria, produto, nome }
-  function classificar(nomePasta) {
+  // Nome da pasta de produto (+ material lido da etiqueta, quando a regra o pede) ->
+  // { processo, sub, regra, numRegra, qtd, categoria, produto, nome }
+  function classificar(nomePasta, material = null) {
     const p = lerNomeProduto(nomePasta);
     const n = normalizar(p.nome);
     for (const [i, r] of REGRAS.entries()) {
       if (!r.teste(n)) continue;
       const num = i + 1;
       if (r.processo) {
+        // Exceção por material (1.6): ex. Ornamento de Natal em Bétula -> OFFSET (por norma é OMEGA)
+        const pm = material && (r.porMaterial || []).find(x => x.teste(material));
+        if (pm) {
+          return { ...p, processo: pm.processo, sub: null, numRegra: num,
+            regra: `Regra ${num}: ${r.quando.replace(/ \(.*\)$/, "")} em ${pm.material} → ${nomeProcesso(pm.processo)}` };
+        }
         const sub = r.sub || null;
         const destino = sub ? `${nomeProcesso(r.processo)} › ${SUBPROCESSOS[sub].nome}` : nomeProcesso(r.processo);
         return { ...p, processo: r.processo, sub, numRegra: num, regra: `Regra ${num}: ${r.quando} → ${destino}` };
@@ -510,6 +519,28 @@ const Logica = (() => {
     }
     return [...vistos.values()];
   }
+  // Produtos cujo processo depende do material da etiqueta (1.6): a regra que lhes cabe tem "porMaterial"
+  function precisaMaterial(nomePasta) {
+    const n = normalizar(lerNomeProduto(nomePasta).nome);
+    const r = REGRAS.find(x => x.teste(n));
+    return !!(r && r.porMaterial && r.porMaterial.length);
+  }
+  // "Tipo de Material" na etiqueta. O pdf.js devolve primeiro os rótulos e depois os valores, pela mesma ordem:
+  //   "Tipo de Material:" / "Correção de cor:" / "Bétula" / "Não"  -> "Bétula"
+  // (se o valor vier na mesma linha, "Tipo de Material: Bétula", também serve). Sem a linha: null.
+  function materialDaEtiqueta(texto) {
+    const linhas = String(texto ?? "").split(/\r?\n/).map(l => l.replace(/\s+/g, " ").trim()).filter(Boolean);
+    const i = linhas.findIndex(l => /^tipo de material:/i.test(l));
+    if (i < 0) return null;
+    const mesma = linhas[i].replace(/^tipo de material:\s*/i, "").trim();
+    if (mesma) return mesma;
+    const rotulo = l => /:$/.test(l);
+    let ini = i; while (ini > 0 && rotulo(linhas[ini - 1])) ini--;
+    let fim = i; while (fim + 1 < linhas.length && rotulo(linhas[fim + 1])) fim++;
+    const valor = linhas[fim + 1 + (i - ini)];
+    return valor && !rotulo(valor) ? valor : null;
+  }
+
   // Uma encomenda sem pasta "Categoria › Produto" (só ficheiros e/ou pastas "x3"): é preciso ler a etiqueta
   const semPastaDeProduto = subpastas => !subpastas.some(s => !qtdDaPasta(s));
 
@@ -541,7 +572,7 @@ const Logica = (() => {
   return {
     PROCESSOS, SUBPROCESSOS, ORDEM, REGRAS, REGRAS_BMJCP, EXCECOES_BMJCP, normalizar, lerNomeProduto, classificar,
     ehPastaEncomenda, pareceEncomenda, orderId, qtdDaPasta, ehEtiqueta, produtoDaImagem, produtosDaEtiqueta,
-    produtosDaEncomenda, semPastaDeProduto, ordemEtiquetas, gruposPesquisa, LIMITE_PESQUISA, MAX_IDS_GRUPO,
+    produtosDaEncomenda, semPastaDeProduto, ordemEtiquetas, precisaMaterial, materialDaEtiqueta, gruposPesquisa, LIMITE_PESQUISA, MAX_IDS_GRUPO,
   };
 })();
 </script>
@@ -676,13 +707,28 @@ function criarProgresso(el, tituloBase = document.title) {
   // ficheiros: [{ ficheiro, qtd, obter }], em que obter() devolve o File. Tenta os PDFs da encomenda pela
   // ordem de Logica.ordemEtiquetas (primeiro o "_label.pdf"); um PDF sem a linha "Ficheiros de …" (por
   // exemplo, só com o código de barras da encomenda) não conta, e passa-se ao seguinte. Sem nenhum, a imagem.
-  async function produtosSemPasta(enc, subpastas, ficheiros) {
-    let daEtiqueta = [];
+  async function lerEtiquetas(ficheiros) {
+    let lida = false;
     for (const f of Logica.ordemEtiquetas(ficheiros)) {
-      daEtiqueta = Logica.produtosDaEtiqueta(await textoDoPdf(await f.obter().catch(() => null)));
-      if (daEtiqueta.length) break;
+      const texto = await textoDoPdf(await f.obter().catch(() => null));
+      if (texto.trim()) lida = true;
+      const produtos = Logica.produtosDaEtiqueta(texto), material = Logica.materialDaEtiqueta(texto);
+      if (produtos.length || material) return { lida, produtos, material };
     }
-    return Logica.produtosDaEncomenda(enc, subpastas, daEtiqueta, ficheiros);
+    return { lida, produtos: [], material: null };
+  }
+
+  // Os produtos de uma encomenda e, quando algum deles o pede (ex.: ornamentos), o material da etiqueta.
+  // material: texto lido; materialLido: false se não houve etiqueta para ler.
+  async function produtosDaEncomendaUI(enc, subpastas, ficheiros) {
+    if (Logica.semPastaDeProduto(subpastas)) {
+      const e = await lerEtiquetas(ficheiros);
+      return { produtos: Logica.produtosDaEncomenda(enc, subpastas, e.produtos, ficheiros), material: e.material, materialLido: e.lida };
+    }
+    const produtos = Logica.produtosDaEncomenda(enc, subpastas);
+    if (!produtos.some(p => Logica.precisaMaterial(p.produto))) return { produtos, material: null, materialLido: true };
+    const e = await lerEtiquetas(ficheiros);
+    return { produtos, material: e.material, materialLido: e.lida };
   }
 
   // Picagem e destino das pastas: ESCONDIDOS por decisão do utilizador (2026-11-12, versão 1.2.1).
@@ -720,10 +766,12 @@ function criarProgresso(el, tituloBase = document.title) {
     const mapa = new Map();
     for (const e of entradas) {
       const chave = `${e.canal}\u0000${e.enc}`;
-      if (!mapa.has(chave)) mapa.set(chave, { canal: e.canal, enc: e.enc, produtos: [], origem: new Map() });
+      if (!mapa.has(chave)) mapa.set(chave, { canal: e.canal, enc: e.enc, produtos: [], origem: new Map(), material: null, materialLido: true });
       const enc = mapa.get(chave);
       if (e.produto && !enc.produtos.includes(e.produto)) enc.produtos.push(e.produto);
       if (e.produto && e.origem) enc.origem.set(e.produto, e.origem);
+      if (e.material) enc.material = e.material;
+      if (e.materialLido === false) enc.materialLido = false;
     }
     return [...mapa.values()].sort((a, b) => a.canal.localeCompare(b.canal) || a.enc.localeCompare(b.enc));
   }
@@ -755,20 +803,17 @@ function criarProgresso(el, tituloBase = document.title) {
     const filhos = await no.filhos();
     if (Logica.ehPastaEncomenda(no.nome)) {
       const subpastas = filhos.filter(f => f.pasta);
-      let produtos;
+      // Os ficheiros da encomenda (a etiqueta está aqui) e, sem pasta de produto, os das pastas "x3"
+      const ficheiros = filhos.filter(f => !f.pasta).map(f => ({ ficheiro: f.nome, qtd: 1, obter: () => f.obter() }));
       if (Logica.semPastaDeProduto(subpastas.map(f => f.nome))) {
-        // Só ficheiros e/ou pastas "x3": ler a etiqueta e, de recurso, os nomes das imagens
-        const ficheiros = filhos.filter(f => !f.pasta).map(f => ({ ficheiro: f.nome, qtd: 1, no: f }));
         for (const q of subpastas) {
           const qtd = Logica.qtdDaPasta(q.nome);
-          for (const f of await q.filhos()) if (!f.pasta) ficheiros.push({ ficheiro: f.nome, qtd, no: f });
+          for (const f of await q.filhos()) if (!f.pasta) ficheiros.push({ ficheiro: f.nome, qtd, obter: () => f.obter() });
         }
-        produtos = await produtosSemPasta(no.nome, subpastas.map(f => f.nome), ficheiros.map(f => ({ ...f, obter: () => f.no.obter() })));
-      } else {
-        produtos = Logica.produtosDaEncomenda(no.nome, subpastas.map(f => f.nome));
       }
-      if (!produtos.length) entradas.push({ canal: pai, enc: no.nome, produto: null });
-      for (const p of produtos) entradas.push({ canal: pai, enc: no.nome, produto: p.produto, origem: p.origem });
+      const r = await produtosDaEncomendaUI(no.nome, subpastas.map(f => f.nome), ficheiros);
+      if (!r.produtos.length) entradas.push({ canal: pai, enc: no.nome, produto: null });
+      for (const p of r.produtos) entradas.push({ canal: pai, enc: no.nome, produto: p.produto, origem: p.origem, material: r.material, materialLido: r.materialLido });
       contar();
       return;
     }
@@ -864,11 +909,9 @@ function criarProgresso(el, tituloBase = document.title) {
     const entradas = [];
     for (const e of porEncomenda.values()) {
       const subpastas = [...e.subpastas];
-      const produtos = Logica.semPastaDeProduto(subpastas)
-        ? await produtosSemPasta(e.enc, subpastas, e.ficheiros.map(f => ({ ...f, obter: async () => f.file })))
-        : Logica.produtosDaEncomenda(e.enc, subpastas);
-      if (!produtos.length) entradas.push({ canal: e.canal, enc: e.enc, produto: null });
-      for (const p of produtos) entradas.push({ canal: e.canal, enc: e.enc, produto: p.produto, origem: p.origem });
+      const r = await produtosDaEncomendaUI(e.enc, subpastas, e.ficheiros.map(f => ({ ...f, obter: async () => f.file })));
+      if (!r.produtos.length) entradas.push({ canal: e.canal, enc: e.enc, produto: null });
+      for (const p of r.produtos) entradas.push({ canal: e.canal, enc: e.enc, produto: p.produto, origem: p.origem, material: r.material, materialLido: r.materialLido });
     }
     const pasta = (todos[0].webkitRelativePath || "").split("/")[0] || "Pasta";
     definirPasta(juntar(entradas), pasta, foraDoFormato);
@@ -971,7 +1014,11 @@ function criarProgresso(el, tituloBase = document.title) {
     const semProduto = [];
     for (const enc of lida) {
       if (!enc.produtos.length) { semProduto.push(enc); continue; }
-      for (const produto of enc.produtos) linhas.push({ ...enc, pasta: produto, origem: enc.origem.get(produto) || "pasta", ...Logica.classificar(produto) });
+      for (const produto of enc.produtos) {
+        const precisa = Logica.precisaMaterial(produto);
+        linhas.push({ ...enc, pasta: produto, origem: enc.origem.get(produto) || "pasta", precisaMaterial: precisa,
+          ...Logica.classificar(produto, precisa ? enc.material : null) });
+      }
     }
     const porProcesso = Object.fromEntries(ORDEM.map(k => [k, linhas.filter(l => l.processo === k)]));
     const multi = lida.filter(e => e.produtos.length > 1);
@@ -1063,7 +1110,9 @@ function criarProgresso(el, tituloBase = document.title) {
         variosCanais && el("td", { className: "cat", textContent: nomeCanal(l.canal) }),
         el("td", {}, l.categoria ? el("span", { className: "cat", textContent: `${l.categoria} › ` }) : null, l.produto,
           l.origem === "etiqueta" ? el("span", { className: "cat", textContent: " · lido da etiqueta" }) : null,
-          l.origem === "imagem" ? el("span", { className: "cat", textContent: " · pelo nome da imagem" }) : null),
+          l.origem === "imagem" ? el("span", { className: "cat", textContent: " · pelo nome da imagem" }) : null,
+          l.precisaMaterial ? el("span", { className: l.materialLido ? "cat" : "cat aviso-texto",
+            textContent: l.material ? ` · material: ${l.material}` : l.materialLido ? " · sem material na etiqueta" : " · etiqueta não lida: material por verificar" }) : null),
         el("td", { className: "qtd", textContent: String(l.qtd) })))));
     const detalhes = el("details", { open: k === "DESCONHECIDO" || linhas.length <= 15 },
       el("summary", { textContent: `Ver encomendas (${fmt(linhas.length)})` }),

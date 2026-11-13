@@ -158,6 +158,24 @@ if (ord !== "3480222_2064810_label.pdf|3480222_2064810.pdf") falhar(`ordemEtique
 if (Logica.produtosDaEtiqueta("*3480222*\n3480222\n").length) falhar("um PDF só com o código de barras deu um produto");
 console.log("ok  encomendas sem pasta de produto (etiqueta e imagem)");
 
+// ---------------------------------------------------------------- material da etiqueta (1.6)
+// Ornamento de Natal: por norma OMEGA; em Bétula, OFFSET. O pdf.js devolve os rótulos e depois os valores.
+const etqMat = mat => ["Item Produtos Acabamentos Qtd", "2943995 ...o - Christmas Gifts - Ornamento de Natal - Bola 10x10cm",
+  "Tipo de Material:", "Correção de cor:", mat, "Não", "6", "Ficheiros de: 6537131_1524942 - Ornamento de Navidad - Bola 10x10cm"].join("\n");
+if (Logica.materialDaEtiqueta(etqMat("Bétula")) !== "Bétula") falhar(`materialDaEtiqueta deu ${Logica.materialDaEtiqueta(etqMat("Bétula"))}`);
+if (Logica.materialDaEtiqueta(etqMat("Pvc")) !== "Pvc") falhar("materialDaEtiqueta (Pvc)");
+if (Logica.materialDaEtiqueta("Tipo de Material: Bétula   Não") === null) falhar("materialDaEtiqueta na mesma linha");
+if (Logica.materialDaEtiqueta("Item Produtos\nCorreção de cor:\nNão") !== null) falhar("materialDaEtiqueta inventou um material");
+const orn = "Christmas Gifts › Ornamento de Natal - Bola 10x10cm";
+if (!Logica.precisaMaterial(orn) || !Logica.precisaMaterial("Natal › Ornamento de Natal - Coração")) falhar("precisaMaterial (ornamentos)");
+if (Logica.precisaMaterial("Canecas › Caneca Simples") || Logica.precisaMaterial("Christmas Gifts › Bola de Natal")) falhar("precisaMaterial (outros)");
+if (Logica.classificar(orn, "Bétula").processo !== "OFFSET") falhar("ornamento em Bétula devia ser OFFSET");
+if (Logica.classificar(orn, "Betula").processo !== "OFFSET") falhar("ornamento em Betula (sem acento) devia ser OFFSET");
+if (Logica.classificar(orn, "Pvc").processo !== "OMEGA") falhar("ornamento em Pvc devia ser OMEGA");
+if (Logica.classificar(orn).processo !== "OMEGA") falhar("ornamento sem material devia ser OMEGA");
+if (Logica.classificar("Canecas › Caneca Simples", "Bétula").processo !== "GIFTS") falhar("o material não pode mudar outros produtos");
+console.log("ok  material da etiqueta (ornamento em Bétula → OFFSET)");
+
 // ---------------------------------------------------------------- gruposPesquisa
 for (const total of [0, 1, 2, 22, 23, 24, 50, 271, 1000]) {
   const lista = Array.from({ length: total }, (_, i) => String(2000000 + i * 37));

@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.5
+- **Versão atual:** web 1.6
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -22,8 +22,9 @@ renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "
 (`createWritable`, `removeEntry`, `move`, `readwrite`, `fetch`, …). Não mudar isto sem o utilizador pedir.
 
 Tudo corre no browser e **nada é enviado para lado nenhum**. A app lê nomes de pastas e, desde a 1.3, só
-abre um ficheiro num caso: a **etiqueta PDF** das encomendas que não têm pasta "Categoria › Produto" (ver
-"Encomendas sem pasta de produto"). Não introduzir pedidos de rede nem CDNs; a única biblioteca é o pdf.js
+abre um ficheiro em dois casos: a **etiqueta PDF** das encomendas que não têm pasta "Categoria › Produto"
+(ver "Encomendas sem pasta de produto") e a das encomendas cujo processo depende do material (ornamentos:
+ver 1.6 em "Versões"). Não introduzir pedidos de rede nem CDNs; a única biblioteca é o pdf.js
 (`web/vendor/pdfjs`, a mesma cópia do Proc-Separador).
 
 ---
@@ -254,7 +255,7 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 19 | contém `imas de natal` ou `ima de natal` (grafia brasileira; não são os Ímanes, que são OFFSET) | OMEGA | Christmas Gifts › Ímãs de Natal - Bola, Ímãs de Natal - Estrela |
 | 20 | contém `porta chave` ou `porta-chave` | GIFTS | Metálico, Coração, Quadrado |
 | 21 | contém `iman` | OFFSET | Íman Quadrado, Ímanes Vintage, Ímanes Redondos, Imans Fotográficos 6x8cm / 5x5cm, Iman Fotográfico Redondo 5,5cm |
-| 22 | contém `ornamento` | OMEGA | Ornamento de Natal: Coração, Floco de Neve, Quadrado |
+| 22 | contém `ornamento` (em Bétula vai para OFFSET: ver o material na etiqueta) | OMEGA (em Bétula: OFFSET) | Ornamento de Natal: Coração, Floco de Neve, Quadrado |
 | 23 | contém `bola de natal` ou `bola natal` | OFFSET | Natal › Bola de Natal; Natal › Bola de Natal Brilhante |
 | 24 | contém `paper ball` | OFFSET | Christmas Gifts › Christmas Paper Ball |
 | 25 | contém `fotos vintage` ou `vintage fotos` (não apanha a Moldura Vintage nem os Ímanes Vintage) | OFFSET | Vintage Fotos › Fotos Vintage |
@@ -415,6 +416,15 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.6** (2026-11-13): **exceção por material**. O utilizador explicou que o "Ornamento de Natal" é por norma
+  OMEGA, mas em **Bétula** é OFFSET; o material vem na etiqueta ("Tipo de Material:"). A regra do ornamento
+  tem `porMaterial`; nas encomendas cujo produto o pede (`precisaMaterial`), a app lê a etiqueta e passa o
+  material ao `classificar(nome, material)`. O pdf.js devolve os rótulos e depois os valores pela mesma
+  ordem ("Tipo de Material:" / "Correção de cor:" / "Bétula" / "Não"): o `materialDaEtiqueta` lê pela
+  posição. Sem material na etiqueta (ex.: "Ornamento de Natal - Bola", sem tamanho), fica OMEGA; sem
+  etiqueta legível, fica OMEGA com o aviso "etiqueta não lida: material por verificar". Nos lotes de
+  teste só os ornamentos 10x10cm da outra loja tinham "Tipo de Material" (Bétula ou Pvc). A tabela mostra
+  "· material: …" ao lado do produto.
 - **1.5** (2026-11-13): produtos da outra loja (`65…_… - <produto>`, muitos na categoria "Christmas Gifts",
   que junta processos diferentes, por isso decide-se pelo nome do produto): "Keychain" → OMEGA (antes da
   regra dos porta-chaves); "Ímãs de Natal" (Bola, Estrela; grafia brasileira) → OMEGA; "Christmas Paper Ball"
@@ -650,3 +660,6 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Christmas Gifts › Iman Fotográfico Redondo - 5,5cm | OFFSET |
 | Christmas Gifts › Bola de Natal | OFFSET |
 | Puzzles & Jogos › Puzzle A4 | GIFTS |
+| Christmas Gifts › Ornamento de Natal - Bola 10x10cm | OMEGA |
+| Christmas Gifts › Ornamento de Natal - Pinheiro de Natal 10x10cm | OMEGA |
+| Christmas Gifts › Ornamento de Natal - Bola | OMEGA |
