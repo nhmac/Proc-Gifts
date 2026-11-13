@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.4.3
+- **Versão atual:** web 1.5
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -218,7 +218,7 @@ O resumo mostra a contagem do subprocesso por baixo do processo, e a pesquisa de
 
 | Chave | Nome | Processo | Produtos |
 |---|---|---|---|
-| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 29) |
+| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 32) |
 
 Para acrescentar um: uma entrada em `SUBPROCESSOS` e `sub: "<CHAVE>"` na(s) regra(s). Só com indicação
 do utilizador ("para já só tenho este", 2026-11-12).
@@ -233,35 +233,38 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 
 | # | Bate quando o texto normalizado… | Processo | Exemplos |
 |---|---|---|---|
-| 1 | contém `landscape 31x23` (com ou sem espaços à volta do x) | BOXS | Horizontais › Landscape 31x23 (Aro 3cm / Aro 4.5cm) |
-| 2 | contém `classic 23x31` | BOXS | Verticais › Classic 23x31 (Aro 3cm / Aro 4.5cm) |
-| 3 | contém `square 21x21` | BOXS | Square 21x21 (Aro 4.5cm) — sem exemplo real ainda (ver Versões, 1.4.2) |
-| 4 | contém `box para album 21x21` | BOXS | Box para Álbum 21x21 cm — sem exemplo real ainda (ver Versões, 1.4.3) |
+| 1 | contém `landscape 31x23` | BOXS | Horizontais › Landscape 31x23 (Aro 3cm, Aro 4.5cm) |
+| 2 | contém `classic 23x31` | BOXS | Verticais › Classic 23x31 (Aro 3cm, Aro 4.5cm) |
+| 3 | contém `square 21x21` | BOXS | Square 21x21 (Aro 4.5cm) |
+| 4 | contém `box para album 21x21` | BOXS | Box para Álbum 21x21 cm |
 | 5 | contém `globo` | OFFSET | Foto Globos › Globo Personalizado |
-| 6 | tem a palavra `pin` / `pins` (isolada: não pode apanhar "pinguim") | OFFSET | Pin › Pin |
+| 6 | tem a palavra `pin` ou `pins` | OFFSET | Pin › Pin |
 | 7 | contém `moldura atlas` | OMEGA | Moldura Atlas 13x18, 15x20 |
 | 8 | contém `moldura essence` | OMEGA | Moldura Essence 20x20, 20x30, 30x45, 40x60 |
 | 9 | contém `moldura haramukh` | OMEGA | Moldura Haramukh 10x15, 15x20 |
 | 10 | contém `moldura vintage` ou `mold vintage` | GIFTS | Moldura Vintage (não confundir com Fotos Vintage nem Ímanes Vintage, que são OFFSET) |
 | 11 | contém `mealheiro` | GIFTS | Oportunidades › Mealheiro |
-| 12 | contém `almofada`, `manta`, `dibu` ou `boneco` | **regras B1-B9** (abaixo): BMJCP ou GIFTS | Almofadas, Mantas, Dibuñecos |
+| 12 | contém `almofada`, `manta`, `dibu` ou `boneco` | **regras B1-B9** (abaixo): BMJCP ou GIFTS | Almofadas, Mantas e Dibuñecos (ver as regras B1-B9) |
 | 13 | contém `caneca` | GIFTS | Básica, Colorida, Love, Mágica, Preta Personalizada, Simples |
-| 14 | contém `avental` / `aventais` | GIFTS | Aventais › Avental |
-| 15 | contém `baralho` | OFFSET | Puzzles & Jogos / Baraja de cartas › Baralho Cartas (9x6cm) |
+| 14 | contém `avental` ou `aventais` | GIFTS | Aventais › Avental |
+| 15 | contém `baralho` | OFFSET | Baralho Cartas (9x6cm) |
 | 16 | contém `puzzle` | GIFTS | Puzzles Simples, Puzzle Coração, Puzzles Madeira |
 | 17 | contém `tapete` | GIFTS | Tapete de Rato Têxtil, Tapete Rato Gaming |
-| 18 | contém `porta chave` / `porta-chave` | GIFTS | Metálico, Coração, Quadrado |
-| 19 | contém `iman` | OFFSET | Íman Quadrado, Ímanes Vintage, Ímanes Redondos |
-| 20 | contém `ornamento` | OMEGA | Ornamento de Natal - Coração, Floco de Neve, Quadrado |
-| 21 | contém `bola de natal` ou `bola natal` | OFFSET | Natal › Bola de Natal; Natal › Bola de Natal Brilhante |
-| 22 | contém `fotos vintage` ou `vintage fotos` (não apanha a Moldura Vintage nem os Ímanes Vintage) | OFFSET | Vintage Fotos › Fotos Vintage |
-| 23 | contém `moldura cubo`, `mold cubo` ou `cubo com fotos` | OFFSET | Moldura Cubo › Cubo com Fotos 10x10 |
-| 24 | contém `azulejo` | GIFTS | Azulejo Português (15x15cm) |
-| 25 | contém `pvc` | OMEGA | Quadro PVC, todos os tamanhos |
-| 26 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
-| 27 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
-| 28 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
-| 29 | contém `cartao de visita` / `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
+| 18 | contém `keychain` (antes da regra dos porta-chaves: é OMEGA, não Gifts) | OMEGA | Porta-Chaves › Keychain |
+| 19 | contém `imas de natal` ou `ima de natal` (grafia brasileira; não são os Ímanes, que são OFFSET) | OMEGA | Christmas Gifts › Ímãs de Natal - Bola, Ímãs de Natal - Estrela |
+| 20 | contém `porta chave` ou `porta-chave` | GIFTS | Metálico, Coração, Quadrado |
+| 21 | contém `iman` | OFFSET | Íman Quadrado, Ímanes Vintage, Ímanes Redondos, Imans Fotográficos 6x8cm / 5x5cm, Iman Fotográfico Redondo 5,5cm |
+| 22 | contém `ornamento` | OMEGA | Ornamento de Natal: Coração, Floco de Neve, Quadrado |
+| 23 | contém `bola de natal` ou `bola natal` | OFFSET | Natal › Bola de Natal; Natal › Bola de Natal Brilhante |
+| 24 | contém `paper ball` | OFFSET | Christmas Gifts › Christmas Paper Ball |
+| 25 | contém `fotos vintage` ou `vintage fotos` (não apanha a Moldura Vintage nem os Ímanes Vintage) | OFFSET | Vintage Fotos › Fotos Vintage |
+| 26 | contém `moldura cubo`, `mold cubo`, `cubo com fotos` ou `cubo 10x10` | OFFSET | Moldura Cubo › Cubo com Fotos 10x10; Christmas Gifts › Cubo 10x10 |
+| 27 | contém `azulejo` | GIFTS | Azulejo Português (15x15cm) |
+| 28 | contém `pvc` | OMEGA | Quadro PVC, todos os tamanhos |
+| 29 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
+| 30 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
+| 31 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
+| 32 | contém `cartao de visita` ou `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
 | — | nenhuma regra bate | **Por confirmar** | |
 
 ### Almofadas, mantas e bonecos: regras B1-B9 (regra 9; decididas pelo utilizador a 2026-11-12)
@@ -412,6 +415,12 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.5** (2026-11-13): produtos da outra loja (`65…_… - <produto>`, muitos na categoria "Christmas Gifts",
+  que junta processos diferentes, por isso decide-se pelo nome do produto): "Keychain" → OMEGA (antes da
+  regra dos porta-chaves); "Ímãs de Natal" (Bola, Estrela; grafia brasileira) → OMEGA; "Christmas Paper Ball"
+  e "Cubo 10x10" → OFFSET. Confirmados pelo utilizador: Globo de Natal, Imans Fotográficos 6x8/5x5cm e Iman
+  Fotográfico Redondo 5,5cm → OFFSET; Puzzle A4 → GIFTS. Por confirmar: "Ornamento de Natal - Bola / Bola
+  10x10cm / Pinheiro de Natal 10x10cm" (hoje OMEGA, pela regra "ornamento").
 - **1.4.3** (2026-11-12): "Box para Álbum 21x21 cm" → BOXS AMADOR (regra 4). O utilizador confirmou também
   o Classic 23x31 e o Landscape 31x23 com Aro 3cm (já cobertos pelas regras 1 e 2). Sem exemplos reais ainda.
 - **1.4.2** (2026-11-12): "Square 21x21 (Aro 4.5cm)" → BOXS AMADOR (regra 3). O utilizador não tinha um
@@ -632,3 +641,12 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Quadrados › Square 21x21 (Aro 4.5cm) | BOXS |
 | Boxs › Box para Álbum 21x21 cm | BOXS |
 | Horizontais › Landscape 31x23 (Aro 3cm) | BOXS |
+| Christmas Gifts › Ímãs de Natal - Bola | OMEGA |
+| Christmas Gifts › Ímãs de Natal - Estrela | OMEGA |
+| Christmas Gifts › Cubo 10x10 | OFFSET |
+| Christmas Gifts › Globo de Natal | OFFSET |
+| Christmas Gifts › Imans Fotográficos - 6x8cm | OFFSET |
+| Christmas Gifts › Imans Fotográficos - 5x5cm | OFFSET |
+| Christmas Gifts › Iman Fotográfico Redondo - 5,5cm | OFFSET |
+| Christmas Gifts › Bola de Natal | OFFSET |
+| Puzzles & Jogos › Puzzle A4 | GIFTS |

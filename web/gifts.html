@@ -275,7 +275,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.4.3</div>
+      <div class="versao">Versão web 1.5</div>
     </div>
   </aside>
 
@@ -380,12 +380,15 @@ const Logica = (() => {
     { quando: "contém «baralho»", processo: "OFFSET", exemplos: "Baralho Cartas (9x6cm)", teste: n => /baralho/.test(n) },
     { quando: "contém «puzzle»", processo: "GIFTS", exemplos: "Puzzles Simples, Puzzle Coração, Puzzles Madeira", teste: n => /puzzle/.test(n) },
     { quando: "contém «tapete»", processo: "GIFTS", exemplos: "Tapete de Rato Têxtil, Tapete Rato Gaming", teste: n => /tapete/.test(n) },
+    { quando: "contém «keychain» (antes da regra dos porta-chaves: é OMEGA, não Gifts)", processo: "OMEGA", exemplos: "Porta-Chaves › Keychain", teste: n => /keychain/.test(n) },
+    { quando: "contém «imas de natal» ou «ima de natal» (grafia brasileira; não são os Ímanes, que são OFFSET)", processo: "OMEGA", exemplos: "Christmas Gifts › Ímãs de Natal - Bola, Ímãs de Natal - Estrela", teste: n => /imas? de natal/.test(n) },
     { quando: "contém «porta chave» ou «porta-chave»", processo: "GIFTS", exemplos: "Metálico, Coração, Quadrado", teste: n => /porta.?chave/.test(n) },
-    { quando: "contém «iman»", processo: "OFFSET", exemplos: "Íman Quadrado, Ímanes Vintage, Ímanes Redondos", teste: n => /iman/.test(n) },
+    { quando: "contém «iman»", processo: "OFFSET", exemplos: "Íman Quadrado, Ímanes Vintage, Ímanes Redondos, Imans Fotográficos 6x8cm / 5x5cm, Iman Fotográfico Redondo 5,5cm", teste: n => /iman/.test(n) },
     { quando: "contém «ornamento»", processo: "OMEGA", exemplos: "Ornamento de Natal: Coração, Floco de Neve, Quadrado", teste: n => /ornamento/.test(n) },
     { quando: "contém «bola de natal» ou «bola natal»", processo: "OFFSET", exemplos: "Natal › Bola de Natal; Natal › Bola de Natal Brilhante", teste: n => /bola (de )?natal/.test(n) },
+    { quando: "contém «paper ball»", processo: "OFFSET", exemplos: "Christmas Gifts › Christmas Paper Ball", teste: n => /paper ball/.test(n) },
     { quando: "contém «fotos vintage» ou «vintage fotos» (não apanha a Moldura Vintage nem os Ímanes Vintage)", processo: "OFFSET", exemplos: "Vintage Fotos › Fotos Vintage", teste: n => /fotos? vintage|vintage fotos?/.test(n) },
-    { quando: "contém «moldura cubo», «mold cubo» ou «cubo com fotos»", processo: "OFFSET", exemplos: "Moldura Cubo › Cubo com Fotos 10x10", teste: n => /mold(ura)? cubo|cubo com fotos/.test(n) },
+    { quando: "contém «moldura cubo», «mold cubo», «cubo com fotos» ou «cubo 10x10»", processo: "OFFSET", exemplos: "Moldura Cubo › Cubo com Fotos 10x10; Christmas Gifts › Cubo 10x10", teste: n => /mold(ura)? cubo|cubo com fotos|cubo 10\s*x\s*10/.test(n) },
     { quando: "contém «azulejo»", processo: "GIFTS", exemplos: "Azulejo Português (15x15cm)", teste: n => /azulejo/.test(n) },
     { quando: "contém «pvc»", processo: "OMEGA", exemplos: "Quadro PVC, todos os tamanhos", teste: n => /pvc/.test(n) },
     { quando: "contém «mont blanc»", processo: "OMEGA", exemplos: "Moldura Mont Blanc 10X15", teste: n => /mont blanc/.test(n) },
