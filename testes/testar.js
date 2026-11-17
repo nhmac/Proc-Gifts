@@ -181,6 +181,55 @@ if (Logica.classificar(orn).processo !== "OMEGA") falhar("ornamento sem material
 if (Logica.classificar("Canecas › Caneca Simples", "Bétula").processo !== "GIFTS") falhar("o material não pode mudar outros produtos");
 console.log("ok  material da etiqueta (ornamento em Bétula → OFFSET)");
 
+// ---------------------------------------------------------------- calendários e acabamento da etiqueta (1.10)
+// Poster, Parede, Mesa e Bolso: True White ou Sirio Ice White -> OFFSET › CALENDÁRIOS; Gesso -> ESAG.
+// Calendário de Madeira -> OMEGA; Christmas Calendar Holder (e a Recarga) -> OFFSET › CALENDÁRIOS.
+const etqAc = ac => ["Item Produtos Acabamentos Qtd", "2933416 Produto - Poster - Calendário Poster 30x42",
+  "Acabamento:", "Correção de cor:", ac, "Não", "1", "Ficheiros de: 6534871_1519619 - Póster Calendario 30x42"].join("\n");
+for (const ac of ["True White", "Sirio Ice White", "Tintoretto Gesso", "Gesso"])
+  if (Logica.acabamentoDaEtiqueta(etqAc(ac)) !== ac) falhar(`acabamentoDaEtiqueta (${ac}) deu ${Logica.acabamentoDaEtiqueta(etqAc(ac))}`);
+if (Logica.acabamentoDaEtiqueta("Acabamento: Sirio Ice White") !== "Sirio Ice White") falhar("acabamentoDaEtiqueta na mesma linha");
+if (Logica.acabamentoDaEtiqueta("Item Produtos Acabamentos Qtd\nCorreção de cor:\nNão") !== null) falhar("acabamentoDaEtiqueta inventou um acabamento (o cabeçalho «Acabamentos» não conta)");
+const cal = (nome, ac) => { const r = Logica.classificar(nome, ac === undefined ? null : { acabamento: ac }); return `${r.processo}${r.sub ? "/" + r.sub : ""}`; };
+const casosCal = [
+  ["Poster › Calendário Poster 30x42", "True White", "OFFSET/CALENDARIOS"],
+  ["Poster › Calendário Poster 30x42", "Sirio Ice White", "OFFSET/CALENDARIOS"],
+  ["Poster › Calendário Poster 30x42", "Tintoretto Gesso", "ESAG"],
+  ["Parede › Calendário Parede 30x42", "Sirio Ice White", "OFFSET/CALENDARIOS"],
+  ["Parede › Calendário Parede 21x29", "Tintoretto Gesso", "ESAG"],
+  ["Parede › Calendário Parede 21x29", "Gesso", "ESAG"],
+  ["Mesa › Calendário Mesa 10x15", "True White", "OFFSET/CALENDARIOS"],
+  ["Mesa › Calendário Mesa 10x15", "Tintoretto Gesso", "ESAG"],
+  ["Mesa › Calendário Mesa 14x14", "Sirio Ice White", "OFFSET/CALENDARIOS"],
+  ["(x2) - Mesa › Calendário Mesa 21x10", "True White", "OFFSET/CALENDARIOS"],
+  ["Bolso › Calendário Bolso 5,5x8,5", "True White", "OFFSET/CALENDARIOS"],
+  ["Calend#U00e1rio Poster 30x42", "True White", "OFFSET/CALENDARIOS"],
+  ["Poster › Calendário Poster 30x42", "Lustre", "DESCONHECIDO"],       // acabamento sem regra: nunca adivinhar
+  ["Poster › Calendário Poster 30x42", undefined, "DESCONHECIDO"],      // sem etiqueta
+  ["Madeira › Calendário de Madeira 30x30", undefined, "OMEGA"],
+  ["Madeira › Calendário de Madeira 30x45", "True White", "OMEGA"],     // o acabamento não muda a madeira
+  ["Christmas Calendars › Christmas Calendar Holder - 10x15", undefined, "OFFSET/CALENDARIOS"],
+  ["Christmas Calendars › Christmas Calendar Holder - 10x15 - Recarga", undefined, "OFFSET/CALENDARIOS"],
+  ["Calendários › Calendário A4", "True White", "DESCONHECIDO"],        // outro calendário: sem regra
+  ["Posters › Poster A4 - Frente", "Gesso", "OFFSET"],                  // o acabamento não muda outros produtos
+  // Card Shop nunca segue a regra do acabamento, mesmo em Tintoretto Gesso (decisão do utilizador, 2026-11-17)
+  ["Card Shop - Convites › 15x20 (Vertical - Qtd. Min. 8)", "Tintoretto Gesso", "OFFSET/CARTOES"],
+  ["Card Shop - Postais Especiais › 20x10 (Horizontal) (Qtd. Min. 6)", "Gesso", "OFFSET/CARTOES"],
+  ["Card Shop - Calendários › Calendário Mesa 10x15", "Tintoretto Gesso", "OFFSET/CARTOES"],
+  ["Card Shop › Calendário Poster 30x42", "Gesso", "OFFSET/CARTOES"],
+];
+for (const [nome, ac, esperado] of casosCal) if (cal(nome, ac) !== esperado) falhar(`"${nome}" em ${ac} devia ser ${esperado} (deu ${cal(nome, ac)})`);
+if (Logica.campoDaEtiqueta("Poster › Calendário Poster 30x42") !== "acabamento" || Logica.campoDaEtiqueta(orn) !== "material"
+  || Logica.campoDaEtiqueta("Canecas › Caneca Simples") !== null || Logica.campoDaEtiqueta("Madeira › Calendário de Madeira 30x30") !== null)
+  falhar("campoDaEtiqueta");
+if (!Logica.ORDEM.includes("ESAG") || !Logica.PROCESSOS.ESAG || Logica.SUBPROCESSOS.CALENDARIOS.processo !== "OFFSET") falhar("ESAG / CALENDÁRIOS");
+// Os "complete.pdf" são os ficheiros de impressão: nunca são lidos como etiqueta
+for (const f of ["6534871_1519619_complete.pdf", "complete.pdf", "6534871_1519619-complete.pdf", "6534871_1519619_Complete.pdf"])
+  if (Logica.ehEtiqueta(f)) falhar(`ehEtiqueta aceitou ${f}`);
+if (Logica.ordemEtiquetas([{ ficheiro: "6534871_1519619_complete.pdf" }, { ficheiro: "6534871_1519619_label.pdf" }]).length !== 1) falhar("ordemEtiquetas com complete.pdf");
+if (Logica.produtosDaEncomenda("6534871_1519619", [], [], [{ ficheiro: "6534871_1519619_complete.pdf", qtd: 1 }]).length) falhar("complete.pdf deu um produto");
+console.log("ok  calendários (acabamento → OFFSET › CALENDÁRIOS / ESAG; madeira → OMEGA; complete.pdf ignorado)");
+
 // ---------------------------------------------------------------- prefixo da encomenda (1.7)
 // Íman Quadrado: 1… e 3… -> OFFSET; 6… (outra loja) -> OMEGA; outro prefixo ou sem encomenda -> Por confirmar
 const iq = "Ímanes › Íman Quadrado";

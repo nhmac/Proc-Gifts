@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.9
+- **Versão atual:** web 1.10
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -24,7 +24,8 @@ renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "
 Tudo corre no browser e **nada é enviado para lado nenhum**. A app lê nomes de pastas e, desde a 1.3, só
 abre um ficheiro em dois casos: a **etiqueta PDF** das encomendas que não têm pasta "Categoria › Produto"
 (ver "Encomendas sem pasta de produto") e a das encomendas cujo processo depende do material (ornamentos:
-ver 1.6 em "Versões"). Não introduzir pedidos de rede nem CDNs; a única biblioteca é o pdf.js
+ver 1.6 em "Versões") ou do acabamento (calendários: ver 1.10). Os `…complete.pdf` (ficheiros de impressão)
+nunca são abertos. Não introduzir pedidos de rede nem CDNs; a única biblioteca é o pdf.js
 (`web/vendor/pdfjs`, a mesma cópia do Proc-Separador).
 
 ---
@@ -202,6 +203,7 @@ Os dados de cada processo vêm da documentação do departamento (Notion).
 | `OMEGA` | OMEGA | Pré Impressão | `A:\PRE_IMPRESSAO\_#OMEGA` (UV) · `_#BISCATES` (Lembranças) |
 | `OFFSET` | OFFSET | Pré Impressão | `A:\PRE_IMPRESSAO\_#OFFSET_DIGITAL` |
 | `BOXS` | BOXS AMADOR | *por confirmar* | *por confirmar* |
+| `ESAG` | ESAG | *por confirmar* | *por confirmar* |
 | `DESCONHECIDO` | Por confirmar | — | Produto sem regra: confirmar com o responsável |
 
 O processo BOXS AMADOR substituiu o URGENTES na 1.2 (a pedido do utilizador), com os mesmos dois
@@ -221,6 +223,8 @@ O resumo mostra a contagem do subprocesso por baixo do processo, e a pesquisa de
 |---|---|---|---|
 | `CARTOES` | CARTÕES | OFFSET | Cartões de Visita; Card Shop (convites, postais, trifold…); Christmas Cards; Postal True White Matte; Cartões › Cartão 10 x 15 cm (1.9) — Cartões Visita › Cartões de Visita (regras 35 e 43) |
 
+| `CALENDARIOS` | CALENDÁRIOS | OFFSET | Calendários Poster, Parede, Mesa e Bolso em True White ou Sirio Ice White; Christmas Calendar Holder (e a Recarga) (1.10) — regras 45 e 46 |
+
 Para acrescentar um: uma entrada em `SUBPROCESSOS` e `sub: "<CHAVE>"` na(s) regra(s). Só com indicação
 do utilizador ("para já só tenho este", 2026-11-12).
 
@@ -234,10 +238,10 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 
 | # | Bate quando o texto normalizado… | Processo | Exemplos |
 |---|---|---|---|
-| 1 | contém `landscape 31x23` | BOXS | Horizontais › Landscape 31x23 (Aro 3cm, Aro 4.5cm) |
-| 2 | contém `classic 23x31` | BOXS | Verticais › Classic 23x31 (Aro 3cm, Aro 4.5cm) |
-| 3 | contém `square 21x21` | BOXS | Square 21x21 (Aro 4.5cm) |
-| 4 | contém `box para album 21x21` | BOXS | Box para Álbum 21x21 cm |
+| 1 | contém `landscape 31x23` | BOXS AMADOR | Horizontais › Landscape 31x23 (Aro 3cm, Aro 4.5cm) |
+| 2 | contém `classic 23x31` | BOXS AMADOR | Verticais › Classic 23x31 (Aro 3cm, Aro 4.5cm) |
+| 3 | contém `square 21x21` | BOXS AMADOR | Square 21x21 (Aro 4.5cm) |
+| 4 | contém `box para album 21x21` | BOXS AMADOR | Box para Álbum 21x21 cm |
 | 5 | contém `globo` | OFFSET | Foto Globos › Globo Personalizado |
 | 6 | tem a palavra `pin` ou `pins` | OFFSET | Pin › Pin |
 | 7 | contém `moldura atlas` | OMEGA | Moldura Atlas 13x18, 15x20 |
@@ -277,6 +281,9 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 41 | contém `christmas wall gallery`, `christmas photo trail`, `christmas semi frame` ou `enfeite de natal` | OMEGA | Christmas Decor › Christmas Wall Gallery; Christmas Photo Trail; Christmas Semi Frame 20x15; Natal › Enfeite de Natal em forma de Presente |
 | 42 | contém `suporte 15x20` | OMEGA | Suporte 15x20 (pastas «… - Passepartout C») |
 | 43 | contém `cartao de visita` ou `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
+| 44 | contém `calendario de madeira` | OMEGA | Madeira › Calendário de Madeira 30x30, 30x45 |
+| 45 | contém `calendar holder` | OFFSET › CALENDÁRIOS | Christmas Calendars › Christmas Calendar Holder - 10x15 (Madeira Clara, Nogal; também a Recarga) |
+| 46 | contém `calendario` + poster, parede, mesa ou bolso: depende do acabamento na etiqueta (o Card Shop nunca chega aqui: fica nos CARTÕES, regra 35) | True White, Sirio Ice White → OFFSET › CALENDÁRIOS; Gesso, Tintoretto Gesso → ESAG; outro acabamento ou sem etiqueta → Por confirmar | Poster › Calendário Poster 30x42; Parede › Calendário Parede 30x42, 21x29; Mesa › Calendário Mesa 10x15, 14x14, 21x10; Bolso › Calendário Bolso 5,5x8,5 |
 | — | nenhuma regra bate | **Por confirmar** | |
 
 ### Almofadas, mantas e bonecos: regras B1-B9 (regra 9; decididas pelo utilizador a 2026-11-12)
@@ -315,6 +322,10 @@ normalizado; ganha a primeira que bate:
   disse se *tudo* o que está em Horizontais/Verticais vai para BOXS AMADOR. Um tamanho novo dessas pastas
   fica "Por confirmar".
 - A regra é a mesma para todos os canais (AMADOR, FOTOPRIX, …).
+- **Calendários por acabamento** (1.10): Poster, Parede, Mesa e Bolso em True White ou Sirio Ice White → OFFSET ›
+  CALENDÁRIOS; em Tintoretto Gesso ou só "Gesso" → **ESAG** (processo próprio, confirmado pelo utilizador).
+  Acabamento sem regra ou etiqueta não lida → Por confirmar. **Card Shop nunca segue esta regra**, mesmo em
+  Tintoretto Gesso: fica sempre em OFFSET › CARTÕES (regra 35, que tem de ficar antes das dos calendários).
 - **Picagem e destino escondidos** (1.2.1, decisão do utilizador): `MOSTRAR_PICAGEM_DESTINO = false`. Não
   reativar sem o utilizador pedir.
 - **Almofadas, mantas e bonecos** (desde a 1.1): Com Margem é sempre GIFTS; Sem Margem, Polar, Frente e
@@ -427,6 +438,15 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.10** (2026-11-17): **calendários** (lote "CALENDARIOS", 86 encomendas da outra loja). Processo novo **ESAG**
+  e subprocesso **OFFSET › CALENDÁRIOS**. Calendário de Madeira → OMEGA; Christmas Calendar Holder (Madeira Clara /
+  Nogal, e a Recarga) → OFFSET › CALENDÁRIOS; Calendário Poster, Parede, Mesa e Bolso pelo **acabamento** da
+  etiqueta ("Acabamento:", lido pela posição como o material da 1.6): True White ou Sirio Ice White → CALENDÁRIOS,
+  Gesso (Tintoretto Gesso ou só Gesso) → ESAG, outro ou sem etiqueta → Por confirmar. A regra tem `porAcabamento`;
+  o `classificar(nome, etiqueta, pastaEnc)` aceita `etiqueta` como texto (material) ou `{ material, acabamento }`, e
+  o `campoDaEtiqueta(nome)` diz qual dos campos a regra pede. Card Shop fica sempre em CARTÕES (regra 35, antes).
+  Os `…complete.pdf` (ficheiros de impressão) nunca contam como etiqueta. Resultado do lote: 74 OFFSET ›
+  CALENDÁRIOS, 7 ESAG, 5 OMEGA, 0 por confirmar; sem mudanças nas 2.676 pastas dos lotes anteriores.
 - **1.9** (2026-11-17): **produtos OFFSET do lote "MAIS DADOS OFFSET"**, que o utilizador separou em duas pastas:
   os da "OFFSET - SUB CATEGORIA CARTÕES" vão para o subprocesso **CARTÕES** (Card Shop: convites, dípticos,
   especiais, postais especiais, trifold; Christmas Cards: Cover Premium, Photo Card Set; Postais/Convites
@@ -766,3 +786,8 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Convites › Postal 10x15 em True White Matte | OFFSET |
 | Convites › Postal 15x20 em True White Matte | OFFSET |
 | Postais › Postal 10x15 em True White Matte | OFFSET |
+| Madeira › Calendário de Madeira 30x30 | OMEGA |
+| Madeira › Calendário de Madeira 30x45 | OMEGA |
+| Christmas Calendars › Christmas Calendar Holder - 10x15 | OFFSET |
+| Christmas Calendars › Christmas Calendar Holder - 10x15 - Recarga | OFFSET |
+| Poster › Calendário Poster 30x42 | DESCONHECIDO |
