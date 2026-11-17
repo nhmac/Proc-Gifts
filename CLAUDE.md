@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.7
+- **Versão atual:** web 1.8
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -149,8 +149,8 @@ Na 1.2.1 a primeira ficava em "sem pasta de produto" e a segunda era classificad
 chamado "x3"; o utilizador deu por falta delas na separação da manhã. Desde a 1.3, quando uma encomenda
 não tem nenhuma subpasta além das de quantidade (`x<N>`), o produto lê-se:
 
-1. da **etiqueta PDF** (`<nº>_<id>_label.pdf` ou, nalgumas encomendas, só `<nº>_<id>.pdf`, na pasta da
-   encomenda), na linha
+1. da **etiqueta PDF** (`<nº>_<id>_label.pdf`, `<nº>_<id>_processed_label.pdf` nas encomendas 10…, ou só
+   `<nº>_<id>.pdf`, na pasta da encomenda), na linha
    `Ficheiros de Natal › Bola de Natal Brilhante` → `Natal › Bola de Natal Brilhante` (sugestão do
    utilizador: é a fonte certa; o nome da imagem diz só "bola natal cores");
 2. se não houver etiqueta ou ela não tiver essa linha, do **nome da imagem**:
@@ -219,7 +219,7 @@ O resumo mostra a contagem do subprocesso por baixo do processo, e a pesquisa de
 
 | Chave | Nome | Processo | Produtos |
 |---|---|---|---|
-| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 34) |
+| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 40) |
 
 Para acrescentar um: uma entrada em `SUBPROCESSOS` e `sub: "<CHAVE>"` na(s) regra(s). Só com indicação
 do utilizador ("para já só tenho este", 2026-11-12).
@@ -267,7 +267,13 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 31 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
 | 32 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
 | 33 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
-| 34 | contém `cartao de visita` ou `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
+| 34 | contém `acrilico` ou `acrilica` | OMEGA | Acrílico › 30x45; Quadro em Acrílico › Quadro Acrílico 15 x 20 cm; Molduras Acrílicas 20mm › 15x20; Standup Acrilico - Comunhões › 10x15 |
+| 35 | contém `madeira natural`, `quadro em madeira`, `folio de madeira` ou `wood edge panel` | OMEGA | Madeira Natural › 30x30; Quadro em Madeira › Quadro em Madeira 30 x 45 cm; Fólio de Madeira › 10x15; Wood Edge Panel › 40x60 |
+| 36 | contém `dibond`, `aluminio`, `design clear`, `quadro adesivo`, `shapes ›` ou `circulo` | OMEGA | Dibond › Tamanho não Standard; Quadro em Alumínio › Quadro alumínio 30x45; Design Clear 15x20; Quadro Adesivo 20x20; Shapes › 30x30 - Círculo; Círculo › Círculo 50x50 |
+| 37 | contém `moldura` + 3D, Apalaches, Denali, Dome, Fusion, Hayes, Ridge, Shake, Whistler, ou `moldura para arvore` | OMEGA | Moldura 3D 15 x 15 cm; Moldura Dome 10x15; Moldura Fusion › 20x25; Moldura Whistler 15 x 20 cm; Natal › Moldura para Árvore de Natal |
+| 38 | contém `christmas wall gallery`, `christmas photo trail`, `christmas semi frame` ou `enfeite de natal` | OMEGA | Christmas Decor › Christmas Wall Gallery; Christmas Photo Trail; Christmas Semi Frame 20x15; Natal › Enfeite de Natal em forma de Presente |
+| 39 | contém `suporte 15x20` | OMEGA | Suporte 15x20 (pastas «… - Passepartout C») |
+| 40 | contém `cartao de visita` ou `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
 | — | nenhuma regra bate | **Por confirmar** | |
 
 ### Almofadas, mantas e bonecos: regras B1-B9 (regra 9; decididas pelo utilizador a 2026-11-12)
@@ -418,6 +424,15 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.8** (2026-11-17): **produtos OMEGA do lote "#IMPRESSO"** (o utilizador pediu "regista como OMEGA os que
+  o programa ainda não conhece"): Acrílico (e Quadro em Acrílico, Molduras Acrílicas 20mm, Standup Acrílico),
+  Madeira Natural, Quadro em Madeira, Fólio de Madeira, Wood Edge Panel, Dibond, Quadro em Alumínio, Design
+  Clear, Quadro Adesivo, Shapes/Círculo, as molduras 3D, Apalaches, Denali, Dome, Fusion, Hayes, Ridge, Shake e
+  Whistler, Moldura para Árvore de Natal, Christmas Wall Gallery / Photo Trail / Semi Frame, Enfeite de Natal e
+  Suporte 15x20. As regras ficam no fim da lista, por isso as antigas continuam a ganhar (sem mudanças nas
+  2.429 pastas dos lotes anteriores). Também: as encomendas **10…** chamam à etiqueta
+  `<nº>_<id>_processed_label.pdf`; a app não a reconhecia e 24 encomendas sem pasta de produto ficavam "sem
+  produto". O `ehEtiqueta` aceita agora `_label.pdf`, `_processed_label.pdf` e `<nº>_<id>.pdf`.
 - **1.7** (2026-11-13): **regra por prefixo da encomenda**. O "Íman Quadrado" vai para OFFSET nas encomendas
   1… (`102…_103…`, 87 nos lotes de teste) e 3… (`3480222_2064810`), e para OMEGA nas 6… (outra loja:
   `6537480_1525722/23`, `6536897_1524318/19`), decisão do utilizador. Outro prefixo, ou sem a pasta da
@@ -685,3 +700,36 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | 6537480_1525723 :: Ímanes › Íman Quadrado | OMEGA |
 | 6536897_1524318 :: Ímanes › Íman Quadrado | OMEGA |
 | 6536897_1524319 :: Ímanes › Íman Quadrado | OMEGA |
+| Acrílico › 30x45 | OMEGA |
+| Acrílico › Tamanho não Standard | OMEGA |
+| Quadro em Acrílico › Quadro Acrílico 15 x 20 cm | OMEGA |
+| Molduras Acrílicas 20mm › 15x20 | OMEGA |
+| Standup Acrilico - Comunhões › 10x15 | OMEGA |
+| Madeira Natural › 30x30 | OMEGA |
+| Quadro em Madeira › Quadro em Madeira 30 x 45 cm | OMEGA |
+| Fólio de Madeira › 10x15 | OMEGA |
+| Wood Edge Panel › 40x60 | OMEGA |
+| Dibond › Tamanho não Standard | OMEGA |
+| Quadro em Alumínio › Quadro alumínio 30x45 | OMEGA |
+| Design Clear › Design Clear 15x20 | OMEGA |
+| Quadro Adesivo › Quadro Adesivo 20x20 (1 Unid) | OMEGA |
+| Quadro Adesivo › Quadro Adesivo Hexágono ( 6 Unid ) | OMEGA |
+| Shapes › 30x30 - Círculo | OMEGA |
+| Círculo › Círculo 50x50 | OMEGA |
+| Moldura 3D › Moldura 3D 15 x 15 cm | OMEGA |
+| Moldura Apalaches › Moldura Apalaches 13x18 | OMEGA |
+| Moldura Denali › Moldura Denali 15x20 | OMEGA |
+| Moldura Dome › Moldura Dome 10x15 | OMEGA |
+| Moldura Fusion › 20x25 | OMEGA |
+| Moldura Hayes › Moldura Hayes 10 x 15 cm | OMEGA |
+| Moldura Ridge › Moldura Ridge 15 x 20 cm | OMEGA |
+| Moldura Shake › Moldura Shake 10 x 15 cm | OMEGA |
+| Moldura Whistler › Moldura Whistler 15 x 20 cm | OMEGA |
+| Natal › Moldura para Árvore de Natal | OMEGA |
+| Christmas Decor › Christmas Wall Gallery | OMEGA |
+| Christmas Products › Christmas Photo Trail | OMEGA |
+| Christmas Products › Christmas Semi Frame 20x15 | OMEGA |
+| Natal › Enfeite de Natal em forma de Presente | OMEGA |
+| Suporte 15x20 | OMEGA |
+| Christmas Gifts › Ornamento de Natal - Sino | OMEGA |
+| PVC › Tamanho não Standard | OMEGA |

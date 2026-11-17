@@ -276,7 +276,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.7</div>
+      <div class="versao">Versão web 1.8</div>
     </div>
   </aside>
 
@@ -399,6 +399,13 @@ const Logica = (() => {
     { quando: "contém «mont blanc»", processo: "OMEGA", exemplos: "Moldura Mont Blanc 10X15", teste: n => /mont blanc/.test(n) },
     { quando: "contém «peluche», «coelhinho», «reninha», «sapinho», «ursinho» ou as palavras «rena», «sapo»", processo: "GIFTS", exemplos: "Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney", teste: n => /peluche|coelhinho|reninha|sapinho|ursinho/.test(n) || /(^|[^a-z])(rena|sapo)([^a-z]|$)/.test(n) },
     { quando: "contém «caderno»", processo: "OFFSET", exemplos: "Cadernos › Caderno A5", teste: n => /caderno/.test(n) },
+    // Produtos OMEGA registados a 2026-11-17 (lote "#IMPRESSO"): quadros, molduras e decoração de Natal
+    { quando: "contém «acrilico» ou «acrilica»", processo: "OMEGA", exemplos: "Acrílico › 30x45; Quadro em Acrílico › Quadro Acrílico 15 x 20 cm; Molduras Acrílicas 20mm › 15x20; Standup Acrilico - Comunhões › 10x15", teste: n => /acrilic[oa]/.test(n) },
+    { quando: "contém «madeira natural», «quadro em madeira», «folio de madeira» ou «wood edge panel»", processo: "OMEGA", exemplos: "Madeira Natural › 30x30; Quadro em Madeira › Quadro em Madeira 30 x 45 cm; Fólio de Madeira › 10x15; Wood Edge Panel › 40x60", teste: n => /madeira natural|quadro em madeira|folio de madeira|wood edge panel/.test(n) },
+    { quando: "contém «dibond», «aluminio», «design clear», «quadro adesivo», «shapes ›» ou «circulo»", processo: "OMEGA", exemplos: "Dibond › Tamanho não Standard; Quadro em Alumínio › Quadro alumínio 30x45; Design Clear 15x20; Quadro Adesivo 20x20; Shapes › 30x30 - Círculo; Círculo › Círculo 50x50", teste: n => /dibond|aluminio|design clear|quadro adesivo|shapes ›|circulo/.test(n) },
+    { quando: "contém «moldura» + 3D, Apalaches, Denali, Dome, Fusion, Hayes, Ridge, Shake, Whistler, ou «moldura para arvore»", processo: "OMEGA", exemplos: "Moldura 3D 15 x 15 cm; Moldura Dome 10x15; Moldura Fusion › 20x25; Moldura Whistler 15 x 20 cm; Natal › Moldura para Árvore de Natal", teste: n => /moldura (3d|apalaches|denali|dome|fusion|hayes|ridge|shake|whistler|para arvore)/.test(n) },
+    { quando: "contém «christmas wall gallery», «christmas photo trail», «christmas semi frame» ou «enfeite de natal»", processo: "OMEGA", exemplos: "Christmas Decor › Christmas Wall Gallery; Christmas Photo Trail; Christmas Semi Frame 20x15; Natal › Enfeite de Natal em forma de Presente", teste: n => /christmas (wall gallery|photo trail|semi frame)|enfeite de natal/.test(n) },
+    { quando: "contém «suporte 15x20»", processo: "OMEGA", exemplos: "Suporte 15x20 (pastas «… - Passepartout C»)", teste: n => /suporte 15\s*x\s*20/.test(n) },
     { quando: "contém «cartao de visita» ou «cartoes visita»", processo: "OFFSET", sub: "CARTOES", exemplos: "Cartões Visita › Cartões de Visita", teste: n => /cartoes? (de )?visita/.test(n) },
   ];
 
@@ -494,7 +501,8 @@ const Logica = (() => {
     return m ? parseInt(m[1], 10) : 0;
   }
   // A etiqueta chama-se "<nº>_<id>_label.pdf" ou, em algumas encomendas, só "<nº>_<id>.pdf"
-  const ehEtiqueta = ficheiro => /^\d+_\d+(?:_label)?\.pdf$/i.test(descodificar(ficheiro).trim());
+  // (nas encomendas 10…_…, "<nº>_<id>_processed_label.pdf")
+  const ehEtiqueta = ficheiro => /^\d+_\d+(?:_processed)?(?:_label)?\.pdf$/i.test(descodificar(ficheiro).trim());
   function produtoDaImagem(pastaEnc, ficheiro) {
     const e = PASTA_ENCOMENDA.exec(descodificar(pastaEnc).trim());
     if (!e) return null;

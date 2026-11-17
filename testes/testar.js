@@ -134,6 +134,7 @@ console.log("ok  subprocessos");
 if (Logica.qtdDaPasta("x3") !== 3 || Logica.qtdDaPasta("X 12") !== 12 || Logica.qtdDaPasta("Canecas › Caneca") !== 0) falhar("qtdDaPasta");
 if (!Logica.semPastaDeProduto([]) || !Logica.semPastaDeProduto(["x3"]) || Logica.semPastaDeProduto(["Natal › Bola de Natal"])) falhar("semPastaDeProduto");
 if (!Logica.ehEtiqueta("3480186_2064704_label.pdf") || !Logica.ehEtiqueta("3480222_2064810.pdf")
+  || !Logica.ehEtiqueta("10253052_10356132_processed_label.pdf")
   || Logica.ehEtiqueta("3480186_2064704_bola_natal_cores_0000.jpg") || Logica.ehEtiqueta("outro.pdf")) falhar("ehEtiqueta");
 const img = Logica.produtoDaImagem("3480186_2064704", "3480186_2064704_bola_natal_cores_0000.jpg");
 if (img !== "bola natal cores") falhar(`produtoDaImagem deu "${img}"`);
