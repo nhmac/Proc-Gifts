@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.8
+- **Versão atual:** web 1.9
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -219,7 +219,7 @@ O resumo mostra a contagem do subprocesso por baixo do processo, e a pesquisa de
 
 | Chave | Nome | Processo | Produtos |
 |---|---|---|---|
-| `CARTOES` | CARTÕES | OFFSET | Cartões Visita › Cartões de Visita (regra 40) |
+| `CARTOES` | CARTÕES | OFFSET | Cartões de Visita; Card Shop (convites, postais, trifold…); Christmas Cards; Postal True White Matte; Cartões › Cartão 10 x 15 cm (1.9) — Cartões Visita › Cartões de Visita (regras 35 e 43) |
 
 Para acrescentar um: uma entrada em `SUBPROCESSOS` e `sub: "<CHAVE>"` na(s) regra(s). Só com indicação
 do utilizador ("para já só tenho este", 2026-11-12).
@@ -267,13 +267,16 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 31 | contém `mont blanc` | OMEGA | Moldura Mont Blanc 10X15 |
 | 32 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
 | 33 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
-| 34 | contém `acrilico` ou `acrilica` | OMEGA | Acrílico › 30x45; Quadro em Acrílico › Quadro Acrílico 15 x 20 cm; Molduras Acrílicas 20mm › 15x20; Standup Acrilico - Comunhões › 10x15 |
-| 35 | contém `madeira natural`, `quadro em madeira`, `folio de madeira` ou `wood edge panel` | OMEGA | Madeira Natural › 30x30; Quadro em Madeira › Quadro em Madeira 30 x 45 cm; Fólio de Madeira › 10x15; Wood Edge Panel › 40x60 |
-| 36 | contém `dibond`, `aluminio`, `design clear`, `quadro adesivo`, `shapes ›` ou `circulo` | OMEGA | Dibond › Tamanho não Standard; Quadro em Alumínio › Quadro alumínio 30x45; Design Clear 15x20; Quadro Adesivo 20x20; Shapes › 30x30 - Círculo; Círculo › Círculo 50x50 |
-| 37 | contém `moldura` + 3D, Apalaches, Denali, Dome, Fusion, Hayes, Ridge, Shake, Whistler, ou `moldura para arvore` | OMEGA | Moldura 3D 15 x 15 cm; Moldura Dome 10x15; Moldura Fusion › 20x25; Moldura Whistler 15 x 20 cm; Natal › Moldura para Árvore de Natal |
-| 38 | contém `christmas wall gallery`, `christmas photo trail`, `christmas semi frame` ou `enfeite de natal` | OMEGA | Christmas Decor › Christmas Wall Gallery; Christmas Photo Trail; Christmas Semi Frame 20x15; Natal › Enfeite de Natal em forma de Presente |
-| 39 | contém `suporte 15x20` | OMEGA | Suporte 15x20 (pastas «… - Passepartout C») |
-| 40 | contém `cartao de visita` ou `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
+| 34 | contém `sticker` | OFFSET | Sticker › Sticker - Circulo 5x5 |
+| 35 | contém `card shop`, `christmas cards ›`, `christmas cover premium`, `christmas photo card set`, `postal`, ou é da categoria `Cartões ›` | OFFSET › CARTÕES | Card Shop - Convites › 15x20; Card Shop - Trifold Especiais › 10x15; Christmas Cards › Christmas Cover Premium; Convites › Postal 15x20 em True White Matte; Cartões › Cartão 10 x 15 cm |
+| 36 | contém `capas para fotografia`, `capa fotos natalicia`, `pop cover`, `pocket cover` ou `poster a4` | OFFSET | Capas Para Fotografia › 22x32 (Photo 20x30); Natal › Capa Fotos Natalícia Person. 15x20 (x25); Christmas Pop Cover; Pocket Cover Christmas; Posters › Poster A4 - Frente |
+| 37 | contém `acrilico` ou `acrilica` | OMEGA | Acrílico › 30x45; Quadro em Acrílico › Quadro Acrílico 15 x 20 cm; Molduras Acrílicas 20mm › 15x20; Standup Acrilico - Comunhões › 10x15 |
+| 38 | contém `madeira natural`, `quadro em madeira`, `folio de madeira` ou `wood edge panel` | OMEGA | Madeira Natural › 30x30; Quadro em Madeira › Quadro em Madeira 30 x 45 cm; Fólio de Madeira › 10x15; Wood Edge Panel › 40x60 |
+| 39 | contém `dibond`, `aluminio`, `design clear`, `quadro adesivo`, `shapes ›` ou da categoria `Círculo ›` | OMEGA | Dibond › Tamanho não Standard; Quadro em Alumínio › Quadro alumínio 30x45; Design Clear 15x20; Quadro Adesivo 20x20; Shapes › 30x30 - Círculo; Círculo › Círculo 50x50 |
+| 40 | contém `moldura` + 3D, Apalaches, Denali, Dome, Fusion, Hayes, Ridge, Shake, Whistler, ou `moldura para arvore` | OMEGA | Moldura 3D 15 x 15 cm; Moldura Dome 10x15; Moldura Fusion › 20x25; Moldura Whistler 15 x 20 cm; Natal › Moldura para Árvore de Natal |
+| 41 | contém `christmas wall gallery`, `christmas photo trail`, `christmas semi frame` ou `enfeite de natal` | OMEGA | Christmas Decor › Christmas Wall Gallery; Christmas Photo Trail; Christmas Semi Frame 20x15; Natal › Enfeite de Natal em forma de Presente |
+| 42 | contém `suporte 15x20` | OMEGA | Suporte 15x20 (pastas «… - Passepartout C») |
+| 43 | contém `cartao de visita` ou `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
 | — | nenhuma regra bate | **Por confirmar** | |
 
 ### Almofadas, mantas e bonecos: regras B1-B9 (regra 9; decididas pelo utilizador a 2026-11-12)
@@ -424,6 +427,17 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.9** (2026-11-17): **produtos OFFSET do lote "MAIS DADOS OFFSET"**, que o utilizador separou em duas pastas:
+  os da "OFFSET - SUB CATEGORIA CARTÕES" vão para o subprocesso **CARTÕES** (Card Shop: convites, dípticos,
+  especiais, postais especiais, trifold; Christmas Cards: Cover Premium, Photo Card Set; Postais/Convites
+  "Postal … True White Matte"; categoria "Cartões ›", ex. Cartão 10 x 15 cm), e os da "OFFSET_MAIN" para OFFSET
+  (Sticker; Capas Para Fotografia; Capa Fotos Natalícia; Christmas Pop Cover; Pocket Cover; Poster A4). A regra
+  OMEGA do «circulo» (1.8) apanhava o "Sticker - Circulo 5x5": passou a ser só a categoria "Círculo ›" e as
+  "Shapes", e o Sticker tem regra própria (OFFSET) antes. **Produto pelo nome da pasta da encomenda:** sem pasta
+  de produto e sem "Ficheiros de … › …" na etiqueta (a etiqueta da outra loja diz "Produto - Natal - Capa…",
+  ambíguo porque os nomes têm " - "), usa-se o texto depois do número na pasta da encomenda
+  ("6537695_1526206 - Capa Fotos Natalícia (x25)"), antes do nome da imagem; a tabela mostra "· pelo nome da pasta
+  da encomenda". Ficam "sem produto" as encomendas só com o `COMPLETED` (nos lotes de teste sem imagens).
 - **1.8** (2026-11-17): **produtos OMEGA do lote "#IMPRESSO"** (o utilizador pediu "regista como OMEGA os que
   o programa ainda não conhece"): Acrílico (e Quadro em Acrílico, Molduras Acrílicas 20mm, Standup Acrílico),
   Madeira Natural, Quadro em Madeira, Fólio de Madeira, Wood Edge Panel, Dibond, Quadro em Alumínio, Design
@@ -733,3 +747,22 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Suporte 15x20 | OMEGA |
 | Christmas Gifts › Ornamento de Natal - Sino | OMEGA |
 | PVC › Tamanho não Standard | OMEGA |
+| Sticker › Sticker - Circulo 5x5 | OFFSET |
+| Capas Para Fotografia › 16x22 ( Photo 15x20 ) | OFFSET |
+| Capas Para Fotografia › 22x32 (Photo 20x30) | OFFSET |
+| Natal › Capa Fotos Natalícia Person. 15x20 (x25) | OFFSET |
+| Capa Fotos Natalícia (x25) | OFFSET |
+| Natal › Christmas Pop Cover - 15x20 | OFFSET |
+| Natal › Pocket Cover Christmas Personalizável-15x20 | OFFSET |
+| Posters › Poster A4 - Frente | OFFSET |
+| Card Shop - Convites Dípticos › 15x15 Díptico (Qtd. Min. 8) | OFFSET |
+| Card Shop - Convites Especiais › 15x15 (Qtd. Min. 4) | OFFSET |
+| Card Shop - Convites › 15x20 (Vertical - Qtd. Min. 8) | OFFSET |
+| Card Shop - Postais Especiais › 20x10 (Horizontal) (Qtd. Min. 6) | OFFSET |
+| Card Shop - Trifold Especiais › 10x15 (Qtd. Min. 2) | OFFSET |
+| Cartões › Cartão 10 x 15 cm | OFFSET |
+| Christmas Cards › Christmas Cover Premium | OFFSET |
+| Christmas Cards › Christmas Photo Card Set | OFFSET |
+| Convites › Postal 10x15 em True White Matte | OFFSET |
+| Convites › Postal 15x20 em True White Matte | OFFSET |
+| Postais › Postal 10x15 em True White Matte | OFFSET |

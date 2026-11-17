@@ -276,7 +276,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.8</div>
+      <div class="versao">Versão web 1.9</div>
     </div>
   </aside>
 
@@ -399,10 +399,14 @@ const Logica = (() => {
     { quando: "contém «mont blanc»", processo: "OMEGA", exemplos: "Moldura Mont Blanc 10X15", teste: n => /mont blanc/.test(n) },
     { quando: "contém «peluche», «coelhinho», «reninha», «sapinho», «ursinho» ou as palavras «rena», «sapo»", processo: "GIFTS", exemplos: "Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney", teste: n => /peluche|coelhinho|reninha|sapinho|ursinho/.test(n) || /(^|[^a-z])(rena|sapo)([^a-z]|$)/.test(n) },
     { quando: "contém «caderno»", processo: "OFFSET", exemplos: "Cadernos › Caderno A5", teste: n => /caderno/.test(n) },
+    // Produtos OFFSET registados a 2026-11-17 (lote "MAIS DADOS OFFSET"; os da pasta "SUB CATEGORIA CARTÕES" -> CARTÕES)
+    { quando: "contém «sticker»", processo: "OFFSET", exemplos: "Sticker › Sticker - Circulo 5x5", teste: n => /sticker/.test(n) },
+    { quando: "contém «card shop», «christmas cards ›», «christmas cover premium», «christmas photo card set», «postal», ou é da categoria «Cartões ›»", processo: "OFFSET", sub: "CARTOES", exemplos: "Card Shop - Convites › 15x20; Card Shop - Trifold Especiais › 10x15; Christmas Cards › Christmas Cover Premium; Convites › Postal 15x20 em True White Matte; Cartões › Cartão 10 x 15 cm", teste: n => /card shop|christmas cards ›|christmas cover premium|christmas photo card set|postal|^cartoes ›/.test(n) },
+    { quando: "contém «capas para fotografia», «capa fotos natalicia», «pop cover», «pocket cover» ou «poster a4»", processo: "OFFSET", exemplos: "Capas Para Fotografia › 22x32 (Photo 20x30); Natal › Capa Fotos Natalícia Person. 15x20 (x25); Christmas Pop Cover; Pocket Cover Christmas; Posters › Poster A4 - Frente", teste: n => /capas para fotografia|capa fotos natalicia|pop cover|pocket cover|poster a4/.test(n) },
     // Produtos OMEGA registados a 2026-11-17 (lote "#IMPRESSO"): quadros, molduras e decoração de Natal
     { quando: "contém «acrilico» ou «acrilica»", processo: "OMEGA", exemplos: "Acrílico › 30x45; Quadro em Acrílico › Quadro Acrílico 15 x 20 cm; Molduras Acrílicas 20mm › 15x20; Standup Acrilico - Comunhões › 10x15", teste: n => /acrilic[oa]/.test(n) },
     { quando: "contém «madeira natural», «quadro em madeira», «folio de madeira» ou «wood edge panel»", processo: "OMEGA", exemplos: "Madeira Natural › 30x30; Quadro em Madeira › Quadro em Madeira 30 x 45 cm; Fólio de Madeira › 10x15; Wood Edge Panel › 40x60", teste: n => /madeira natural|quadro em madeira|folio de madeira|wood edge panel/.test(n) },
-    { quando: "contém «dibond», «aluminio», «design clear», «quadro adesivo», «shapes ›» ou «circulo»", processo: "OMEGA", exemplos: "Dibond › Tamanho não Standard; Quadro em Alumínio › Quadro alumínio 30x45; Design Clear 15x20; Quadro Adesivo 20x20; Shapes › 30x30 - Círculo; Círculo › Círculo 50x50", teste: n => /dibond|aluminio|design clear|quadro adesivo|shapes ›|circulo/.test(n) },
+    { quando: "contém «dibond», «aluminio», «design clear», «quadro adesivo», «shapes ›» ou da categoria «Círculo ›»", processo: "OMEGA", exemplos: "Dibond › Tamanho não Standard; Quadro em Alumínio › Quadro alumínio 30x45; Design Clear 15x20; Quadro Adesivo 20x20; Shapes › 30x30 - Círculo; Círculo › Círculo 50x50", teste: n => /dibond|aluminio|design clear|quadro adesivo|shapes ›|^circulo ›/.test(n) },
     { quando: "contém «moldura» + 3D, Apalaches, Denali, Dome, Fusion, Hayes, Ridge, Shake, Whistler, ou «moldura para arvore»", processo: "OMEGA", exemplos: "Moldura 3D 15 x 15 cm; Moldura Dome 10x15; Moldura Fusion › 20x25; Moldura Whistler 15 x 20 cm; Natal › Moldura para Árvore de Natal", teste: n => /moldura (3d|apalaches|denali|dome|fusion|hayes|ridge|shake|whistler|para arvore)/.test(n) },
     { quando: "contém «christmas wall gallery», «christmas photo trail», «christmas semi frame» ou «enfeite de natal»", processo: "OMEGA", exemplos: "Christmas Decor › Christmas Wall Gallery; Christmas Photo Trail; Christmas Semi Frame 20x15; Natal › Enfeite de Natal em forma de Presente", teste: n => /christmas (wall gallery|photo trail|semi frame)|enfeite de natal/.test(n) },
     { quando: "contém «suporte 15x20»", processo: "OMEGA", exemplos: "Suporte 15x20 (pastas «… - Passepartout C»)", teste: n => /suporte 15\s*x\s*20/.test(n) },
@@ -533,6 +537,9 @@ const Logica = (() => {
     const qtd = Math.max(1, ...subpastas.map(qtdDaPasta));
     const comQtd = nome => (qtd > 1 ? `(x${qtd}) - ${nome}` : nome);
     if (daEtiqueta.length) return daEtiqueta.map(p => ({ produto: comQtd(p), origem: "etiqueta" }));
+    // Outra loja (1.9): a pasta da encomenda traz o nome do produto ("6537695_1526206 - Capa Fotos Natalícia (x25)")
+    const doNome = produtoDoNomeDaEncomenda(pastaEnc);
+    if (doNome) return [{ produto: comQtd(doNome), origem: "encomenda" }];
     const vistos = new Map();
     for (const { ficheiro, qtd: q } of ficheiros) {
       const nome = produtoDaImagem(pastaEnc, ficheiro);
@@ -562,6 +569,16 @@ const Logica = (() => {
     let fim = i; while (fim + 1 < linhas.length && rotulo(linhas[fim + 1])) fim++;
     const valor = linhas[fim + 1 + (i - ini)];
     return valor && !rotulo(valor) ? valor : null;
+  }
+
+  // O texto depois do número na pasta da encomenda, sem "URGENTE": "6537695_1526206 - Capa Fotos Natalícia (x25)"
+  // -> "Capa Fotos Natalícia (x25)". Só serve quando não há pasta de produto nem produto na etiqueta.
+  function produtoDoNomeDaEncomenda(pastaEnc) {
+    const nome = descodificar(pastaEnc).trim();
+    if (!PASTA_ENCOMENDA.test(nome)) return null;
+    const resto = nome.replace(/^\d+_\d+/, "").replace(/urgente/ig, "").replace(/^[\s\-›>]+|[\s\-›>]+$/g, "").trim();
+    // Só um tamanho ("100x150", "40x60") não é um produto
+    return /[a-z]/i.test(resto.replace(/\d+\s*x\s*\d+/gi, "")) ? resto : null;
   }
 
   // Uma encomenda sem pasta "Categoria › Produto" (só ficheiros e/ou pastas "x3"): é preciso ler a etiqueta
@@ -595,7 +612,7 @@ const Logica = (() => {
   return {
     PROCESSOS, SUBPROCESSOS, ORDEM, REGRAS, REGRAS_BMJCP, EXCECOES_BMJCP, normalizar, lerNomeProduto, classificar,
     ehPastaEncomenda, pareceEncomenda, orderId, qtdDaPasta, ehEtiqueta, produtoDaImagem, produtosDaEtiqueta,
-    produtosDaEncomenda, semPastaDeProduto, ordemEtiquetas, precisaMaterial, materialDaEtiqueta, gruposPesquisa, LIMITE_PESQUISA, MAX_IDS_GRUPO,
+    produtosDaEncomenda, semPastaDeProduto, ordemEtiquetas, produtoDoNomeDaEncomenda, precisaMaterial, materialDaEtiqueta, gruposPesquisa, LIMITE_PESQUISA, MAX_IDS_GRUPO,
   };
 })();
 </script>
@@ -1134,6 +1151,7 @@ function criarProgresso(el, tituloBase = document.title) {
         el("td", {}, l.categoria ? el("span", { className: "cat", textContent: `${l.categoria} › ` }) : null, l.produto,
           l.origem === "etiqueta" ? el("span", { className: "cat", textContent: " · lido da etiqueta" }) : null,
           l.origem === "imagem" ? el("span", { className: "cat", textContent: " · pelo nome da imagem" }) : null,
+          l.origem === "encomenda" ? el("span", { className: "cat", textContent: " · pelo nome da pasta da encomenda" }) : null,
           l.precisaMaterial ? el("span", { className: l.materialLido ? "cat" : "cat aviso-texto",
             textContent: l.material ? ` · material: ${l.material}` : l.materialLido ? " · sem material na etiqueta" : " · etiqueta não lida: material por verificar" }) : null),
         el("td", { className: "qtd", textContent: String(l.qtd) })))));

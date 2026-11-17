@@ -197,6 +197,30 @@ for (const [n, e] of [["Ímanes › Ímanes Vintage", "OFFSET"], ["Ímanes › P
 }
 console.log("ok  prefixo da encomenda (Íman Quadrado)");
 
+// ---------------------------------------------------------------- produto pelo nome da pasta da encomenda (1.9)
+const pn = Logica.produtoDoNomeDaEncomenda;
+if (pn("6537695_1526206 - Capa Fotos Natalícia (x25)") !== "Capa Fotos Natalícia (x25)") falhar(`produtoDoNomeDaEncomenda deu ${pn("6537695_1526206 - Capa Fotos Natalícia (x25)")}`);
+if (pn("3480124_2064550 - URGENTE") !== null || pn("3477501_2057613") !== null || pn("6537976_1526863 - 100x150") !== null) falhar("produtoDoNomeDaEncomenda inventou um produto");
+const capa = Logica.produtosDaEncomenda("6537695_1526206 - Capa Fotos Natalícia (x25)", [], [], [{ ficheiro: "6537695_1526206_label.pdf", qtd: 1 }]);
+if (JSON.stringify(capa) !== JSON.stringify([{ produto: "Capa Fotos Natalícia (x25)", origem: "encomenda" }])) falhar(`produtosDaEncomenda (nome da pasta): ${JSON.stringify(capa)}`);
+if (Logica.classificar("Capa Fotos Natalícia (x25)").processo !== "OFFSET") falhar("Capa Fotos Natalícia devia ser OFFSET");
+// A pasta de produto e a etiqueta continuam a mandar
+if (Logica.produtosDaEncomenda("6537695_1526206 - Capa Fotos", ["Natal › Capa Fotos Natalícia Person. 15x20 (x25)"])[0].origem !== "pasta") falhar("a pasta de produto devia mandar");
+if (Logica.produtosDaEncomenda("6537695_1526206 - Capa Fotos", [], ["Natal › Bola de Natal"])[0].origem !== "etiqueta") falhar("a etiqueta devia mandar");
+// Subprocesso CARTÕES (pasta "OFFSET - SUB CATEGORIA CARTÕES") e o resto do OFFSET
+for (const n of ["Card Shop - Convites › 15x20 (Vertical - Qtd. Min. 8)", "Card Shop - Trifold Especiais › 10x15 (Qtd. Min. 2)",
+  "Christmas Cards › Christmas Cover Premium", "Convites › Postal 15x20 em True White Matte", "Postais › Postal 10x15 em True White Matte",
+  "Cartões › Cartão 10 x 15 cm", "Cartões Visita › Cartões de Visita"]) {
+  const r = Logica.classificar(n);
+  if (r.processo !== "OFFSET" || r.sub !== "CARTOES") falhar(`"${n}" devia ser OFFSET › CARTÕES (deu ${r.processo} ${r.sub})`);
+}
+for (const n of ["Sticker › Sticker - Circulo 5x5", "Capas Para Fotografia › 22x32 (Photo 20x30)", "Natal › Christmas Pop Cover - 15x20", "Posters › Poster A4 - Frente"]) {
+  const r = Logica.classificar(n);
+  if (r.processo !== "OFFSET" || r.sub) falhar(`"${n}" devia ser OFFSET sem subprocesso (deu ${r.processo} ${r.sub})`);
+}
+if (Logica.classificar("Shapes › 30x30 - Círculo").processo !== "OMEGA" || Logica.classificar("Círculo › Círculo 50x50").processo !== "OMEGA") falhar("Círculo (Shapes) devia continuar OMEGA");
+console.log("ok  1.9: nome da pasta da encomenda, CARTÕES e OFFSET novos");
+
 // ---------------------------------------------------------------- gruposPesquisa
 for (const total of [0, 1, 2, 22, 23, 24, 50, 271, 1000]) {
   const lista = Array.from({ length: total }, (_, i) => String(2000000 + i * 37));
