@@ -390,6 +390,9 @@ O objetivo é colar na pesquisa da pasta e ver só as encomendas de um processo.
   é **partido em grupos**, cada um com o seu botão Copiar, com a mesma regra do Proc-Scanner:
   reaproveitar o `gruposPesquisa()` do `web/scanner.html` (`LIMITE_PESQUISA = 400`,
   `MAX_IDS_GRUPO = 23`), contando já os asteriscos e o ` OR ` no tamanho.
+- **Teste no Windows 11 (2026-11-17):** 594 caracteres (46 ids) e 958 (74 ids) encontraram tudo; 2.011 já não
+  deixou pesquisar. O limite do Windows 11 fica algures entre 958 e 2.011 (o dos 400 é o do Windows 10). O
+  utilizador decidiu **manter os grupos de 400 caracteres / 23 ids**, que servem nos dois.
 - O protótipo usa blocos fixos (20 por omissão, com um seletor de 5 a 40): na app, usar o
   `gruposPesquisa()` da família em vez disso.
 - O botão Copiar muda para "Copiado ✓" durante 1,5 s, e os grupos já copiados ficam marcados, para o
