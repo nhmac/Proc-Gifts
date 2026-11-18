@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.10.3
+- **Versão atual:** web 1.10.4
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -273,7 +273,7 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 33 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
 | 34 | contém `sticker` | OFFSET | Sticker › Sticker - Circulo 5x5 |
 | 35 | contém `card shop`, `christmas cards ›`, `christmas cover premium`, `christmas photo card set`, `postal`, ou é da categoria `Cartões ›` | OFFSET › CARTÕES | Card Shop - Convites › 15x20; Card Shop - Trifold Especiais › 10x15; Christmas Cards › Christmas Cover Premium; Convites › Postal 15x20 em True White Matte; Cartões › Cartão 10 x 15 cm |
-| 36 | contém `capas para fotografia`, `capa fotos natalicia`, `capa de fotos comunhoes`, `pop cover`, `pocket cover`, `poster a4`, `poster a3`, `photo card premium` ou `voucher` | OFFSET | Capas Para Fotografia › 22x32 (Photo 20x30); Natal › Capa Fotos Natalícia Person. 15x20 (x25); Capa de Fotos Comunhões (x25); Christmas Pop Cover; Pocket Cover Christmas; Posters › Poster A4 - Frente, Poster A3 - Frente; Natal › Christmas Photo Card Premium - Lacre; Vouchers Marketing › Voucher Marketing (1.10.2) |
+| 36 | contém `capas para fotografia`, `capa fotos natalicia`, `capa de fotos comunhoes`, `pop cover`, `pocket cover`, `poster a4`, `poster a3`, `photo card premium`, `voucher` ou `estrela de natal` | OFFSET | Capas Para Fotografia › 22x32 (Photo 20x30); Natal › Capa Fotos Natalícia Person. 15x20 (x25); Capa de Fotos Comunhões (x25); Christmas Pop Cover; Pocket Cover Christmas; Posters › Poster A4 - Frente, Poster A3 - Frente; Natal › Christmas Photo Card Premium - Lacre; Vouchers Marketing › Voucher Marketing (1.10.2); Christmas Gifts › Estrela de Natal (1.10.4) |
 | 37 | contém `acrilico` ou `acrilica` | OMEGA | Acrílico › 30x45; Quadro em Acrílico › Quadro Acrílico 15 x 20 cm; Molduras Acrílicas 20mm › 15x20; Standup Acrilico - Comunhões › 10x15 |
 | 38 | contém `madeira natural`, `quadro em madeira`, `folio de madeira` ou `wood edge panel` | OMEGA | Madeira Natural › 30x30; Quadro em Madeira › Quadro em Madeira 30 x 45 cm; Fólio de Madeira › 10x15; Wood Edge Panel › 40x60 |
 | 39 | contém `dibond`, `aluminio`, `design clear`, `quadro adesivo`, `shapes ›` ou das categorias `Círculo ›` e `Hexágono ›` | OMEGA | Dibond › Tamanho não Standard; Quadro em Alumínio › Quadro alumínio 30x45; Design Clear 15x20; Quadro Adesivo 20x20; Shapes › 30x30 - Círculo; Círculo › Círculo 50x50; Hexágono › Hexágono 30x30 (1.10.3) |
@@ -442,6 +442,8 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.10.4** (2026-11-18): Christmas Gifts › Estrela de Natal → OFFSET (regra 36, pedido do utilizador). Não
+  apanha os "Ímãs de Natal - Estrela" nem o "Ornamento de Natal - Estrela", que continuam OMEGA (regras 19 e 24).
 - **1.10.3** (2026-11-18): produtos OMEGA (pedido do utilizador, "adiciona ao processo omega"): Hexágono ›
   Hexágono 30x30 (regra 39, pela categoria "Hexágono ›") e Moldura Aconcágua › Moldura Aconcágua 20x25 (regra 40).
 - **1.10.2** (2026-11-18): produtos OFFSET (pedido do utilizador, "adiciona aos produtos offset"), na regra 36:
@@ -799,6 +801,7 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Natal › Christmas Photo Card Premium - Lacre | OFFSET |
 | Posters › Poster A3 - Frente | OFFSET |
 | Vouchers Marketing › Voucher Marketing | OFFSET |
+| Christmas Gifts › Estrela de Natal | OFFSET |
 | Card Shop - Convites Dípticos › 15x15 Díptico (Qtd. Min. 8) | OFFSET |
 | Card Shop - Convites Especiais › 15x15 (Qtd. Min. 4) | OFFSET |
 | Card Shop - Convites › 15x20 (Vertical - Qtd. Min. 8) | OFFSET |
