@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.10
+- **Versão atual:** web 1.10.4
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -223,7 +223,7 @@ O resumo mostra a contagem do subprocesso por baixo do processo, e a pesquisa de
 |---|---|---|---|
 | `CARTOES` | CARTÕES | OFFSET | Cartões de Visita; Card Shop (convites, postais, trifold…); Christmas Cards; Postal True White Matte; Cartões › Cartão 10 x 15 cm (1.9) — Cartões Visita › Cartões de Visita (regras 35 e 43) |
 
-| `CALENDARIOS` | CALENDÁRIOS | OFFSET | Calendários Poster, Parede, Mesa e Bolso em True White ou Sirio Ice White; Christmas Calendar Holder (e a Recarga) (1.10) — regras 45 e 46 |
+| `CALENDARIOS` | CALENDÁRIOS | OFFSET | Calendários Poster, Parede, Mesa e Bolso em True White ou Sirio Ice White; Christmas Calendar Holder (e a Recarga) (1.10); Christmas Calendar - 15x20 e Paper Folio Armonia (1.10.1) — regras 45, 46 e 47 |
 
 Para acrescentar um: uma entrada em `SUBPROCESSOS` e `sub: "<CHAVE>"` na(s) regra(s). Só com indicação
 do utilizador ("para já só tenho este", 2026-11-12).
@@ -273,17 +273,18 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 33 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
 | 34 | contém `sticker` | OFFSET | Sticker › Sticker - Circulo 5x5 |
 | 35 | contém `card shop`, `christmas cards ›`, `christmas cover premium`, `christmas photo card set`, `postal`, ou é da categoria `Cartões ›` | OFFSET › CARTÕES | Card Shop - Convites › 15x20; Card Shop - Trifold Especiais › 10x15; Christmas Cards › Christmas Cover Premium; Convites › Postal 15x20 em True White Matte; Cartões › Cartão 10 x 15 cm |
-| 36 | contém `capas para fotografia`, `capa fotos natalicia`, `pop cover`, `pocket cover` ou `poster a4` | OFFSET | Capas Para Fotografia › 22x32 (Photo 20x30); Natal › Capa Fotos Natalícia Person. 15x20 (x25); Christmas Pop Cover; Pocket Cover Christmas; Posters › Poster A4 - Frente |
+| 36 | contém `capas para fotografia`, `capa fotos natalicia`, `capa de fotos comunhoes`, `pop cover`, `pocket cover`, `poster a4`, `poster a3`, `photo card premium`, `voucher` ou `estrela de natal` | OFFSET | Capas Para Fotografia › 22x32 (Photo 20x30); Natal › Capa Fotos Natalícia Person. 15x20 (x25); Capa de Fotos Comunhões (x25); Christmas Pop Cover; Pocket Cover Christmas; Posters › Poster A4 - Frente, Poster A3 - Frente; Natal › Christmas Photo Card Premium - Lacre; Vouchers Marketing › Voucher Marketing (1.10.2); Christmas Gifts › Estrela de Natal (1.10.4) |
 | 37 | contém `acrilico` ou `acrilica` | OMEGA | Acrílico › 30x45; Quadro em Acrílico › Quadro Acrílico 15 x 20 cm; Molduras Acrílicas 20mm › 15x20; Standup Acrilico - Comunhões › 10x15 |
 | 38 | contém `madeira natural`, `quadro em madeira`, `folio de madeira` ou `wood edge panel` | OMEGA | Madeira Natural › 30x30; Quadro em Madeira › Quadro em Madeira 30 x 45 cm; Fólio de Madeira › 10x15; Wood Edge Panel › 40x60 |
-| 39 | contém `dibond`, `aluminio`, `design clear`, `quadro adesivo`, `shapes ›` ou da categoria `Círculo ›` | OMEGA | Dibond › Tamanho não Standard; Quadro em Alumínio › Quadro alumínio 30x45; Design Clear 15x20; Quadro Adesivo 20x20; Shapes › 30x30 - Círculo; Círculo › Círculo 50x50 |
-| 40 | contém `moldura` + 3D, Apalaches, Denali, Dome, Fusion, Hayes, Ridge, Shake, Whistler, ou `moldura para arvore` | OMEGA | Moldura 3D 15 x 15 cm; Moldura Dome 10x15; Moldura Fusion › 20x25; Moldura Whistler 15 x 20 cm; Natal › Moldura para Árvore de Natal |
+| 39 | contém `dibond`, `aluminio`, `design clear`, `quadro adesivo`, `shapes ›` ou das categorias `Círculo ›` e `Hexágono ›` | OMEGA | Dibond › Tamanho não Standard; Quadro em Alumínio › Quadro alumínio 30x45; Design Clear 15x20; Quadro Adesivo 20x20; Shapes › 30x30 - Círculo; Círculo › Círculo 50x50; Hexágono › Hexágono 30x30 (1.10.3) |
+| 40 | contém `moldura` + 3D, Aconcágua (1.10.3), Apalaches, Denali, Dome, Fusion, Hayes, Ridge, Shake, Whistler, ou `moldura para arvore` | OMEGA | Moldura 3D 15 x 15 cm; Moldura Dome 10x15; Moldura Fusion › 20x25; Moldura Whistler 15 x 20 cm; Natal › Moldura para Árvore de Natal |
 | 41 | contém `christmas wall gallery`, `christmas photo trail`, `christmas semi frame` ou `enfeite de natal` | OMEGA | Christmas Decor › Christmas Wall Gallery; Christmas Photo Trail; Christmas Semi Frame 20x15; Natal › Enfeite de Natal em forma de Presente |
 | 42 | contém `suporte 15x20` | OMEGA | Suporte 15x20 (pastas «… - Passepartout C») |
 | 43 | contém `cartao de visita` ou `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
 | 44 | contém `calendario de madeira` | OMEGA | Madeira › Calendário de Madeira 30x30, 30x45 |
-| 45 | contém `calendar holder` | OFFSET › CALENDÁRIOS | Christmas Calendars › Christmas Calendar Holder - 10x15 (Madeira Clara, Nogal; também a Recarga) |
+| 45 | contém `calendar holder` ou `christmas calendar - <tamanho>` | OFFSET › CALENDÁRIOS | Christmas Calendars › Christmas Calendar Holder - 10x15 (Madeira Clara, Nogal; também a Recarga); Christmas Calendars › Christmas Calendar - 15x20 (1.10.1) |
 | 46 | contém `calendario` + poster, parede, mesa ou bolso: depende do acabamento na etiqueta (o Card Shop nunca chega aqui: fica nos CARTÕES, regra 35) | True White, Sirio Ice White → OFFSET › CALENDÁRIOS; Gesso, Tintoretto Gesso → ESAG; outro acabamento ou sem etiqueta → Por confirmar | Poster › Calendário Poster 30x42; Parede › Calendário Parede 30x42, 21x29; Mesa › Calendário Mesa 10x15, 14x14, 21x10; Bolso › Calendário Bolso 5,5x8,5 |
+| 47 | contém `paper folio armonia` (1.10.1, pedido do utilizador) | OFFSET › CALENDÁRIOS | Comunhões › Paper Folio Armonia (Qtd. Min. 4) |
 | — | nenhuma regra bate | **Por confirmar** | |
 
 ### Almofadas, mantas e bonecos: regras B1-B9 (regra 9; decididas pelo utilizador a 2026-11-12)
@@ -441,6 +442,22 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.10.4** (2026-11-18): Christmas Gifts › Estrela de Natal → OFFSET (regra 36, pedido do utilizador). Não
+  apanha os "Ímãs de Natal - Estrela" nem o "Ornamento de Natal - Estrela", que continuam OMEGA (regras 19 e 24).
+- **1.10.3** (2026-11-18): produtos OMEGA (pedido do utilizador, "adiciona ao processo omega"): Hexágono ›
+  Hexágono 30x30 (regra 39, pela categoria "Hexágono ›") e Moldura Aconcágua › Moldura Aconcágua 20x25 (regra 40).
+- **1.10.2** (2026-11-18): produtos OFFSET (pedido do utilizador, "adiciona aos produtos offset"), na regra 36:
+  Capa de Fotos Comunhões (x25), Natal › Christmas Photo Card Premium - Lacre (OFFSET, não CARTÕES: o Christmas
+  Photo Card **Set** continua em CARTÕES), Posters › Poster A3 - Frente e Vouchers Marketing › Voucher Marketing.
+- **1.10.1** (2026-11-18): "Christmas Calendars › Christmas Calendar - 15x20" (encomenda `6538939_1529321`, pedido
+  do utilizador: "adiciona aos calendários") → OFFSET › CALENDÁRIOS, na regra 45 com o Calendar Holder. A etiqueta
+  não tem "Acabamento:", por isso não depende do acabamento. Bate em `christmas calendar - <tamanho>`, para
+  apanhar outros tamanhos do mesmo produto, mas não o resto da categoria "Christmas Calendars". Também
+  "Paper Folio Armonia" (encomenda `6538651_1528648`, "e este também") → OFFSET › CALENDÁRIOS (regra 47; a etiqueta
+  diz "Tipo: H - Cartões", mas foi o utilizador que o pôs nos calendários). Último recurso para o produto: a linha
+  "Ficheiros de: <nº>_<id> - <produto>" da etiqueta (sem "›"), usada só quando não há pasta de produto, nem
+  "Ficheiros de … › …", nem texto na pasta da encomenda, nem imagens (`produtosDaEtiquetaSemCategoria`); a tabela
+  mostra "· lido da etiqueta". Sem mudanças nos resultados antigos: só entra quando antes ficava "sem produto".
 - **1.10** (2026-11-17): **calendários** (lote "CALENDARIOS", 86 encomendas da outra loja). Processo novo **ESAG**
   e subprocesso **OFFSET › CALENDÁRIOS**. Calendário de Madeira → OMEGA; Christmas Calendar Holder (Madeira Clara /
   Nogal, e a Recarga) → OFFSET › CALENDÁRIOS; Calendário Poster, Parede, Mesa e Bolso pelo **acabamento** da
@@ -768,6 +785,8 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Christmas Products › Christmas Semi Frame 20x15 | OMEGA |
 | Natal › Enfeite de Natal em forma de Presente | OMEGA |
 | Suporte 15x20 | OMEGA |
+| Hexágono › Hexágono 30x30 | OMEGA |
+| Moldura Aconcágua › Moldura Aconcágua 20x25 | OMEGA |
 | Christmas Gifts › Ornamento de Natal - Sino | OMEGA |
 | PVC › Tamanho não Standard | OMEGA |
 | Sticker › Sticker - Circulo 5x5 | OFFSET |
@@ -778,6 +797,11 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Natal › Christmas Pop Cover - 15x20 | OFFSET |
 | Natal › Pocket Cover Christmas Personalizável-15x20 | OFFSET |
 | Posters › Poster A4 - Frente | OFFSET |
+| Capa de Fotos Comunhões (x25) | OFFSET |
+| Natal › Christmas Photo Card Premium - Lacre | OFFSET |
+| Posters › Poster A3 - Frente | OFFSET |
+| Vouchers Marketing › Voucher Marketing | OFFSET |
+| Christmas Gifts › Estrela de Natal | OFFSET |
 | Card Shop - Convites Dípticos › 15x15 Díptico (Qtd. Min. 8) | OFFSET |
 | Card Shop - Convites Especiais › 15x15 (Qtd. Min. 4) | OFFSET |
 | Card Shop - Convites › 15x20 (Vertical - Qtd. Min. 8) | OFFSET |
@@ -793,4 +817,8 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Madeira › Calendário de Madeira 30x45 | OMEGA |
 | Christmas Calendars › Christmas Calendar Holder - 10x15 | OFFSET |
 | Christmas Calendars › Christmas Calendar Holder - 10x15 - Recarga | OFFSET |
+| Christmas Calendars › Christmas Calendar - 15x20 | OFFSET |
+| (x2) - Christmas Calendars › Christmas Calendar - 15x20 | OFFSET |
+| Comunhões › Paper Folio Armonia (Qtd. Min. 4) | OFFSET |
+| Paper Folio Armonia (Ctd. Min. 4) | OFFSET |
 | Poster › Calendário Poster 30x42 | DESCONHECIDO |
