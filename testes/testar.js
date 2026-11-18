@@ -210,6 +210,8 @@ const casosCal = [
   ["Madeira › Calendário de Madeira 30x45", "True White", "OMEGA"],     // o acabamento não muda a madeira
   ["Christmas Calendars › Christmas Calendar Holder - 10x15", undefined, "OFFSET/CALENDARIOS"],
   ["Christmas Calendars › Christmas Calendar Holder - 10x15 - Recarga", undefined, "OFFSET/CALENDARIOS"],
+  ["Christmas Calendars › Christmas Calendar - 15x20", undefined, "OFFSET/CALENDARIOS"],      // 1.10.1, sem acabamento na etiqueta
+  ["Christmas Calendar - 15x20", "True White", "OFFSET/CALENDARIOS"],
   ["Calendários › Calendário A4", "True White", "DESCONHECIDO"],        // outro calendário: sem regra
   ["Posters › Poster A4 - Frente", "Gesso", "OFFSET"],                  // o acabamento não muda outros produtos
   // Card Shop nunca segue a regra do acabamento, mesmo em Tintoretto Gesso (decisão do utilizador, 2026-11-17)
@@ -228,6 +230,21 @@ for (const f of ["6534871_1519619_complete.pdf", "complete.pdf", "6534871_151961
   if (Logica.ehEtiqueta(f)) falhar(`ehEtiqueta aceitou ${f}`);
 if (Logica.ordemEtiquetas([{ ficheiro: "6534871_1519619_complete.pdf" }, { ficheiro: "6534871_1519619_label.pdf" }]).length !== 1) falhar("ordemEtiquetas com complete.pdf");
 if (Logica.produtosDaEncomenda("6534871_1519619", [], [], [{ ficheiro: "6534871_1519619_complete.pdf", qtd: 1 }]).length) falhar("complete.pdf deu um produto");
+// 1.10.1: Christmas Calendar e Paper Folio Armonia -> OFFSET › CALENDÁRIOS; "Ficheiros de: <nº>_<id> - <produto>" como último recurso
+for (const n of ["Christmas Calendars › Christmas Calendar - 15x20", "Christmas Calendar - 15x20", "Comunhões › Paper Folio Armonia (Qtd. Min. 4)", "Paper Folio Armonia (Ctd. Min. 4)"])
+  if (cal(n, undefined) !== "OFFSET/CALENDARIOS") falhar(`${n} devia ser OFFSET/CALENDARIOS (deu ${cal(n, undefined)})`);
+if (cal("Christmas Calendars › Outro Produto", undefined) !== "DESCONHECIDO") falhar("o resto da categoria Christmas Calendars não pode ir para CALENDÁRIOS");
+{
+  const sc = Logica.produtosDaEtiquetaSemCategoria("Ficheiros de: 6538939_1529321 - Christmas Calendar - 15x20\nChristmas Calendar - 15x20 1");
+  if (JSON.stringify(sc) !== '["Christmas Calendar - 15x20"]') falhar(`produtosDaEtiquetaSemCategoria: ${JSON.stringify(sc)}`);
+  if (Logica.produtosDaEtiquetaSemCategoria("Ficheiros de Natal › Bola de Natal Brilhante").length) falhar("produtosDaEtiquetaSemCategoria apanhou uma linha com ›");
+  const p1 = Logica.produtosDaEncomenda("6538651_1528648", [], [], [{ ficheiro: "6538651_1528648_label.pdf", qtd: 1 }], ["Paper Folio Armonia (Ctd. Min. 4)"]);
+  if (p1.length !== 1 || p1[0].origem !== "etiqueta" || p1[0].produto !== "Paper Folio Armonia (Ctd. Min. 4)") falhar(`último recurso da etiqueta: ${JSON.stringify(p1)}`);
+  const p2 = Logica.produtosDaEncomenda("6537695_1526206 - Capa Fotos Natalícia (x25)", [], [], [], ["Outra Coisa"]);
+  if (p2[0].produto !== "Capa Fotos Natalícia (x25)") falhar("o nome da pasta da encomenda tem de ganhar à etiqueta sem categoria");
+  const p3 = Logica.produtosDaEncomenda("3480186_2064704", [], [], [{ ficheiro: "3480186_2064704_bola_natal_cores_0000.jpg", qtd: 1 }], ["Outra Coisa"]);
+  if (p3[0].produto !== "bola natal cores") falhar("a imagem tem de ganhar à etiqueta sem categoria");
+}
 console.log("ok  calendários (acabamento → OFFSET › CALENDÁRIOS / ESAG; madeira → OMEGA; complete.pdf ignorado)");
 
 // ---------------------------------------------------------------- prefixo da encomenda (1.7)
