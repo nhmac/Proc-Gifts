@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.10.2
+- **Versão atual:** web 1.10.3
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -276,8 +276,8 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 36 | contém `capas para fotografia`, `capa fotos natalicia`, `capa de fotos comunhoes`, `pop cover`, `pocket cover`, `poster a4`, `poster a3`, `photo card premium` ou `voucher` | OFFSET | Capas Para Fotografia › 22x32 (Photo 20x30); Natal › Capa Fotos Natalícia Person. 15x20 (x25); Capa de Fotos Comunhões (x25); Christmas Pop Cover; Pocket Cover Christmas; Posters › Poster A4 - Frente, Poster A3 - Frente; Natal › Christmas Photo Card Premium - Lacre; Vouchers Marketing › Voucher Marketing (1.10.2) |
 | 37 | contém `acrilico` ou `acrilica` | OMEGA | Acrílico › 30x45; Quadro em Acrílico › Quadro Acrílico 15 x 20 cm; Molduras Acrílicas 20mm › 15x20; Standup Acrilico - Comunhões › 10x15 |
 | 38 | contém `madeira natural`, `quadro em madeira`, `folio de madeira` ou `wood edge panel` | OMEGA | Madeira Natural › 30x30; Quadro em Madeira › Quadro em Madeira 30 x 45 cm; Fólio de Madeira › 10x15; Wood Edge Panel › 40x60 |
-| 39 | contém `dibond`, `aluminio`, `design clear`, `quadro adesivo`, `shapes ›` ou da categoria `Círculo ›` | OMEGA | Dibond › Tamanho não Standard; Quadro em Alumínio › Quadro alumínio 30x45; Design Clear 15x20; Quadro Adesivo 20x20; Shapes › 30x30 - Círculo; Círculo › Círculo 50x50 |
-| 40 | contém `moldura` + 3D, Apalaches, Denali, Dome, Fusion, Hayes, Ridge, Shake, Whistler, ou `moldura para arvore` | OMEGA | Moldura 3D 15 x 15 cm; Moldura Dome 10x15; Moldura Fusion › 20x25; Moldura Whistler 15 x 20 cm; Natal › Moldura para Árvore de Natal |
+| 39 | contém `dibond`, `aluminio`, `design clear`, `quadro adesivo`, `shapes ›` ou das categorias `Círculo ›` e `Hexágono ›` | OMEGA | Dibond › Tamanho não Standard; Quadro em Alumínio › Quadro alumínio 30x45; Design Clear 15x20; Quadro Adesivo 20x20; Shapes › 30x30 - Círculo; Círculo › Círculo 50x50; Hexágono › Hexágono 30x30 (1.10.3) |
+| 40 | contém `moldura` + 3D, Aconcágua (1.10.3), Apalaches, Denali, Dome, Fusion, Hayes, Ridge, Shake, Whistler, ou `moldura para arvore` | OMEGA | Moldura 3D 15 x 15 cm; Moldura Dome 10x15; Moldura Fusion › 20x25; Moldura Whistler 15 x 20 cm; Natal › Moldura para Árvore de Natal |
 | 41 | contém `christmas wall gallery`, `christmas photo trail`, `christmas semi frame` ou `enfeite de natal` | OMEGA | Christmas Decor › Christmas Wall Gallery; Christmas Photo Trail; Christmas Semi Frame 20x15; Natal › Enfeite de Natal em forma de Presente |
 | 42 | contém `suporte 15x20` | OMEGA | Suporte 15x20 (pastas «… - Passepartout C») |
 | 43 | contém `cartao de visita` ou `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
@@ -442,6 +442,8 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.10.3** (2026-11-18): produtos OMEGA (pedido do utilizador, "adiciona ao processo omega"): Hexágono ›
+  Hexágono 30x30 (regra 39, pela categoria "Hexágono ›") e Moldura Aconcágua › Moldura Aconcágua 20x25 (regra 40).
 - **1.10.2** (2026-11-18): produtos OFFSET (pedido do utilizador, "adiciona aos produtos offset"), na regra 36:
   Capa de Fotos Comunhões (x25), Natal › Christmas Photo Card Premium - Lacre (OFFSET, não CARTÕES: o Christmas
   Photo Card **Set** continua em CARTÕES), Posters › Poster A3 - Frente e Vouchers Marketing › Voucher Marketing.
@@ -781,6 +783,8 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Christmas Products › Christmas Semi Frame 20x15 | OMEGA |
 | Natal › Enfeite de Natal em forma de Presente | OMEGA |
 | Suporte 15x20 | OMEGA |
+| Hexágono › Hexágono 30x30 | OMEGA |
+| Moldura Aconcágua › Moldura Aconcágua 20x25 | OMEGA |
 | Christmas Gifts › Ornamento de Natal - Sino | OMEGA |
 | PVC › Tamanho não Standard | OMEGA |
 | Sticker › Sticker - Circulo 5x5 | OFFSET |
