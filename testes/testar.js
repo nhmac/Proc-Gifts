@@ -245,6 +245,10 @@ if (cal("Christmas Calendars › Outro Produto", undefined) !== "DESCONHECIDO") 
   const p3 = Logica.produtosDaEncomenda("3480186_2064704", [], [], [{ ficheiro: "3480186_2064704_bola_natal_cores_0000.jpg", qtd: 1 }], ["Outra Coisa"]);
   if (p3[0].produto !== "bola natal cores") falhar("a imagem tem de ganhar à etiqueta sem categoria");
 }
+// 1.10.2: produtos OFFSET (não CARTÕES)
+for (const n of ["Capa de Fotos Comunhões (x25)", "Natal › Christmas Photo Card Premium - Lacre", "Posters › Poster A3 - Frente", "Vouchers Marketing › Voucher Marketing"])
+  if (cal(n, undefined) !== "OFFSET") falhar(`${n} devia ser OFFSET (deu ${cal(n, undefined)})`);
+if (cal("Christmas Cards › Christmas Photo Card Set", undefined) !== "OFFSET/CARTOES") falhar("o Photo Card Set tem de continuar em CARTÕES");
 console.log("ok  calendários (acabamento → OFFSET › CALENDÁRIOS / ESAG; madeira → OMEGA; complete.pdf ignorado)");
 
 // ---------------------------------------------------------------- prefixo da encomenda (1.7)

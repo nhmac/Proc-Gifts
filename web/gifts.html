@@ -278,7 +278,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.10.1</div>
+      <div class="versao">Versão web 1.10.2</div>
     </div>
   </aside>
 
@@ -407,7 +407,7 @@ const Logica = (() => {
     { quando: "contém «sticker»", processo: "OFFSET", exemplos: "Sticker › Sticker - Circulo 5x5", teste: n => /sticker/.test(n) },
     // Card Shop é sempre CARTÕES, seja qual for o acabamento (Tintoretto Gesso incluído): tem de ficar antes da regra dos calendários
     { quando: "contém «card shop», «christmas cards ›», «christmas cover premium», «christmas photo card set», «postal», ou é da categoria «Cartões ›»", processo: "OFFSET", sub: "CARTOES", exemplos: "Card Shop - Convites › 15x20; Card Shop - Trifold Especiais › 10x15; Christmas Cards › Christmas Cover Premium; Convites › Postal 15x20 em True White Matte; Cartões › Cartão 10 x 15 cm", teste: n => /card shop|christmas cards ›|christmas cover premium|christmas photo card set|postal|^cartoes ›/.test(n) },
-    { quando: "contém «capas para fotografia», «capa fotos natalicia», «pop cover», «pocket cover» ou «poster a4»", processo: "OFFSET", exemplos: "Capas Para Fotografia › 22x32 (Photo 20x30); Natal › Capa Fotos Natalícia Person. 15x20 (x25); Christmas Pop Cover; Pocket Cover Christmas; Posters › Poster A4 - Frente", teste: n => /capas para fotografia|capa fotos natalicia|pop cover|pocket cover|poster a4/.test(n) },
+    { quando: "contém «capas para fotografia», «capa fotos natalicia», «capa de fotos comunhoes», «pop cover», «pocket cover», «poster a4», «poster a3», «photo card premium» ou «voucher»", processo: "OFFSET", exemplos: "Capas Para Fotografia › 22x32 (Photo 20x30); Natal › Capa Fotos Natalícia Person. 15x20 (x25); Capa de Fotos Comunhões (x25); Christmas Pop Cover; Pocket Cover Christmas; Posters › Poster A4 - Frente; Posters › Poster A3 - Frente; Natal › Christmas Photo Card Premium - Lacre; Vouchers Marketing › Voucher Marketing", teste: n => /capas para fotografia|capa fotos natalicia|capa de fotos comunhoes|pop cover|pocket cover|poster a[34]|photo card premium|voucher/.test(n) },
     // Produtos OMEGA registados a 2026-11-17 (lote "#IMPRESSO"): quadros, molduras e decoração de Natal
     { quando: "contém «acrilico» ou «acrilica»", processo: "OMEGA", exemplos: "Acrílico › 30x45; Quadro em Acrílico › Quadro Acrílico 15 x 20 cm; Molduras Acrílicas 20mm › 15x20; Standup Acrilico - Comunhões › 10x15", teste: n => /acrilic[oa]/.test(n) },
     { quando: "contém «madeira natural», «quadro em madeira», «folio de madeira» ou «wood edge panel»", processo: "OMEGA", exemplos: "Madeira Natural › 30x30; Quadro em Madeira › Quadro em Madeira 30 x 45 cm; Fólio de Madeira › 10x15; Wood Edge Panel › 40x60", teste: n => /madeira natural|quadro em madeira|folio de madeira|wood edge panel/.test(n) },
