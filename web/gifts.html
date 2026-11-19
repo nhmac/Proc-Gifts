@@ -278,7 +278,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.10.1</div>
+      <div class="versao">Versão web 1.10.2</div>
     </div>
   </aside>
 
@@ -412,7 +412,7 @@ const Logica = (() => {
     { quando: "contém «acrilico» ou «acrilica»", processo: "OMEGA", exemplos: "Acrílico › 30x45; Quadro em Acrílico › Quadro Acrílico 15 x 20 cm; Molduras Acrílicas 20mm › 15x20; Standup Acrilico - Comunhões › 10x15", teste: n => /acrilic[oa]/.test(n) },
     { quando: "contém «madeira natural», «quadro em madeira», «folio de madeira» ou «wood edge panel»", processo: "OMEGA", exemplos: "Madeira Natural › 30x30; Quadro em Madeira › Quadro em Madeira 30 x 45 cm; Fólio de Madeira › 10x15; Wood Edge Panel › 40x60", teste: n => /madeira natural|quadro em madeira|folio de madeira|wood edge panel/.test(n) },
     { quando: "contém «dibond», «aluminio», «design clear», «quadro adesivo», «shapes ›» ou da categoria «Círculo ›»", processo: "OMEGA", exemplos: "Dibond › Tamanho não Standard; Quadro em Alumínio › Quadro alumínio 30x45; Design Clear 15x20; Quadro Adesivo 20x20; Shapes › 30x30 - Círculo; Círculo › Círculo 50x50", teste: n => /dibond|aluminio|design clear|quadro adesivo|shapes ›|^circulo ›/.test(n) },
-    { quando: "contém «moldura» + 3D, Apalaches, Denali, Dome, Fusion, Hayes, Ridge, Shake, Whistler, ou «moldura para arvore»", processo: "OMEGA", exemplos: "Moldura 3D 15 x 15 cm; Moldura Dome 10x15; Moldura Fusion › 20x25; Moldura Whistler 15 x 20 cm; Natal › Moldura para Árvore de Natal", teste: n => /moldura (3d|apalaches|denali|dome|fusion|hayes|ridge|shake|whistler|para arvore)/.test(n) },
+    { quando: "contém «moldura» + 3D, Andromeda, Apalaches, Denali, Dome, Fusion, Hayes, Nature, Pokalde, Ridge, Shake, Whistler, Yangra, ou «moldura para arvore»", processo: "OMEGA", exemplos: "Moldura 3D 15 x 15 cm; Moldura Andromeda 10X15; Moldura Dome 10x15; Moldura Fusion › 20x25; Moldura Nature 20 x 15 cm; Moldura Pokalde 15 x 20 cm; Moldura Whistler 15 x 20 cm; Moldura Yangra 15x20; Natal › Moldura para Árvore de Natal", teste: n => /moldura (3d|andromeda|apalaches|denali|dome|fusion|hayes|nature|pokalde|ridge|shake|whistler|yangra|para arvore)/.test(n) },
     { quando: "contém «christmas wall gallery», «christmas photo trail», «christmas semi frame» ou «enfeite de natal»", processo: "OMEGA", exemplos: "Christmas Decor › Christmas Wall Gallery; Christmas Photo Trail; Christmas Semi Frame 20x15; Natal › Enfeite de Natal em forma de Presente", teste: n => /christmas (wall gallery|photo trail|semi frame)|enfeite de natal/.test(n) },
     { quando: "contém «suporte 15x20»", processo: "OMEGA", exemplos: "Suporte 15x20 (pastas «… - Passepartout C»)", teste: n => /suporte 15\s*x\s*20/.test(n) },
     { quando: "contém «cartao de visita» ou «cartoes visita»", processo: "OFFSET", sub: "CARTOES", exemplos: "Cartões Visita › Cartões de Visita", teste: n => /cartoes? (de )?visita/.test(n) },
