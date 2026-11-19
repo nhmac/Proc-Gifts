@@ -210,6 +210,8 @@ const casosCal = [
   ["Madeira › Calendário de Madeira 30x45", "True White", "OMEGA"],     // o acabamento não muda a madeira
   ["Christmas Calendars › Christmas Calendar Holder - 10x15", undefined, "OFFSET/CALENDARIOS"],
   ["Christmas Calendars › Christmas Calendar Holder - 10x15 - Recarga", undefined, "OFFSET/CALENDARIOS"],
+  ["Christmas Calendars › Christmas Calendar - 15x20", undefined, "OFFSET/CALENDARIOS"],
+  ["Christmas Calendars › Christmas Calendar - 15x20", "Tintoretto Gesso", "OFFSET/CALENDARIOS"], // não depende do acabamento
   ["Calendários › Calendário A4", "True White", "DESCONHECIDO"],        // outro calendário: sem regra
   ["Posters › Poster A4 - Frente", "Gesso", "OFFSET"],                  // o acabamento não muda outros produtos
   // Card Shop nunca segue a regra do acabamento, mesmo em Tintoretto Gesso (decisão do utilizador, 2026-11-17)

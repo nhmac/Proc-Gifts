@@ -278,7 +278,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.10</div>
+      <div class="versao">Versão web 1.10.1</div>
     </div>
   </aside>
 
@@ -418,7 +418,7 @@ const Logica = (() => {
     { quando: "contém «cartao de visita» ou «cartoes visita»", processo: "OFFSET", sub: "CARTOES", exemplos: "Cartões Visita › Cartões de Visita", teste: n => /cartoes? (de )?visita/.test(n) },
     // Calendários (1.10, lote "CALENDARIOS" de 2026-11-17)
     { quando: "contém «calendario de madeira»", processo: "OMEGA", exemplos: "Madeira › Calendário de Madeira 30x30, 30x45", teste: n => /calendario (de )?madeira/.test(n) },
-    { quando: "contém «calendar holder»", processo: "OFFSET", sub: "CALENDARIOS", exemplos: "Christmas Calendars › Christmas Calendar Holder - 10x15 (Madeira Clara, Nogal; também a Recarga)", teste: n => /calendar holder/.test(n) },
+    { quando: "contém «calendar holder» ou «christmas calendar - 15x20»", processo: "OFFSET", sub: "CALENDARIOS", exemplos: "Christmas Calendars › Christmas Calendar Holder - 10x15 (Madeira Clara, Nogal; também a Recarga); Christmas Calendars › Christmas Calendar - 15x20", teste: n => /calendar holder|christmas calendar - 15\s*x\s*20/.test(n) },
     { quando: "contém «calendario» + poster, parede, mesa ou bolso: depende do acabamento na etiqueta (o Card Shop nunca chega aqui: fica nos CARTÕES, regra 35)", processo: "DESCONHECIDO",
       exemplos: "Poster › Calendário Poster 30x42; Parede › Calendário Parede 30x42, 21x29; Mesa › Calendário Mesa 10x15, 14x14, 21x10; Bolso › Calendário Bolso 5,5x8,5",
       teste: n => /calendario (de )?(poster|parede?|mesa|bolso)|(poster|parede?|mesa|bolso) calendario/.test(n),

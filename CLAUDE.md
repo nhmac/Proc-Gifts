@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.10
+- **Versão atual:** web 1.10.1
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -223,7 +223,7 @@ O resumo mostra a contagem do subprocesso por baixo do processo, e a pesquisa de
 |---|---|---|---|
 | `CARTOES` | CARTÕES | OFFSET | Cartões de Visita; Card Shop (convites, postais, trifold…); Christmas Cards; Postal True White Matte; Cartões › Cartão 10 x 15 cm (1.9) — Cartões Visita › Cartões de Visita (regras 35 e 43) |
 
-| `CALENDARIOS` | CALENDÁRIOS | OFFSET | Calendários Poster, Parede, Mesa e Bolso em True White ou Sirio Ice White; Christmas Calendar Holder (e a Recarga) (1.10) — regras 45 e 46 |
+| `CALENDARIOS` | CALENDÁRIOS | OFFSET | Calendários Poster, Parede, Mesa e Bolso em True White ou Sirio Ice White; Christmas Calendar Holder (e a Recarga) (1.10); Christmas Calendar - 15x20 (1.10.1) — regras 45 e 46 |
 
 Para acrescentar um: uma entrada em `SUBPROCESSOS` e `sub: "<CHAVE>"` na(s) regra(s). Só com indicação
 do utilizador ("para já só tenho este", 2026-11-12).
@@ -282,7 +282,7 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 42 | contém `suporte 15x20` | OMEGA | Suporte 15x20 (pastas «… - Passepartout C») |
 | 43 | contém `cartao de visita` ou `cartoes visita` | OFFSET › CARTÕES | Cartões Visita › Cartões de Visita |
 | 44 | contém `calendario de madeira` | OMEGA | Madeira › Calendário de Madeira 30x30, 30x45 |
-| 45 | contém `calendar holder` | OFFSET › CALENDÁRIOS | Christmas Calendars › Christmas Calendar Holder - 10x15 (Madeira Clara, Nogal; também a Recarga) |
+| 45 | contém `calendar holder` ou `christmas calendar - 15x20` | OFFSET › CALENDÁRIOS | Christmas Calendars › Christmas Calendar Holder - 10x15 (Madeira Clara, Nogal; também a Recarga); Christmas Calendars › Christmas Calendar - 15x20 (1.10.1) |
 | 46 | contém `calendario` + poster, parede, mesa ou bolso: depende do acabamento na etiqueta (o Card Shop nunca chega aqui: fica nos CARTÕES, regra 35) | True White, Sirio Ice White → OFFSET › CALENDÁRIOS; Gesso, Tintoretto Gesso → ESAG; outro acabamento ou sem etiqueta → Por confirmar | Poster › Calendário Poster 30x42; Parede › Calendário Parede 30x42, 21x29; Mesa › Calendário Mesa 10x15, 14x14, 21x10; Bolso › Calendário Bolso 5,5x8,5 |
 | — | nenhuma regra bate | **Por confirmar** | |
 
@@ -441,6 +441,8 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.10.1** (2026-11-19): "Christmas Calendars › Christmas Calendar - 15x20" → OFFSET › CALENDÁRIOS (regra 45), a pedido
+  do utilizador. Regra estreita (só o 15x20): outro tamanho fica "Por confirmar". Não depende do acabamento.
 - **1.10** (2026-11-17): **calendários** (lote "CALENDARIOS", 86 encomendas da outra loja). Processo novo **ESAG**
   e subprocesso **OFFSET › CALENDÁRIOS**. Calendário de Madeira → OMEGA; Christmas Calendar Holder (Madeira Clara /
   Nogal, e a Recarga) → OFFSET › CALENDÁRIOS; Calendário Poster, Parede, Mesa e Bolso pelo **acabamento** da
@@ -793,4 +795,5 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Madeira › Calendário de Madeira 30x45 | OMEGA |
 | Christmas Calendars › Christmas Calendar Holder - 10x15 | OFFSET |
 | Christmas Calendars › Christmas Calendar Holder - 10x15 - Recarga | OFFSET |
+| Christmas Calendars › Christmas Calendar - 15x20 | OFFSET |
 | Poster › Calendário Poster 30x42 | DESCONHECIDO |
