@@ -1,5 +1,5 @@
-// Testes da lógica do Proc-Gifts: node testes/testar.js (na raiz do repositório)
-// Extrai o <script id="logica"> do web/gifts.html, corre-o e confere:
+// Testes da lógica do Proc-Triagem: node testes/testar.js (na raiz do repositório)
+// Extrai o <script id="logica"> do web/triagem.html, corre-o e confere:
 //   - os casos do anexo do CLAUDE.md (nome da pasta de produto -> processo)
 //   - pastas de encomenda (todos os formatos) e orderId
 //   - regras B1-B9
@@ -26,9 +26,9 @@ function falhar(msg) {
 }
 
 // ---------------------------------------------------------------- carregar a lógica
-const html = ler("web/gifts.html");
+const html = ler("web/triagem.html");
 const m = html.match(/<script id="logica">([\s\S]*?)<\/script>/);
-if (!m) falhar('não encontrei o <script id="logica"> no web/gifts.html');
+if (!m) falhar('não encontrei o <script id="logica"> no web/triagem.html');
 const Logica = new Function(`${m[1]}\nreturn Logica;`)();
 
 // ---------------------------------------------------------------- casos do anexo
@@ -299,7 +299,7 @@ console.log("ok  gruposPesquisa");
 const proibidos = [/createWritable/, /removeEntry/, /\.move\s*\(/, /readwrite/, /showSaveFilePicker/,
   /requestPermission/, /\bfetch\s*\(/, /XMLHttpRequest/, /sendBeacon/, /WebSocket/, /getFileHandle\([^)]*create/,
   /getDirectoryHandle\([^)]*create/];
-for (const re of proibidos) if (re.test(html)) falhar(`o web/gifts.html usa ${re}: a app tem de ser só de leitura`);
+for (const re of proibidos) if (re.test(html)) falhar(`o web/triagem.html usa ${re}: a app tem de ser só de leitura`);
 if (!/showDirectoryPicker\(\{[^}]*mode: "read"/.test(html)) falhar('o showDirectoryPicker tem de ser chamado com mode: "read"');
 console.log("ok  só leitura (nada de escrever, apagar, mover ou enviar)");
 

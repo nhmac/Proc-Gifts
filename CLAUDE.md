@@ -1,4 +1,8 @@
-# Proc-Gifts
+# Proc-Triagem
+
+**Nome:** Proc-Triagem desde a 1.11 (2026-11-19, a pedido do utilizador); antes Proc-Gifts e, no início,
+Proc-Encaminhador. O repositório e o site mudaram de nome com ele. O `id` do seletor de pastas
+(`showDirectoryPicker({ id: "proc-gifts" })`) ficou de propósito: é onde o browser guarda a última pasta.
 
 **Primeiro passo de cada sessão, antes de ler ou alterar código:** `git pull --ff-only`. O utilizador
 trabalha em dois PCs e no Claude Code na web, e o GitHub é a única fonte. Se o pull falhar (alterações
@@ -12,13 +16,13 @@ Ferramenta de posto de trabalho da linha de apps "Processamento" (a mesma famíl
 Diz a que **processo de processamento de encomendas** pertence cada encomenda de **Presentes
 Personalizados**, a partir do **nome da pasta de produto** que está dentro da pasta da encomenda.
 
-- **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
-- **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.10.2
+- **App:** https://nhmac.github.io/Proc-Triagem/ (Chrome ou Edge; pode ser instalada como app)
+- **Repositório:** https://github.com/nhmac/Proc-Triagem (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
+- **Versão atual:** web 1.11
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
-`testes/testar.js` falha se o `web/gifts.html` usar APIs de escrita, de apagar ou de rede
+`testes/testar.js` falha se o `web/triagem.html` usar APIs de escrita, de apagar ou de rede
 (`createWritable`, `removeEntry`, `move`, `readwrite`, `fetch`, …). Não mudar isto sem o utilizador pedir.
 
 Tudo corre no browser e **nada é enviado para lado nenhum**. A app lê nomes de pastas e, desde a 1.3, só
@@ -77,7 +81,7 @@ fim do ficheiro o commit da versão 1.0.
 
 1. `git pull --ff-only` (ver o primeiro passo, no topo).
 
-2. Alterar só `web/gifts.html` (a fonte do site) e subir o "Versão web" do rodapé da sidebar.
+2. Alterar só `web/triagem.html` (a fonte do site) e subir o "Versão web" do rodapé da sidebar.
 
 3. Testar: `py build_pages.py` (ou `python3`) gera `_site/`. Correr os testes da lógica e abrir o
    `_site/index.html`.
@@ -97,15 +101,16 @@ existem nos PCs.
 
 | Ficheiro | Papel |
 |---|---|
-| `web/gifts.html` | **Fonte do site.** Lógica no `<script id="logica">` (não mexe no DOM), `criarProgresso()` num `<script>` próprio, interface no `<script>` seguinte. |
+| `web/triagem.html` | **Fonte do site.** Lógica no `<script id="logica">` (não mexe no DOM), `criarProgresso()` num `<script>` próprio, interface no `<script>` seguinte. |
 | `build_pages.py` | Gera o site em `_site/` (ignorado no git). Só usa a biblioteca padrão. |
 | `.github/workflows/pages.yml` | A cada push ao `main`, corre o `build_pages.py` e publica o `_site/` no GitHub Pages. |
 | `.claude/settings.json` | Hook `SessionStart` com o `git pull --ff-only` (igual ao do Scanner). |
-| `testes/testar.js` | Testes da lógica com o Node: extrai o `<script id="logica">` do `web/gifts.html` e confere os casos do anexo. |
+| `testes/testar.js` | Testes da lógica com o Node: extrai o `<script id="logica">` do `web/triagem.html` e confere os casos do anexo. |
 | `PROJETO.md` | O que a app faz, pastas, como atualizar (o README do projeto). |
 | `README.md` | O do GitHub, comentado de propósito. |
-| `Inter/`, `icone.ico`, `web/icon-*.png` | Fonte Inter (SIL OFL) e ícones, iguais aos da família. |
+| `Inter/`, `icone.ico`, `web/icon-*.png` | Fonte Inter (SIL OFL) e ícones. O ícone é o "p" da família, mas verde-azulado (`#0d9488`, desde a 1.10.3): cada app tem a sua cor (Scanner vermelho, Separador amarelo, Batches azul). |
 | `web/vendor/pdfjs/` | pdf.js 3.11.174 (Apache 2.0), cópia do Proc-Separador: lê o texto das etiquetas (1.3). |
+| `icones/` | Coleção dos ícones da família (cópias), cores por usar e o `mudar_cor.py`. Ver o `icones/LEIA-ME.md`. O build não os copia. |
 | `referencia/prototipo.html` | Protótipo da 1.ª sessão. Apagar depois da 1.0, com o acordo do utilizador. |
 
 ## O domínio
@@ -346,7 +351,7 @@ Linguagem da família, igual ao Proc-Scanner: dark mode, Inter, sidebar à esque
 baixo, poucos pop-ups (só avisos e erros; não há pop-up de sucesso), português de Portugal, textos
 curtos e passos no infinitivo.
 
-- **Sidebar:** título "Proc-Gifts", subtítulo "Para encaminhar encomendas de Presentes Personalizados",
+- **Sidebar:** título "Proc-Triagem", subtítulo "Para encaminhar encomendas de Presentes Personalizados",
   **Escolher pasta…** (`showDirectoryPicker`; ver abaixo) ou arrastar a pasta, chip com o nome da
   pasta e o nº de encomendas, nota de privacidade ("Só são lidos os nomes das pastas; nada é enviado"),
   botão verde e "Versão web 1.0" no rodapé.
@@ -412,7 +417,7 @@ O `<script id="logica">` expõe um objeto `Logica` e não mexe no DOM, para se p
 
 ## Testar
 
-`node testes/testar.js` extrai o `<script id="logica">` do `web/gifts.html`, corre-o e confere:
+`node testes/testar.js` extrai o `<script id="logica">` do `web/triagem.html`, corre-o e confere:
 
 - todos os casos do anexo (nome da pasta → processo);
 - `orderId` e `ehPastaEncomenda` em todos os formatos de pasta de encomenda (e os nomes que têm de ser
@@ -441,6 +446,11 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.11** (2026-11-19): a app passa a chamar-se **Proc-Triagem** (antes Proc-Gifts), a pedido do utilizador: o
+  nome antigo confundia-se com o processo GIFTS. `web/gifts.html` → `web/triagem.html`, título, sidebar, manifest, cache
+  `proc-triagem-…`. Pasta `icones/` com os ícones da família e as cores por usar (ver `icones/LEIA-ME.md`).
+- **1.10.3** (2026-11-19): ícone verde-azulado (`#0d9488`) em vez do vermelho do Proc-Scanner, a pedido do utilizador
+  (`icone.ico` em todos os tamanhos, `web/icon-192.png`, `web/icon-512.png`; só muda a cor).
 - **1.10.2** (2026-11-19): molduras Andromeda, Nature, Pokalde e Yangra → OMEGA (regra 40), a pedido do utilizador.
 - **1.10.1** (2026-11-19): "Christmas Calendars › Christmas Calendar - 15x20" → OFFSET › CALENDÁRIOS (regra 45), a pedido
   do utilizador. Regra estreita (só o 15x20): outro tamanho fica "Por confirmar". Não depende do acabamento.

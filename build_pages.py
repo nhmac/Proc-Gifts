@@ -1,12 +1,12 @@
 """
-Gera o site do Proc-Gifts para o GitHub Pages na pasta _site/.
+Gera o site do Proc-Triagem para o GitHub Pages na pasta _site/.
 
 Build: py build_pages.py
 Publicar: commit e git push para o main. O GitHub Actions (.github/workflows/pages.yml)
 corre este script e publica a pasta _site/ no GitHub Pages.
 (Só biblioteca padrão: corre com o Python instalado, sem .venv.)
 
-A fonte é o web\\gifts.html (não usa bibliotecas). O build só a embrulha no documento
+A fonte é o web\\triagem.html (não usa bibliotecas). O build só a embrulha no documento
 HTML e junta:
     - a fonte Inter servida pelo próprio site (Inter\\static), sem CDNs
     - manifest + service worker: a página pode ser instalada como app (ícone no
@@ -19,9 +19,9 @@ import os
 import shutil
 
 PROJETO = os.path.dirname(os.path.abspath(__file__))
-FONTE = os.path.join(PROJETO, "web", "gifts.html")
+FONTE = os.path.join(PROJETO, "web", "triagem.html")
 DESTINO = os.path.join(PROJETO, "_site")
-NOME = "Proc-Gifts"
+NOME = "Proc-Triagem"
 
 COPIAR = {
     "vendor/pdfjs/pdf.min.js": "web/vendor/pdfjs/pdf.min.js",
@@ -47,7 +47,7 @@ FONTES_CSS = """<style>
 </style>"""
 
 SW = """// Gerado pelo build_pages.py
-const CACHE = "proc-gifts-%(versao)s";
+const CACHE = "proc-triagem-%(versao)s";
 const FICHEIROS = %(ficheiros)s;
 
 self.addEventListener("install", e => {
@@ -84,11 +84,11 @@ def gerar_html():
 
     for externo in ("http://", "https://"):
         if f'src="{externo}' in html or f'href="{externo}' in html:
-            raise SystemExit(f"build_pages: web/gifts.html carrega um recurso de fora ({externo}); o site tem de ser autónomo")
+            raise SystemExit(f"build_pages: web/triagem.html carrega um recurso de fora ({externo}); o site tem de ser autónomo")
 
     titulo, resto = html.split("\n", 1)
     if not titulo.startswith("<title>"):
-        raise SystemExit("build_pages: a primeira linha de web/gifts.html devia ser o <title>")
+        raise SystemExit("build_pages: a primeira linha de web/triagem.html devia ser o <title>")
     estilo, corpo = resto.split("</style>\n", 1)
 
     return f"""<!doctype html>
