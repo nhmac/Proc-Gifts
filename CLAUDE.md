@@ -14,7 +14,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Gifts/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Gifts (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.10.2
+- **Versão atual:** web 1.10.3
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -104,7 +104,7 @@ existem nos PCs.
 | `testes/testar.js` | Testes da lógica com o Node: extrai o `<script id="logica">` do `web/gifts.html` e confere os casos do anexo. |
 | `PROJETO.md` | O que a app faz, pastas, como atualizar (o README do projeto). |
 | `README.md` | O do GitHub, comentado de propósito. |
-| `Inter/`, `icone.ico`, `web/icon-*.png` | Fonte Inter (SIL OFL) e ícones, iguais aos da família. |
+| `Inter/`, `icone.ico`, `web/icon-*.png` | Fonte Inter (SIL OFL) e ícones. O ícone é o "p" da família, mas verde-azulado (`#0d9488`, desde a 1.10.3): cada app tem a sua cor (Scanner vermelho, Separador amarelo, Batches azul). |
 | `web/vendor/pdfjs/` | pdf.js 3.11.174 (Apache 2.0), cópia do Proc-Separador: lê o texto das etiquetas (1.3). |
 | `referencia/prototipo.html` | Protótipo da 1.ª sessão. Apagar depois da 1.0, com o acordo do utilizador. |
 
@@ -441,6 +441,8 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.10.3** (2026-11-19): ícone verde-azulado (`#0d9488`) em vez do vermelho do Proc-Scanner, a pedido do utilizador
+  (`icone.ico` em todos os tamanhos, `web/icon-192.png`, `web/icon-512.png`; só muda a cor).
 - **1.10.2** (2026-11-19): molduras Andromeda, Nature, Pokalde e Yangra → OMEGA (regra 40), a pedido do utilizador.
 - **1.10.1** (2026-11-19): "Christmas Calendars › Christmas Calendar - 15x20" → OFFSET › CALENDÁRIOS (regra 45), a pedido
   do utilizador. Regra estreita (só o 15x20): outro tamanho fica "Por confirmar". Não depende do acabamento.
