@@ -278,7 +278,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.11.3</div>
+      <div class="versao">Versão web 1.11.4</div>
     </div>
   </aside>
 
@@ -427,6 +427,7 @@ const Logica = (() => {
         { acabamento: "Gesso, Tintoretto Gesso", processo: "ESAG", teste: a => /gesso/i.test(a) },
       ] },
     { quando: "contém «voucher»", processo: "OFFSET", exemplos: "Vouchers Marketing › Voucher Marketing", teste: n => /voucher/.test(n) },
+    { quando: "contém «modern wall frame» ou «frame digital», ou é da categoria «Christmas Products ›» ou «K-Line ›»", processo: "OMEGA", exemplos: "Comunhões › Modern Wall Frame Comunhões 40x40; Christmas Decor › Christmas Desk Frame Digital 20x20; Christmas Decor › Christmas Frame Digital 30x40 - Double; Christmas Products › Casa, Presente; K-Line › Tamanho não Standard", teste: n => /modern wall frame|frame digital|^christmas products ›|^k-?line ›/.test(n) },
   ];
 
   // Nomes vindos de um ZIP trazem os caracteres escapados: "#U203a" -> "›"
