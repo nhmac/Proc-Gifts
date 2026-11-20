@@ -18,7 +18,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Triagem/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Triagem (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.11
+- **Versão atual:** web 1.11.1
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -263,7 +263,7 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 18 | contém `keychain` (antes da regra dos porta-chaves: é OMEGA, não Gifts) | OMEGA | Porta-Chaves › Keychain |
 | 19 | contém `imas de natal` ou `ima de natal` (grafia brasileira; não são os Ímanes, que são OFFSET) | OMEGA | Christmas Gifts › Ímãs de Natal - Bola, Ímãs de Natal - Estrela |
 | 20 | contém `porta chave` ou `porta-chave` | GIFTS | Metálico, Coração, Quadrado |
-| 21 | contém `iman quadrado`: depende do prefixo da encomenda | 1… → OFFSET; 3… → OFFSET; 6… → OMEGA; outro prefixo → Por confirmar | Ímanes › Íman Quadrado (10…_… e 3…_… → OFFSET; 65…_… → OMEGA) |
+| 21 | contém `iman quadrado`: depende do prefixo da encomenda | 1… → OFFSET; 3… → OFFSET; 6… → GIFTS (desde a 1.11.1; antes OMEGA); outro prefixo → Por confirmar | Ímanes › Íman Quadrado (10…_… e 3…_… → OFFSET; 65…_… → GIFTS) |
 | 22 | contém `pack de imanes` (antes da regra dos ímanes, que é OFFSET) | OMEGA | Ímanes › Pack de ímanes |
 | 23 | contém `iman` | OFFSET | Íman Quadrado, Ímanes Vintage, Ímanes Redondos, Imans Fotográficos 6x8cm / 5x5cm, Iman Fotográfico Redondo 5,5cm |
 | 24 | contém `ornamento` (em Bétula vai para OFFSET: ver o material na etiqueta) | OMEGA (em Bétula: OFFSET) | Ornamento de Natal: Coração, Floco de Neve, Quadrado |
@@ -446,6 +446,9 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.11.1** (2026-11-20): regra 21, "Íman Quadrado" nas encomendas **6…** (outra loja) → **GIFTS** (antes OMEGA),
+  a pedido do utilizador; a etiqueta destas encomendas diz "Tipo: G - Gifts" (ex.: `6539253_1530075`). As 1… e 3…
+  continuam OFFSET.
 - **1.11** (2026-11-19): a app passa a chamar-se **Proc-Triagem** (antes Proc-Gifts), a pedido do utilizador: o
   nome antigo confundia-se com o processo GIFTS. `web/gifts.html` → `web/triagem.html`, título, sidebar, manifest, cache
   `proc-triagem-…`. Pasta `icones/` com os ícones da família e as cores por usar (ver `icones/LEIA-ME.md`).
@@ -746,10 +749,11 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Azulejo › Azulejo (15x15) | GIFTS |
 | 10250694_10352245 :: (x2) - Ímanes › Íman Quadrado | OFFSET |
 | 3480222_2064810 :: Ímanes › Íman Quadrado | OFFSET |
-| 6537480_1525722 :: Ímanes › Íman Quadrado | OMEGA |
-| 6537480_1525723 :: Ímanes › Íman Quadrado | OMEGA |
-| 6536897_1524318 :: Ímanes › Íman Quadrado | OMEGA |
-| 6536897_1524319 :: Ímanes › Íman Quadrado | OMEGA |
+| 6537480_1525722 :: Ímanes › Íman Quadrado | GIFTS |
+| 6537480_1525723 :: Ímanes › Íman Quadrado | GIFTS |
+| 6536897_1524318 :: Ímanes › Íman Quadrado | GIFTS |
+| 6536897_1524319 :: Ímanes › Íman Quadrado | GIFTS |
+| 6539253_1530075 :: Ímanes › Íman Quadrado | GIFTS |
 | Acrílico › 30x45 | OMEGA |
 | Acrílico › Tamanho não Standard | OMEGA |
 | Quadro em Acrílico › Quadro Acrílico 15 x 20 cm | OMEGA |

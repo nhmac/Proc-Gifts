@@ -233,16 +233,16 @@ if (Logica.produtosDaEncomenda("6534871_1519619", [], [], [{ ficheiro: "6534871_
 console.log("ok  calendários (acabamento → OFFSET › CALENDÁRIOS / ESAG; madeira → OMEGA; complete.pdf ignorado)");
 
 // ---------------------------------------------------------------- prefixo da encomenda (1.7)
-// Íman Quadrado: 1… e 3… -> OFFSET; 6… (outra loja) -> OMEGA; outro prefixo ou sem encomenda -> Por confirmar
+// Íman Quadrado: 1… e 3… -> OFFSET; 6… (outra loja) -> GIFTS (1.11.1; antes OMEGA); outro prefixo ou sem encomenda -> Por confirmar
 const iq = "Ímanes › Íman Quadrado";
-const porEnc = { "10250365_10351761": "OFFSET", "3480222_2064810": "OFFSET", "6537480_1525722 - Íman Quadrado": "OMEGA",
-  "6536897_1524318": "OMEGA", "2480000_1000000": "DESCONHECIDO" };
+const porEnc = { "10250365_10351761": "OFFSET", "3480222_2064810": "OFFSET", "6537480_1525722 - Íman Quadrado": "GIFTS",
+  "6536897_1524318": "GIFTS", "6539253_1530075 - Íman Quadrado": "GIFTS", "2480000_1000000": "DESCONHECIDO" };
 for (const [enc, esperado] of Object.entries(porEnc)) {
   const r = Logica.classificar(iq, null, enc);
   if (r.processo !== esperado) falhar(`Íman Quadrado em ${enc} deu ${r.processo}, esperado ${esperado} (${r.regra})`);
 }
 if (Logica.classificar(iq).processo !== "DESCONHECIDO") falhar("Íman Quadrado sem encomenda devia ficar Por confirmar");
-if (Logica.classificar("(x2) - " + iq, null, "6537480_1525722").processo !== "OMEGA") falhar("Íman Quadrado com quantidade");
+if (Logica.classificar("(x2) - " + iq, null, "6537480_1525722").processo !== "GIFTS") falhar("Íman Quadrado com quantidade");
 for (const [n, e] of [["Ímanes › Ímanes Vintage", "OFFSET"], ["Ímanes › Pack de ímanes", "OMEGA"], ["Christmas Gifts › Imans Fotográficos - 6x8cm", "OFFSET"]]) {
   if (Logica.classificar(n, null, "6537480_1525722").processo !== e) falhar(`${n} numa encomenda 6… devia ser ${e}`);
 }
