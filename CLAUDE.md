@@ -18,7 +18,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Triagem/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Triagem (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.11.1
+- **Versão atual:** web 1.11.2
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -289,6 +289,7 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 44 | contém `calendario de madeira` | OMEGA | Madeira › Calendário de Madeira 30x30, 30x45 |
 | 45 | contém `calendar holder` ou `christmas calendar - 15x20` | OFFSET › CALENDÁRIOS | Christmas Calendars › Christmas Calendar Holder - 10x15 (Madeira Clara, Nogal; também a Recarga); Christmas Calendars › Christmas Calendar - 15x20 (1.10.1) |
 | 46 | contém `calendario` + poster, parede, mesa ou bolso: depende do acabamento na etiqueta (o Card Shop nunca chega aqui: fica nos CARTÕES, regra 35) | True White, Sirio Ice White → OFFSET › CALENDÁRIOS; Gesso, Tintoretto Gesso → ESAG; outro acabamento ou sem etiqueta → Por confirmar | Poster › Calendário Poster 30x42; Parede › Calendário Parede 30x42, 21x29; Mesa › Calendário Mesa 10x15, 14x14, 21x10; Bolso › Calendário Bolso 5,5x8,5 |
+| 47 | contém `voucher` | OFFSET | Vouchers Marketing › Voucher Marketing |
 | — | nenhuma regra bate | **Por confirmar** | |
 
 ### Almofadas, mantas e bonecos: regras B1-B9 (regra 9; decididas pelo utilizador a 2026-11-12)
@@ -446,6 +447,8 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.11.2** (2026-11-20): "Vouchers Marketing › Voucher Marketing" → OFFSET (regra 47, `voucher`), a pedido do
+  utilizador.
 - **1.11.1** (2026-11-20): regra 21, "Íman Quadrado" nas encomendas **6…** (outra loja) → **GIFTS** (antes OMEGA),
   a pedido do utilizador; a etiqueta destas encomendas diz "Tipo: G - Gifts" (ex.: `6539253_1530075`). As 1… e 3…
   continuam OFFSET.
@@ -815,4 +818,5 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Christmas Calendars › Christmas Calendar Holder - 10x15 | OFFSET |
 | Christmas Calendars › Christmas Calendar Holder - 10x15 - Recarga | OFFSET |
 | Christmas Calendars › Christmas Calendar - 15x20 | OFFSET |
+| Vouchers Marketing › Voucher Marketing | OFFSET |
 | Poster › Calendário Poster 30x42 | DESCONHECIDO |

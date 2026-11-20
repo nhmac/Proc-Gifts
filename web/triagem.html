@@ -278,7 +278,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.11.1</div>
+      <div class="versao">Versão web 1.11.2</div>
     </div>
   </aside>
 
@@ -426,6 +426,7 @@ const Logica = (() => {
         { acabamento: "True White, Sirio Ice White", processo: "OFFSET", sub: "CALENDARIOS", teste: a => /true white|sirio ice white/i.test(a) },
         { acabamento: "Gesso, Tintoretto Gesso", processo: "ESAG", teste: a => /gesso/i.test(a) },
       ] },
+    { quando: "contém «voucher»", processo: "OFFSET", exemplos: "Vouchers Marketing › Voucher Marketing", teste: n => /voucher/.test(n) },
   ];
 
   // Nomes vindos de um ZIP trazem os caracteres escapados: "#U203a" -> "›"
