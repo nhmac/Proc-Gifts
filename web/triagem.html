@@ -278,7 +278,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.11.2</div>
+      <div class="versao">Versão web 1.11.3</div>
     </div>
   </aside>
 
@@ -396,7 +396,7 @@ const Logica = (() => {
       porMaterial: [{ material: "Bétula", processo: "OFFSET", teste: m => /b[eé]tula/i.test(m) }] },
     { quando: "contém «bola de natal» ou «bola natal»", processo: "OFFSET", exemplos: "Natal › Bola de Natal; Natal › Bola de Natal Brilhante", teste: n => /bola (de )?natal/.test(n) },
     { quando: "contém «paper ball»", processo: "OFFSET", exemplos: "Christmas Gifts › Christmas Paper Ball", teste: n => /paper ball/.test(n) },
-    { quando: "contém «fotos vintage» ou «vintage fotos» (não apanha a Moldura Vintage nem os Ímanes Vintage)", processo: "OFFSET", exemplos: "Vintage Fotos › Fotos Vintage", teste: n => /fotos? vintage|vintage fotos?/.test(n) },
+    { quando: "contém «fotos vintage», «vintage fotos» ou «vintage print» (não apanha a Moldura Vintage nem os Ímanes Vintage)", processo: "OFFSET", exemplos: "Vintage Fotos › Fotos Vintage; Vintage Print › Square-10x10 (24 Fotos+Caixa) - True White", teste: n => /fotos? vintage|vintage fotos?|vintage prints?/.test(n) },
     { quando: "contém «moldura cubo», «mold cubo», «cubo com fotos» ou «cubo 10x10»", processo: "OFFSET", exemplos: "Moldura Cubo › Cubo com Fotos 10x10; Christmas Gifts › Cubo 10x10", teste: n => /mold(ura)? cubo|cubo com fotos|cubo 10\s*x\s*10/.test(n) },
     { quando: "contém «azulejo»", processo: "GIFTS", exemplos: "Azulejo Português (15x15cm)", teste: n => /azulejo/.test(n) },
     { quando: "contém «pvc»", processo: "OMEGA", exemplos: "Quadro PVC, todos os tamanhos", teste: n => /pvc/.test(n) },

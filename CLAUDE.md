@@ -18,7 +18,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Triagem/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Triagem (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.11.2
+- **Versão atual:** web 1.11.3
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -269,7 +269,7 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 24 | contém `ornamento` (em Bétula vai para OFFSET: ver o material na etiqueta) | OMEGA (em Bétula: OFFSET) | Ornamento de Natal: Coração, Floco de Neve, Quadrado |
 | 25 | contém `bola de natal` ou `bola natal` | OFFSET | Natal › Bola de Natal; Natal › Bola de Natal Brilhante |
 | 26 | contém `paper ball` | OFFSET | Christmas Gifts › Christmas Paper Ball |
-| 27 | contém `fotos vintage` ou `vintage fotos` (não apanha a Moldura Vintage nem os Ímanes Vintage) | OFFSET | Vintage Fotos › Fotos Vintage |
+| 27 | contém `fotos vintage`, `vintage fotos` ou `vintage print` (não apanha a Moldura Vintage nem os Ímanes Vintage) | OFFSET | Vintage Fotos › Fotos Vintage; Vintage Print › Square-10x10 (24 Fotos+Caixa) - True White |
 | 28 | contém `moldura cubo`, `mold cubo`, `cubo com fotos` ou `cubo 10x10` | OFFSET | Moldura Cubo › Cubo com Fotos 10x10; Christmas Gifts › Cubo 10x10 |
 | 29 | contém `azulejo` | GIFTS | Azulejo Português (15x15cm) |
 | 30 | contém `pvc` | OMEGA | Quadro PVC, todos os tamanhos |
@@ -447,6 +447,8 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.11.3** (2026-11-20): "Vintage Print › Square-10x10 (24 Fotos+Caixa) - True White" → OFFSET (regra 27 passa a
+  apanhar também `vintage print`), a pedido do utilizador.
 - **1.11.2** (2026-11-20): "Vouchers Marketing › Voucher Marketing" → OFFSET (regra 47, `voucher`), a pedido do
   utilizador.
 - **1.11.1** (2026-11-20): regra 21, "Íman Quadrado" nas encomendas **6…** (outra loja) → **GIFTS** (antes OMEGA),
@@ -819,4 +821,5 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Christmas Calendars › Christmas Calendar Holder - 10x15 - Recarga | OFFSET |
 | Christmas Calendars › Christmas Calendar - 15x20 | OFFSET |
 | Vouchers Marketing › Voucher Marketing | OFFSET |
+| Vintage Print › Square-10x10 (24 Fotos+Caixa) - True White | OFFSET |
 | Poster › Calendário Poster 30x42 | DESCONHECIDO |
