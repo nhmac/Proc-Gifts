@@ -18,7 +18,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Triagem/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Triagem (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.11.5
+- **Versão atual:** web 1.11.6
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -226,7 +226,7 @@ O resumo mostra a contagem do subprocesso por baixo do processo, e a pesquisa de
 
 | Chave | Nome | Processo | Produtos |
 |---|---|---|---|
-| `CARTOES` | CARTÕES | OFFSET | Cartões de Visita; Card Shop (convites, postais, trifold…); Christmas Cards; Postal True White Matte; Cartões › Cartão 10 x 15 cm (1.9) — Cartões Visita › Cartões de Visita (regras 35 e 43) |
+| `CARTOES` | CARTÕES | OFFSET | Cartões de Visita; Card Shop (convites, postais, trifold…); Christmas Cards; Postal True White Matte; Cartões › Cartão 10 x 15 cm (1.9); Convites e Postais Niclas (1.11.6); Postal Especial 20x10 fora do Gesso (1.11.6) — regras 35, 43, 50 e 51 |
 
 | `CALENDARIOS` | CALENDÁRIOS | OFFSET | Calendários Poster, Parede, Mesa e Bolso em True White ou Sirio Ice White; Christmas Calendar Holder (e a Recarga) (1.10); Christmas Calendar - 15x20 (1.10.1) — regras 45 e 46 |
 
@@ -277,7 +277,7 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 32 | contém `peluche`, `coelhinho`, `reninha`, `sapinho`, `ursinho` ou as palavras `rena`, `sapo` | GIFTS | Coelhinho Bunny, Reninha Knut, Rena Knut, Sapinho Paddy, Sapo Paddy, Ursinho Barney |
 | 33 | contém `caderno` | OFFSET | Cadernos › Caderno A5 |
 | 34 | contém `sticker` | OFFSET | Sticker › Sticker - Circulo 5x5 |
-| 35 | contém `card shop`, `christmas cards ›`, `christmas cover premium`, `christmas photo card set`, `postal`, ou é da categoria `Cartões ›` | OFFSET › CARTÕES | Card Shop - Convites › 15x20; Card Shop - Trifold Especiais › 10x15; Christmas Cards › Christmas Cover Premium; Convites › Postal 15x20 em True White Matte; Cartões › Cartão 10 x 15 cm |
+| 35 | contém `card shop`, `christmas cards ›`, `christmas cover premium`, `christmas photo card set`, `postal`, ou é da categoria `Cartões ›` (menos o Card Shop - Postais Especiais 20x10: regra 51) | OFFSET › CARTÕES | Card Shop - Convites › 15x20; Card Shop - Trifold Especiais › 10x15; Christmas Cards › Christmas Cover Premium; Convites › Postal 15x20 em True White Matte; Cartões › Cartão 10 x 15 cm |
 | 36 | contém `capas para fotografia`, `capa fotos natalicia`, `pop cover`, `pocket cover` ou `poster a4` | OFFSET | Capas Para Fotografia › 22x32 (Photo 20x30); Natal › Capa Fotos Natalícia Person. 15x20 (x25); Christmas Pop Cover; Pocket Cover Christmas; Posters › Poster A4 - Frente |
 | 37 | contém `acrilico` ou `acrilica` | OMEGA | Acrílico › 30x45; Quadro em Acrílico › Quadro Acrílico 15 x 20 cm; Molduras Acrílicas 20mm › 15x20; Standup Acrilico - Comunhões › 10x15 |
 | 38 | contém `madeira natural`, `quadro em madeira`, `folio de madeira` ou `wood edge panel` | OMEGA | Madeira Natural › 30x30; Quadro em Madeira › Quadro em Madeira 30 x 45 cm; Fólio de Madeira › 10x15; Wood Edge Panel › 40x60 |
@@ -291,6 +291,10 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 46 | contém `calendario` + poster, parede, mesa ou bolso: depende do acabamento na etiqueta (o Card Shop nunca chega aqui: fica nos CARTÕES, regra 35) | True White, Sirio Ice White → OFFSET › CALENDÁRIOS; Gesso, Tintoretto Gesso → ESAG; outro acabamento ou sem etiqueta → Por confirmar | Poster › Calendário Poster 30x42; Parede › Calendário Parede 30x42, 21x29; Mesa › Calendário Mesa 10x15, 14x14, 21x10; Bolso › Calendário Bolso 5,5x8,5 |
 | 47 | contém `voucher` | OFFSET | Vouchers Marketing › Voucher Marketing |
 | 48 | contém `modern wall frame` ou `frame digital`, ou da categoria `Christmas Products ›` ou `K-Line ›` | OMEGA | Comunhões › Modern Wall Frame Comunhões 40x40; Christmas Decor › Christmas Desk Frame Digital 20x20; Christmas Decor › Christmas Frame Digital 30x40 - Double; Christmas Products › Casa, Presente; K-Line › Tamanho não Standard |
+| 49 | contém `paper folio armonia` | OFFSET | Comunhões › Paper Folio Armonia (Qtd. Min. 4) |
+| 50 | é da categoria `Convites ›` ou `Postais ›` e contém `niclas` | OFFSET › CARTÕES | Convites › 10x15 (Qtd. Min. 2) - Niclas; Postais › 15x20 (Vertical) (Qtd. Min. 2) - Niclas |
+| 51 | contém `card shop - postais especiais › 20x10`: depende do "Tipo de Papel" na etiqueta | Tintoretto Gesso → ESAG; outro papel → OFFSET › CARTÕES; sem etiqueta → Por confirmar | Card Shop - Postais Especiais › 20x10 (Horizontal) (Qtd. Min. 6) |
+| 52 | contém `press print` + 30x40, `frente e verso` e `tintoretto gesso` | ESAG | Press Print › 30x40-Imp. Frente e Verso - Tintoretto Gesso |
 | — | nenhuma regra bate | **Por confirmar** | |
 
 ### Almofadas, mantas e bonecos: regras B1-B9 (regra 9; decididas pelo utilizador a 2026-11-12)
@@ -333,6 +337,9 @@ normalizado; ganha a primeira que bate:
   CALENDÁRIOS; em Tintoretto Gesso ou só "Gesso" → **ESAG** (processo próprio, confirmado pelo utilizador).
   Acabamento sem regra ou etiqueta não lida → Por confirmar. **Card Shop nunca segue esta regra**, mesmo em
   Tintoretto Gesso: fica sempre em OFFSET › CARTÕES (regra 35, que tem de ficar antes das dos calendários).
+  **Exceção (1.11.6):** o "Card Shop - Postais Especiais › 20x10" decide-se pelo **"Tipo de Papel"** da etiqueta (não
+  pelo "Acabamento"): Tintoretto Gesso → ESAG, outro papel → OFFSET › CARTÕES, sem etiqueta → Por confirmar (regra 51).
+  Os outros Card Shop em Gesso ficam em CARTÕES: o utilizador ainda não sabe se também vão para a ESAG.
 - **Picagem e destino escondidos** (1.2.1, decisão do utilizador): `MOSTRAR_PICAGEM_DESTINO = false`. Não
   reativar sem o utilizador pedir.
 - **Almofadas, mantas e bonecos** (desde a 1.1): Com Margem é sempre GIFTS; Sem Margem, Polar, Frente e
@@ -448,6 +455,15 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.11.6** (2026-11-21): "Comunhões › Paper Folio Armonia (Qtd. Min. 4)" → OFFSET (regra 49) e "Convites › 10x15
+  (Qtd. Min. 2) - Niclas" / "Postais › 15x20 (Vertical) (Qtd. Min. 2) - Niclas" → OFFSET › CARTÕES (regra 50), a pedido do
+  utilizador. Regras estreitas: outro Paper Folio, ou outro convite/postal sem "Niclas", fica "Por confirmar".
+  Do lote "Nova pasta" (18 encomendas da outra loja, todas com "Pedido Prod. Externo" à ESAG): "Card Shop - Postais
+  Especiais › 20x10" passa a decidir-se pelo **"Tipo de Papel"** da etiqueta (regra 51; em Tintoretto Gesso → ESAG,
+  outro → OFFSET › CARTÕES, sem etiqueta → Por confirmar), e "Press Print › 30x40-Imp. Frente e Verso - Tintoretto
+  Gesso" → ESAG (regra 52). A regra 35 deixa de apanhar o Postal Especial 20x10. A regra com `porAcabamento` aceita
+  agora `campo: "papel"`, `nomeCurto` e `seOutro`; a etiqueta traz também `papel` (`papelDaEtiqueta`). Os outros Card
+  Shop em Gesso continuam CARTÕES até o utilizador decidir.
 - **1.11.5** (2026-11-20): "Hexágono › Hexágono 30x30" → OMEGA (regra 39, `hexagono`) e "Moldura Rustic 15 x 20 cm" →
   OMEGA (regra 40, Rustic), a pedido do utilizador.
 - **1.11.4** (2026-11-20): regra 48 → OMEGA, a pedido do utilizador: Modern Wall Frame (Comunhões), Christmas Desk
@@ -813,7 +829,7 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | Card Shop - Convites Dípticos › 15x15 Díptico (Qtd. Min. 8) | OFFSET |
 | Card Shop - Convites Especiais › 15x15 (Qtd. Min. 4) | OFFSET |
 | Card Shop - Convites › 15x20 (Vertical - Qtd. Min. 8) | OFFSET |
-| Card Shop - Postais Especiais › 20x10 (Horizontal) (Qtd. Min. 6) | OFFSET |
+| Card Shop - Postais Especiais › 20x10 (Horizontal) (Qtd. Min. 6) | DESCONHECIDO |
 | Card Shop - Trifold Especiais › 10x15 (Qtd. Min. 2) | OFFSET |
 | Cartões › Cartão 10 x 15 cm | OFFSET |
 | Christmas Cards › Christmas Cover Premium | OFFSET |
@@ -836,4 +852,8 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | K-Line › Tamanho não Standard | OMEGA |
 | Hexágono › Hexágono 30x30 | OMEGA |
 | Moldura Rustic › Moldura Rustic 15 x 20 cm | OMEGA |
+| Comunhões › Paper Folio Armonia (Qtd. Min. 4) | OFFSET |
+| Convites › 10x15 (Qtd. Min. 2) - Niclas | OFFSET |
+| Postais › 15x20 (Vertical) (Qtd. Min. 2) - Niclas | OFFSET |
+| Press Print › 30x40-Imp. Frente e Verso - Tintoretto Gesso | ESAG |
 | Poster › Calendário Poster 30x42 | DESCONHECIDO |
