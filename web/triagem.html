@@ -367,6 +367,8 @@ const Logica = (() => {
 
   // Por ordem: ganha a primeira que bate. processo null = decidir pelas regras BMJCP (B1-B9).
   // teste recebe o texto normalizado "categoria › produto".
+  // Card Shop - Postais Especiais 20x10: decide-se pelo papel (regra 51), por isso a regra 35 não o apanha (1.11.6)
+  const POSTAL_ESPECIAL_20X10 = /card shop - postais especiais › 20\s*x\s*10/;
   const REGRAS = [
     { quando: "contém «landscape 31x23»", processo: "BOXS", exemplos: "Horizontais › Landscape 31x23 (Aro 3cm, Aro 4.5cm)", teste: n => /landscape 31\s*x\s*23/.test(n) },
     { quando: "contém «classic 23x31»", processo: "BOXS", exemplos: "Verticais › Classic 23x31 (Aro 3cm, Aro 4.5cm)", teste: n => /classic 23\s*x\s*31/.test(n) },
@@ -406,7 +408,7 @@ const Logica = (() => {
     // Produtos OFFSET registados a 2026-11-17 (lote "MAIS DADOS OFFSET"; os da pasta "SUB CATEGORIA CARTÕES" -> CARTÕES)
     { quando: "contém «sticker»", processo: "OFFSET", exemplos: "Sticker › Sticker - Circulo 5x5", teste: n => /sticker/.test(n) },
     // Card Shop é sempre CARTÕES, seja qual for o acabamento (Tintoretto Gesso incluído): tem de ficar antes da regra dos calendários
-    { quando: "contém «card shop», «christmas cards ›», «christmas cover premium», «christmas photo card set», «postal», ou é da categoria «Cartões ›»", processo: "OFFSET", sub: "CARTOES", exemplos: "Card Shop - Convites › 15x20; Card Shop - Trifold Especiais › 10x15; Christmas Cards › Christmas Cover Premium; Convites › Postal 15x20 em True White Matte; Cartões › Cartão 10 x 15 cm", teste: n => /card shop|christmas cards ›|christmas cover premium|christmas photo card set|postal|^cartoes ›/.test(n) },
+    { quando: "contém «card shop», «christmas cards ›», «christmas cover premium», «christmas photo card set», «postal», ou é da categoria «Cartões ›» (menos o Card Shop - Postais Especiais 20x10: regra 51)", processo: "OFFSET", sub: "CARTOES", exemplos: "Card Shop - Convites › 15x20; Card Shop - Trifold Especiais › 10x15; Christmas Cards › Christmas Cover Premium; Convites › Postal 15x20 em True White Matte; Cartões › Cartão 10 x 15 cm", teste: n => !POSTAL_ESPECIAL_20X10.test(n) && /card shop|christmas cards ›|christmas cover premium|christmas photo card set|postal|^cartoes ›/.test(n) },
     { quando: "contém «capas para fotografia», «capa fotos natalicia», «pop cover», «pocket cover» ou «poster a4»", processo: "OFFSET", exemplos: "Capas Para Fotografia › 22x32 (Photo 20x30); Natal › Capa Fotos Natalícia Person. 15x20 (x25); Christmas Pop Cover; Pocket Cover Christmas; Posters › Poster A4 - Frente", teste: n => /capas para fotografia|capa fotos natalicia|pop cover|pocket cover|poster a4/.test(n) },
     // Produtos OMEGA registados a 2026-11-17 (lote "#IMPRESSO"): quadros, molduras e decoração de Natal
     { quando: "contém «acrilico» ou «acrilica»", processo: "OMEGA", exemplos: "Acrílico › 30x45; Quadro em Acrílico › Quadro Acrílico 15 x 20 cm; Molduras Acrílicas 20mm › 15x20; Standup Acrilico - Comunhões › 10x15", teste: n => /acrilic[oa]/.test(n) },
@@ -431,6 +433,11 @@ const Logica = (() => {
     // 1.11.6 (2026-11-21), a pedido do utilizador: regras estreitas, só estes produtos
     { quando: "contém «paper folio armonia»", processo: "OFFSET", exemplos: "Comunhões › Paper Folio Armonia (Qtd. Min. 4)", teste: n => /paper folio armonia/.test(n) },
     { quando: "é da categoria «Convites ›» ou «Postais ›» e contém «niclas»", processo: "OFFSET", sub: "CARTOES", exemplos: "Convites › 10x15 (Qtd. Min. 2) - Niclas; Postais › 15x20 (Vertical) (Qtd. Min. 2) - Niclas", teste: n => /^(convites|postais) ›.*niclas/.test(n) },
+    { quando: "contém «card shop - postais especiais › 20x10»: depende do papel na etiqueta", processo: "DESCONHECIDO", campo: "papel", nomeCurto: "Postal Especial 20x10",
+      exemplos: "Card Shop - Postais Especiais › 20x10 (Horizontal) (Qtd. Min. 6)", teste: n => POSTAL_ESPECIAL_20X10.test(n),
+      porAcabamento: [{ acabamento: "Tintoretto Gesso", processo: "ESAG", teste: a => /gesso/i.test(a) }],
+      seOutro: { processo: "OFFSET", sub: "CARTOES" } },
+    { quando: "contém «press print» + 30x40, frente e verso e tintoretto gesso", processo: "ESAG", exemplos: "Press Print › 30x40-Imp. Frente e Verso - Tintoretto Gesso", teste: n => /press print.*30\s*x\s*40.*frente e verso.*tintoretto gesso/.test(n) },
   ];
 
   // Nomes vindos de um ZIP trazem os caracteres escapados: "#U203a" -> "›"
@@ -463,7 +470,7 @@ const Logica = (() => {
   // { processo, sub, regra, numRegra, qtd, categoria, produto, nome }
   // etiqueta: o material lido (texto, como na 1.6) ou { material, acabamento } (1.10)
   function classificar(nomePasta, etiqueta = null, pastaEnc = null) {
-    const { material = null, acabamento = null } = typeof etiqueta === "string" ? { material: etiqueta } : (etiqueta || {});
+    const { material = null, acabamento = null, papel = null } = typeof etiqueta === "string" ? { material: etiqueta } : (etiqueta || {});
     const p = lerNomeProduto(nomePasta);
     const n = normalizar(p.nome);
     for (const [i, r] of REGRAS.entries()) {
@@ -482,15 +489,20 @@ const Logica = (() => {
           : `Regra ${num}: ${nomeCurto} depende do prefixo da encomenda (${lista}). Indicar a pasta: "<nº>_<id> / ${p.nome}".` };
       }
       // Por acabamento (1.10): ex. calendário poster em True White -> OFFSET › CALENDÁRIOS, em Gesso -> ESAG.
-      // Sem acabamento lido, ou com um acabamento sem regra: "Por confirmar" (nunca adivinhar).
+      // Ou pelo "Tipo de Papel" (campo: "papel", 1.11.6): Postal Especial 20x10 em Gesso -> ESAG, noutro papel ->
+      // seOutro (OFFSET › CARTÕES). Sem o campo lido, ou com um valor sem regra e sem seOutro: "Por confirmar".
       if (r.porAcabamento) {
-        const lista = r.porAcabamento.map(x => `${x.acabamento} → ${destinoDe(x.processo, x.sub)}`).join("; ");
-        const pa = acabamento && r.porAcabamento.find(x => x.teste(acabamento));
+        const campo = r.campo || "acabamento";
+        const valor = campo === "papel" ? papel : acabamento;
+        const nomeCurto = r.nomeCurto || "calendário";
+        const lista = r.porAcabamento.map(x => `${x.acabamento} → ${destinoDe(x.processo, x.sub)}`).join("; ")
+          + (r.seOutro ? `; outro → ${destinoDe(r.seOutro.processo, r.seOutro.sub)}` : "");
+        const pa = valor && (r.porAcabamento.find(x => x.teste(valor)) || r.seOutro);
         if (pa) return { ...p, processo: pa.processo, sub: pa.sub || null, numRegra: num,
-          regra: `Regra ${num}: calendário em ${acabamento} → ${destinoDe(pa.processo, pa.sub)}` };
-        return { ...p, processo: "DESCONHECIDO", sub: null, numRegra: num, regra: acabamento
-          ? `Regra ${num}: acabamento «${acabamento}» sem regra (${lista}). Confirmar com o responsável.`
-          : `Regra ${num}: depende do acabamento na etiqueta (${lista}).` };
+          regra: `Regra ${num}: ${nomeCurto} em ${valor} → ${destinoDe(pa.processo, pa.sub)}` };
+        return { ...p, processo: "DESCONHECIDO", sub: null, numRegra: num, regra: valor
+          ? `Regra ${num}: ${campo} «${valor}» sem regra (${lista}). Confirmar com o responsável.`
+          : `Regra ${num}: depende do ${campo} na etiqueta (${lista}).` };
       }
       if (r.processo) {
         // Exceção por material (1.6): ex. Ornamento de Natal em Bétula -> OFFSET (por norma é OMEGA)
@@ -592,7 +604,7 @@ const Logica = (() => {
   function campoDaEtiqueta(nomePasta) {
     const n = normalizar(lerNomeProduto(nomePasta).nome);
     const r = REGRAS.find(x => x.teste(n));
-    if (r && r.porAcabamento && r.porAcabamento.length) return "acabamento";
+    if (r && r.porAcabamento && r.porAcabamento.length) return r.campo || "acabamento";
     if (r && r.porMaterial && r.porMaterial.length) return "material";
     return null;
   }
@@ -616,6 +628,8 @@ const Logica = (() => {
   const materialDaEtiqueta = texto => campoEtiqueta(texto, "tipo de material");
   // "Acabamento:" na etiqueta (1.10): "True White", "Sirio Ice White", "Tintoretto Gesso"…
   const acabamentoDaEtiqueta = texto => campoEtiqueta(texto, "acabamento");
+  // "Tipo de Papel:" na etiqueta (1.11.6): "Tintoretto Gesso"… (Card Shop - Postais Especiais 20x10)
+  const papelDaEtiqueta = texto => campoEtiqueta(texto, "tipo de papel");
 
   // O texto depois do número na pasta da encomenda, sem "URGENTE": "6537695_1526206 - Capa Fotos Natalícia (x25)"
   // -> "Capa Fotos Natalícia (x25)". Só serve quando não há pasta de produto nem produto na etiqueta.
@@ -658,7 +672,7 @@ const Logica = (() => {
   return {
     PROCESSOS, SUBPROCESSOS, ORDEM, REGRAS, REGRAS_BMJCP, EXCECOES_BMJCP, normalizar, lerNomeProduto, classificar,
     ehPastaEncomenda, pareceEncomenda, orderId, qtdDaPasta, ehEtiqueta, produtoDaImagem, produtosDaEtiqueta,
-    produtosDaEncomenda, semPastaDeProduto, ordemEtiquetas, produtoDoNomeDaEncomenda, precisaMaterial, campoDaEtiqueta, materialDaEtiqueta, acabamentoDaEtiqueta, gruposPesquisa, LIMITE_PESQUISA, MAX_IDS_GRUPO,
+    produtosDaEncomenda, semPastaDeProduto, ordemEtiquetas, produtoDoNomeDaEncomenda, precisaMaterial, campoDaEtiqueta, materialDaEtiqueta, acabamentoDaEtiqueta, papelDaEtiqueta, gruposPesquisa, LIMITE_PESQUISA, MAX_IDS_GRUPO,
   };
 })();
 </script>
@@ -799,8 +813,8 @@ function criarProgresso(el, tituloBase = document.title) {
       const texto = await textoDoPdf(await f.obter().catch(() => null));
       if (texto.trim()) lida = true;
       const produtos = Logica.produtosDaEtiqueta(texto);
-      const etiqueta = { material: Logica.materialDaEtiqueta(texto), acabamento: Logica.acabamentoDaEtiqueta(texto) };
-      if (produtos.length || etiqueta.material || etiqueta.acabamento) return { lida, produtos, etiqueta };
+      const etiqueta = { material: Logica.materialDaEtiqueta(texto), acabamento: Logica.acabamentoDaEtiqueta(texto), papel: Logica.papelDaEtiqueta(texto) };
+      if (produtos.length || etiqueta.material || etiqueta.acabamento || etiqueta.papel) return { lida, produtos, etiqueta };
     }
     return { lida, produtos: [], etiqueta: null };
   }
@@ -1279,7 +1293,8 @@ function criarProgresso(el, tituloBase = document.title) {
       ...REGRAS.map((r, i) => [String(i + 1), r.quando,
         r.porPrefixo ? el("span", {}, ...Object.entries(r.porPrefixo).flatMap(([k, v], i) => [i ? "  " : "", `${k}… `, pill(v)]))
         : r.porAcabamento ? el("span", {}, ...r.porAcabamento.flatMap((x, i) => [i ? " · " : "", `${x.acabamento}: `, pill(x.processo),
-            x.sub ? ` › ${SUBPROCESSOS[x.sub].nome}` : ""]), " · outro: ", pill("DESCONHECIDO"))
+            x.sub ? ` › ${SUBPROCESSOS[x.sub].nome}` : ""]), " · outro: ", pill(r.seOutro ? r.seOutro.processo : "DESCONHECIDO"),
+            r.seOutro && r.seOutro.sub ? ` › ${SUBPROCESSOS[r.seOutro.sub].nome}` : "", r.seOutro ? " · sem etiqueta: " : "", r.seOutro ? pill("DESCONHECIDO") : "")
         : r.processo ? el("span", {}, pill(r.processo), r.sub ? ` › ${SUBPROCESSOS[r.sub].nome}` : "",
           ...(r.porMaterial || []).flatMap(x => [` · em ${x.material}: `, pill(x.processo)]))
           : el("span", {}, "regras B1-B9: ", pill("BMJCP"), " ou ", pill("GIFTS")), r.exemplos]),

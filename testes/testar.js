@@ -214,9 +214,9 @@ const casosCal = [
   ["Christmas Calendars › Christmas Calendar - 15x20", "Tintoretto Gesso", "OFFSET/CALENDARIOS"], // não depende do acabamento
   ["Calendários › Calendário A4", "True White", "DESCONHECIDO"],        // outro calendário: sem regra
   ["Posters › Poster A4 - Frente", "Gesso", "OFFSET"],                  // o acabamento não muda outros produtos
-  // Card Shop nunca segue a regra do acabamento, mesmo em Tintoretto Gesso (decisão do utilizador, 2026-11-17)
+  // Card Shop nunca segue a regra do acabamento, mesmo em Tintoretto Gesso (decisão do utilizador, 2026-11-17).
+  // Exceção desde a 1.11.6: o Postal Especial 20x10 decide-se pelo "Tipo de Papel" (testado mais abaixo).
   ["Card Shop - Convites › 15x20 (Vertical - Qtd. Min. 8)", "Tintoretto Gesso", "OFFSET/CARTOES"],
-  ["Card Shop - Postais Especiais › 20x10 (Horizontal) (Qtd. Min. 6)", "Gesso", "OFFSET/CARTOES"],
   ["Card Shop - Calendários › Calendário Mesa 10x15", "Tintoretto Gesso", "OFFSET/CARTOES"],
   ["Card Shop › Calendário Poster 30x42", "Gesso", "OFFSET/CARTOES"],
 ];
@@ -284,6 +284,36 @@ console.log("ok  1.9: nome da pasta da encomenda, CARTÕES e OFFSET novos");
     if (Logica.classificar(n).processo !== "DESCONHECIDO") falhar(`"${n}" devia ficar Por confirmar`);
   }
   console.log("ok  1.11.6: Paper Folio Armonia e Convites/Postais Niclas");
+}
+// 1.11.6: Card Shop - Postais Especiais 20x10 pelo "Tipo de Papel": Gesso -> ESAG, outro -> OFFSET › CARTÕES,
+// sem etiqueta -> Por confirmar. Press Print 30x40 Frente e Verso Tintoretto Gesso -> ESAG.
+{
+  const pe = "Card Shop - Postais Especiais › 20x10 (Horizontal) (Qtd. Min. 6)";
+  const pap = (nome, papel) => { const r = Logica.classificar(nome, papel === undefined ? null : { papel }); return `${r.processo}${r.sub ? "/" + r.sub : ""}`; };
+  for (const [nome, papel, esperado] of [
+    [pe, "Tintoretto Gesso", "ESAG"],
+    [pe, "Gesso", "ESAG"],
+    [`(x6) - ${pe}`, "Tintoretto Gesso", "ESAG"],
+    ["Card Shop - Postais Especiais #U203a 20x10 (Horizontal) (Qtd. Min. 6)", "Tintoretto Gesso", "ESAG"],
+    [pe, "True White Matte", "OFFSET/CARTOES"],           // outro papel: continua CARTÕES
+    [pe, undefined, "DESCONHECIDO"],                      // sem etiqueta: nunca adivinhar
+    ["Card Shop - Convites › 15x20 (Vertical - Qtd. Min. 8)", "Tintoretto Gesso", "OFFSET/CARTOES"], // os outros Card Shop não mudam
+    ["Card Shop - Postais Especiais › 15x15 (Qtd. Min. 6)", "Tintoretto Gesso", "OFFSET/CARTOES"],   // só o 20x10
+    ["Press Print › 30x40-Imp. Frente e Verso - Tintoretto Gesso", undefined, "ESAG"],
+    ["Press Print › 30x40 Imp. Frente e Verso - Tintoretto Gesso", undefined, "ESAG"],
+    ["Press Print › 30x40-Imp. Frente e Verso - True White", undefined, "DESCONHECIDO"],  // estreita
+  ]) if (pap(nome, papel) !== esperado) falhar(`"${nome}" em ${papel} devia ser ${esperado} (deu ${pap(nome, papel)})`);
+  // O acabamento não serve para o postal: só o "Tipo de Papel"
+  if (Logica.classificar(pe, { acabamento: "Tintoretto Gesso" }).processo !== "DESCONHECIDO") falhar("o postal especial não devia usar o «Acabamento»");
+  if (Logica.campoDaEtiqueta(pe) !== "papel") falhar(`campoDaEtiqueta do postal especial: ${Logica.campoDaEtiqueta(pe)}`);
+  if (Logica.campoDaEtiqueta("Press Print › 30x40-Imp. Frente e Verso - Tintoretto Gesso") !== null) falhar("o Press Print não precisa da etiqueta");
+  // Texto como o pdf.js o devolve: rótulos primeiro, valores depois, pela mesma ordem
+  const etqPapel = ["Item Produtos Acabamentos Qtd", "2951498 ... - Postais Especiais - 20x10 (Horizontal) (Qtd. Min. 6)", "6",
+    "Tipo de Papel:", "Design:", "Correção de cor:", "Tintoretto Gesso", "Curve", "Não"].join("\n");
+  if (Logica.papelDaEtiqueta(etqPapel) !== "Tintoretto Gesso") falhar(`papelDaEtiqueta deu ${Logica.papelDaEtiqueta(etqPapel)}`);
+  if (Logica.papelDaEtiqueta("Tipo de Papel: Tintoretto Gesso") !== "Tintoretto Gesso") falhar("papelDaEtiqueta na mesma linha");
+  if (Logica.papelDaEtiqueta(etqAc("True White")) !== null) falhar("papelDaEtiqueta leu o acabamento de um calendário");
+  console.log("ok  1.11.6: Postal Especial 20x10 pelo papel (Gesso → ESAG) e Press Print → ESAG");
 }
 
 // ---------------------------------------------------------------- gruposPesquisa
