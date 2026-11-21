@@ -18,7 +18,7 @@ Personalizados**, a partir do **nome da pasta de produto** que está dentro da p
 
 - **App:** https://nhmac.github.io/Proc-Triagem/ (Chrome ou Edge; pode ser instalada como app)
 - **Repositório:** https://github.com/nhmac/Proc-Triagem (código-fonte no `main`; o site é gerado e publicado pelo GitHub Actions)
-- **Versão atual:** web 1.11.5
+- **Versão atual:** web 1.11.6
 
 **A app é só de leitura** (decisão do utilizador, 2026-11-12): em circunstância alguma altera, move,
 renomeia ou apaga ficheiros ou pastas. O `showDirectoryPicker` pede só `mode: "read"`, e o
@@ -226,7 +226,7 @@ O resumo mostra a contagem do subprocesso por baixo do processo, e a pesquisa de
 
 | Chave | Nome | Processo | Produtos |
 |---|---|---|---|
-| `CARTOES` | CARTÕES | OFFSET | Cartões de Visita; Card Shop (convites, postais, trifold…); Christmas Cards; Postal True White Matte; Cartões › Cartão 10 x 15 cm (1.9) — Cartões Visita › Cartões de Visita (regras 35 e 43) |
+| `CARTOES` | CARTÕES | OFFSET | Cartões de Visita; Card Shop (convites, postais, trifold…); Christmas Cards; Postal True White Matte; Cartões › Cartão 10 x 15 cm (1.9); Convites e Postais Niclas (1.11.6) — regras 35, 43 e 50 |
 
 | `CALENDARIOS` | CALENDÁRIOS | OFFSET | Calendários Poster, Parede, Mesa e Bolso em True White ou Sirio Ice White; Christmas Calendar Holder (e a Recarga) (1.10); Christmas Calendar - 15x20 (1.10.1) — regras 45 e 46 |
 
@@ -291,6 +291,8 @@ Ornamento e a Bola de Natal são ambos da categoria Natal.
 | 46 | contém `calendario` + poster, parede, mesa ou bolso: depende do acabamento na etiqueta (o Card Shop nunca chega aqui: fica nos CARTÕES, regra 35) | True White, Sirio Ice White → OFFSET › CALENDÁRIOS; Gesso, Tintoretto Gesso → ESAG; outro acabamento ou sem etiqueta → Por confirmar | Poster › Calendário Poster 30x42; Parede › Calendário Parede 30x42, 21x29; Mesa › Calendário Mesa 10x15, 14x14, 21x10; Bolso › Calendário Bolso 5,5x8,5 |
 | 47 | contém `voucher` | OFFSET | Vouchers Marketing › Voucher Marketing |
 | 48 | contém `modern wall frame` ou `frame digital`, ou da categoria `Christmas Products ›` ou `K-Line ›` | OMEGA | Comunhões › Modern Wall Frame Comunhões 40x40; Christmas Decor › Christmas Desk Frame Digital 20x20; Christmas Decor › Christmas Frame Digital 30x40 - Double; Christmas Products › Casa, Presente; K-Line › Tamanho não Standard |
+| 49 | contém `paper folio armonia` | OFFSET | Comunhões › Paper Folio Armonia (Qtd. Min. 4) |
+| 50 | é da categoria `Convites ›` ou `Postais ›` e contém `niclas` | OFFSET › CARTÕES | Convites › 10x15 (Qtd. Min. 2) - Niclas; Postais › 15x20 (Vertical) (Qtd. Min. 2) - Niclas |
 | — | nenhuma regra bate | **Por confirmar** | |
 
 ### Almofadas, mantas e bonecos: regras B1-B9 (regra 9; decididas pelo utilizador a 2026-11-12)
@@ -448,6 +450,9 @@ Teste à mão no browser: criar uma pasta de canal falsa com algumas pastas `<n�
 - **1.2** (2026-11-12): subprocessos dentro de um processo (o primeiro: OFFSET › CARTÕES, com os Cartões de
   Visita); o processo URGENTES passa a chamar-se BOXS AMADOR (chave `BOXS`), com os mesmos dois produtos
   (Landscape 31x23 e Classic 23x31).
+- **1.11.6** (2026-11-21): "Comunhões › Paper Folio Armonia (Qtd. Min. 4)" → OFFSET (regra 49) e "Convites › 10x15
+  (Qtd. Min. 2) - Niclas" / "Postais › 15x20 (Vertical) (Qtd. Min. 2) - Niclas" → OFFSET › CARTÕES (regra 50), a pedido do
+  utilizador. Regras estreitas: outro Paper Folio, ou outro convite/postal sem "Niclas", fica "Por confirmar".
 - **1.11.5** (2026-11-20): "Hexágono › Hexágono 30x30" → OMEGA (regra 39, `hexagono`) e "Moldura Rustic 15 x 20 cm" →
   OMEGA (regra 40, Rustic), a pedido do utilizador.
 - **1.11.4** (2026-11-20): regra 48 → OMEGA, a pedido do utilizador: Modern Wall Frame (Comunhões), Christmas Desk
@@ -836,4 +841,7 @@ confirmado pelo utilizador; as almofadas foram corrigidas na 1.1.
 | K-Line › Tamanho não Standard | OMEGA |
 | Hexágono › Hexágono 30x30 | OMEGA |
 | Moldura Rustic › Moldura Rustic 15 x 20 cm | OMEGA |
+| Comunhões › Paper Folio Armonia (Qtd. Min. 4) | OFFSET |
+| Convites › 10x15 (Qtd. Min. 2) - Niclas | OFFSET |
+| Postais › 15x20 (Vertical) (Qtd. Min. 2) - Niclas | OFFSET |
 | Poster › Calendário Poster 30x42 | DESCONHECIDO |

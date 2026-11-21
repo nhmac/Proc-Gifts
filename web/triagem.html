@@ -278,7 +278,7 @@
 
     <div class="rodape">
       <button class="btn-principal" id="btn-analisar" type="button">Analisar</button>
-      <div class="versao">Versão web 1.11.5</div>
+      <div class="versao">Versão web 1.11.6</div>
     </div>
   </aside>
 
@@ -428,6 +428,9 @@ const Logica = (() => {
       ] },
     { quando: "contém «voucher»", processo: "OFFSET", exemplos: "Vouchers Marketing › Voucher Marketing", teste: n => /voucher/.test(n) },
     { quando: "contém «modern wall frame» ou «frame digital», ou é da categoria «Christmas Products ›» ou «K-Line ›»", processo: "OMEGA", exemplos: "Comunhões › Modern Wall Frame Comunhões 40x40; Christmas Decor › Christmas Desk Frame Digital 20x20; Christmas Decor › Christmas Frame Digital 30x40 - Double; Christmas Products › Casa, Presente; K-Line › Tamanho não Standard", teste: n => /modern wall frame|frame digital|^christmas products ›|^k-?line ›/.test(n) },
+    // 1.11.6 (2026-11-21), a pedido do utilizador: regras estreitas, só estes produtos
+    { quando: "contém «paper folio armonia»", processo: "OFFSET", exemplos: "Comunhões › Paper Folio Armonia (Qtd. Min. 4)", teste: n => /paper folio armonia/.test(n) },
+    { quando: "é da categoria «Convites ›» ou «Postais ›» e contém «niclas»", processo: "OFFSET", sub: "CARTOES", exemplos: "Convites › 10x15 (Qtd. Min. 2) - Niclas; Postais › 15x20 (Vertical) (Qtd. Min. 2) - Niclas", teste: n => /^(convites|postais) ›.*niclas/.test(n) },
   ];
 
   // Nomes vindos de um ZIP trazem os caracteres escapados: "#U203a" -> "›"

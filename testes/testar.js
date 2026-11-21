@@ -271,6 +271,20 @@ for (const n of ["Sticker › Sticker - Circulo 5x5", "Capas Para Fotografia ›
 }
 if (Logica.classificar("Shapes › 30x30 - Círculo").processo !== "OMEGA" || Logica.classificar("Círculo › Círculo 50x50").processo !== "OMEGA") falhar("Círculo (Shapes) devia continuar OMEGA");
 console.log("ok  1.9: nome da pasta da encomenda, CARTÕES e OFFSET novos");
+// 1.11.6: Paper Folio Armonia -> OFFSET (sem subprocesso); Convites/Postais Niclas -> OFFSET › CARTÕES
+{
+  const pf = Logica.classificar("Comunhões › Paper Folio Armonia (Qtd. Min. 4)");
+  if (pf.processo !== "OFFSET" || pf.sub) falhar(`Paper Folio Armonia devia ser OFFSET sem subprocesso (deu ${pf.processo} ${pf.sub})`);
+  for (const n of ["Convites › 10x15 (Qtd. Min. 2) - Niclas", "Postais › 15x20 (Vertical) (Qtd. Min. 2) - Niclas", "(x2) - Convites › 10x15 (Qtd. Min. 2) - Niclas"]) {
+    const r = Logica.classificar(n);
+    if (r.processo !== "OFFSET" || r.sub !== "CARTOES") falhar(`"${n}" devia ser OFFSET › CARTÕES (deu ${r.processo} ${r.sub})`);
+  }
+  // Estreitas: sem "Niclas" / outro Paper Folio continuam por confirmar
+  for (const n of ["Convites › 10x15 (Qtd. Min. 2)", "Postais › 15x20 (Vertical) (Qtd. Min. 2)", "Comunhões › Paper Folio Outro"]) {
+    if (Logica.classificar(n).processo !== "DESCONHECIDO") falhar(`"${n}" devia ficar Por confirmar`);
+  }
+  console.log("ok  1.11.6: Paper Folio Armonia e Convites/Postais Niclas");
+}
 
 // ---------------------------------------------------------------- gruposPesquisa
 for (const total of [0, 1, 2, 22, 23, 24, 50, 271, 1000]) {
